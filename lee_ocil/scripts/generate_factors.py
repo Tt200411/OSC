@@ -21,6 +21,16 @@ DATASETS = {
         "target": "Power",
         "points_per_day": 96,
     },
+    "Solar1": {
+        "path": "../Solar/Site_1_50MW.csv",
+        "target": "Power",
+        "points_per_day": 96,
+    },
+    "Solar5": {
+        "path": "../Solar/Site_5_110MW.csv",
+        "target": "Power",
+        "points_per_day": 96,
+    },
 }
 
 

@@ -33,4 +33,9 @@ rsync -av -e "ssh ${SSH_OPTS}" \
   "${ROOT_DIR}/Solar/PV_Solar_Station_1.csv" \
   "${REMOTE}:${REMOTE_DIR}/Solar/PV_Solar_Station_1.csv"
 
+rsync -av -e "ssh ${SSH_OPTS}" \
+  "${ROOT_DIR}/Solar/Site_1_50MW.csv" \
+  "${ROOT_DIR}/Solar/Site_5_110MW.csv" \
+  "${REMOTE}:${REMOTE_DIR}/Solar/"
+
 echo "Synced core Phase 1 files to ${REMOTE}:${REMOTE_DIR}"

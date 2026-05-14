@@ -32,6 +32,18 @@ DATASET_DEFAULTS = {
         "target": "Power",
         "freq": "t",
     },
+    "Solar1": {
+        "root_path": "../Solar",
+        "data_path": "Site_1_50MW.csv",
+        "target": "Power",
+        "freq": "t",
+    },
+    "Solar5": {
+        "root_path": "../Solar",
+        "data_path": "Site_5_110MW.csv",
+        "target": "Power",
+        "freq": "t",
+    },
 }
 
 
@@ -56,7 +68,7 @@ def build_parser():
     parser = argparse.ArgumentParser(description="Informer activation experiment runner")
 
     parser.add_argument("--model", default=None, choices=["informer", "informerstack"])
-    parser.add_argument("--data", default=None, choices=["ETTh1", "ETTh2", "ETTm1", "ETTm2", "Solar", "custom", "WTH", "ECL"])
+    parser.add_argument("--data", default=None, choices=["ETTh1", "ETTh2", "ETTm1", "ETTm2", "Solar", "Solar1", "Solar5", "custom", "WTH", "ECL"])
     parser.add_argument("--root_path", default=None)
     parser.add_argument("--data_path", default=None)
     parser.add_argument("--features", default=None, choices=["M", "S", "MS"])
