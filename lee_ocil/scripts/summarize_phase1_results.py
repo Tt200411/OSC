@@ -41,12 +41,24 @@ def normalize_columns(df):
     return df
 
 
+def split_filter_values(values):
+    result = []
+    for value in values:
+        for item in str(value).split(","):
+            item = item.strip()
+            if item:
+                result.append(item)
+    return result
+
+
 def apply_filters(df, include_run_id, include_des, exclude_setting_contains, exclude_des_contains):
     df = df.copy()
-    if include_run_id:
-        df = df[df["run_id"].fillna("").astype(str) == include_run_id]
-    if include_des:
-        df = df[df["des"].fillna("").astype(str) == include_des]
+    include_run_ids = split_filter_values(include_run_id)
+    include_des_values = split_filter_values(include_des)
+    if include_run_ids:
+        df = df[df["run_id"].fillna("").astype(str).isin(include_run_ids)]
+    if include_des_values:
+        df = df[df["des"].fillna("").astype(str).isin(include_des_values)]
     for pattern in exclude_setting_contains:
         df = df[~df["setting"].fillna("").str.contains(pattern, regex=False)]
     for pattern in exclude_des_contains:
@@ -139,8 +151,8 @@ def main():
     parser = argparse.ArgumentParser(description="Summarize Phase 1 experiment results")
     parser.add_argument("paths", nargs="+", help="summary.csv files, glob patterns, or directories")
     parser.add_argument("--output_dir", default="analysis")
-    parser.add_argument("--include_run_id", default="")
-    parser.add_argument("--include_des", default="")
+    parser.add_argument("--include_run_id", action="append", default=[])
+    parser.add_argument("--include_des", action="append", default=[])
     parser.add_argument("--exclude_setting_contains", action="append", default=[])
     parser.add_argument("--exclude_des_contains", action="append", default=[])
     args = parser.parse_args()
