@@ -407,7 +407,14 @@ def value_for_bin(bin_values, metric, bin_name):
     match = bin_values[bin_values["factor_bin"].astype(str) == bin_name]
     if match.empty:
         return np.nan
-    return float(match.iloc[0][metric])
+    value = match.iloc[0][metric]
+    if pd.isna(value):
+        return np.nan
+    return float(value)
+
+
+def metric_values(bin_values, metric):
+    return pd.to_numeric(bin_values[metric], errors="coerce").dropna()
 
 
 def edge_bins_for_factor(factor):
@@ -475,7 +482,10 @@ def summarize_factor_contrasts(samples, bin_summary):
                 if not pd.isna(end_value) and not pd.isna(middle_value)
                 else np.nan
             )
-            row[f"{metric}_spread"] = float(bin_values[metric].max() - bin_values[metric].min())
+            values = metric_values(bin_values, metric)
+            row[f"{metric}_spread"] = (
+                float(values.max() - values.min()) if not values.empty else np.nan
+            )
             row[f"{metric}_slope"] = slope_from_bins(bin_values, metric)
 
         factor_values = sample_candidates[f"input_{factor}"]
@@ -493,15 +503,25 @@ def summarize_factor_contrasts(samples, bin_summary):
         )
 
         target_metric = "relative_target_mse_change_mean"
-        best = bin_values.loc[bin_values[target_metric].idxmax()]
-        worst = bin_values.loc[bin_values[target_metric].idxmin()]
-        row["best_target_bin"] = best["factor_bin"]
-        row["worst_target_bin"] = worst["factor_bin"]
+        target_values = metric_values(bin_values, target_metric)
+        if target_values.empty:
+            row["best_target_bin"] = pd.NA
+            row["worst_target_bin"] = pd.NA
+        else:
+            best = bin_values.loc[target_values.idxmax()]
+            worst = bin_values.loc[target_values.idxmin()]
+            row["best_target_bin"] = best["factor_bin"]
+            row["worst_target_bin"] = worst["factor_bin"]
         aggregate_target_metric = "aggregate_relative_target_mse_change"
-        aggregate_best = bin_values.loc[bin_values[aggregate_target_metric].idxmax()]
-        aggregate_worst = bin_values.loc[bin_values[aggregate_target_metric].idxmin()]
-        row["aggregate_best_target_bin"] = aggregate_best["factor_bin"]
-        row["aggregate_worst_target_bin"] = aggregate_worst["factor_bin"]
+        aggregate_values = metric_values(bin_values, aggregate_target_metric)
+        if aggregate_values.empty:
+            row["aggregate_best_target_bin"] = pd.NA
+            row["aggregate_worst_target_bin"] = pd.NA
+        else:
+            aggregate_best = bin_values.loc[aggregate_values.idxmax()]
+            aggregate_worst = bin_values.loc[aggregate_values.idxmin()]
+            row["aggregate_best_target_bin"] = aggregate_best["factor_bin"]
+            row["aggregate_worst_target_bin"] = aggregate_worst["factor_bin"]
         row["factor_conditioned"] = (
             abs(row["relative_target_mse_change_mean_slope"]) >= 0.03
             or abs(row["relative_target_mse_change_spearman"]) >= 0.10

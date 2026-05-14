@@ -7,6 +7,7 @@ INTERVAL_SECONDS="${INTERVAL_SECONDS:-1200}"
 RUN_IDS="${RUN_IDS:-}"
 LOG_FILE="${LOG_FILE:-logs/phase1_heartbeat_$(date +%Y%m%d_%H%M%S).log}"
 mkdir -p logs
+printf "%s\n" "${LOG_FILE}" > logs/current_phase1_heartbeat_log.txt
 
 while true; do
   {
