@@ -41,8 +41,12 @@ def normalize_columns(df):
     return df
 
 
-def apply_filters(df, exclude_setting_contains, exclude_des_contains):
+def apply_filters(df, include_run_id, include_des, exclude_setting_contains, exclude_des_contains):
     df = df.copy()
+    if include_run_id:
+        df = df[df["run_id"].fillna("").astype(str) == include_run_id]
+    if include_des:
+        df = df[df["des"].fillna("").astype(str) == include_des]
     for pattern in exclude_setting_contains:
         df = df[~df["setting"].fillna("").str.contains(pattern, regex=False)]
     for pattern in exclude_des_contains:
@@ -135,13 +139,21 @@ def main():
     parser = argparse.ArgumentParser(description="Summarize Phase 1 experiment results")
     parser.add_argument("paths", nargs="+", help="summary.csv files, glob patterns, or directories")
     parser.add_argument("--output_dir", default="analysis")
+    parser.add_argument("--include_run_id", default="")
+    parser.add_argument("--include_des", default="")
     parser.add_argument("--exclude_setting_contains", action="append", default=[])
     parser.add_argument("--exclude_des_contains", action="append", default=[])
     args = parser.parse_args()
 
     os.makedirs(args.output_dir, exist_ok=True)
     raw = normalize_columns(read_summaries(args.paths))
-    raw = apply_filters(raw, args.exclude_setting_contains, args.exclude_des_contains)
+    raw = apply_filters(
+        raw,
+        args.include_run_id,
+        args.include_des,
+        args.exclude_setting_contains,
+        args.exclude_des_contains,
+    )
     detailed = add_baseline_columns(raw)
     summary = aggregate(detailed)
 
