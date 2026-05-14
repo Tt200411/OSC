@@ -99,13 +99,30 @@ def test_border1(dataset, seq_len, config, lee_root):
     return row_count - num_test - seq_len
 
 
-def factors_for_window(factors, start_index, end_index):
-    matches = factors[
-        (factors["end_index"] >= start_index) & (factors["start_index"] <= end_index)
-    ]
-    if matches.empty:
-        return {column: np.nan for column in FACTOR_COLUMNS}
-    return matches[FACTOR_COLUMNS].mean(numeric_only=True).to_dict()
+def prepare_factor_lookup(factors):
+    factors = factors.sort_values("start_index").reset_index(drop=True)
+    starts = factors["start_index"].to_numpy()
+    ends = factors["end_index"].to_numpy()
+    values = factors[FACTOR_COLUMNS].to_numpy(dtype=float)
+    valid = ~np.isnan(values)
+    value_sums = np.vstack([np.zeros((1, values.shape[1])), np.cumsum(np.where(valid, values, 0.0), axis=0)])
+    value_counts = np.vstack([np.zeros((1, values.shape[1])), np.cumsum(valid.astype(float), axis=0)])
+    return starts, ends, value_sums, value_counts
+
+
+def factor_matrix_for_windows(factor_lookup, start_indices, end_indices):
+    starts, ends, value_sums, value_counts = factor_lookup
+    left = np.searchsorted(ends, start_indices, side="left")
+    right = np.searchsorted(starts, end_indices, side="right")
+    output = np.full((len(start_indices), len(FACTOR_COLUMNS)), np.nan, dtype=float)
+    has_overlap = left < right
+    if has_overlap.any():
+        row_sums = value_sums[right[has_overlap]] - value_sums[left[has_overlap]]
+        row_counts = value_counts[right[has_overlap]] - value_counts[left[has_overlap]]
+        means = np.full_like(row_sums, np.nan, dtype=float)
+        np.divide(row_sums, row_counts, out=means, where=row_counts > 0)
+        output[has_overlap] = means
+    return output
 
 
 def factor_rows_for_prediction(config, factors, n_samples, lee_root):
@@ -114,25 +131,29 @@ def factor_rows_for_prediction(config, factors, n_samples, lee_root):
     dataset = config["data"]
     border1 = test_border1(dataset, seq_len, config, lee_root)
 
-    rows = []
-    for sample_index in range(n_samples):
-        input_start = border1 + sample_index
-        input_end = input_start + seq_len - 1
-        target_start = input_end + 1
-        target_end = target_start + pred_len - 1
-        input_factors = factors_for_window(factors, input_start, input_end)
-        target_factors = factors_for_window(factors, target_start, target_end)
-        row = {
+    sample_index = np.arange(n_samples)
+    input_start = border1 + sample_index
+    input_end = input_start + seq_len - 1
+    target_start = input_end + 1
+    target_end = target_start + pred_len - 1
+
+    factor_lookup = prepare_factor_lookup(factors)
+    input_factors = factor_matrix_for_windows(factor_lookup, input_start, input_end)
+    target_factors = factor_matrix_for_windows(factor_lookup, target_start, target_end)
+
+    rows = pd.DataFrame(
+        {
             "sample_index": sample_index,
             "input_start_index": input_start,
             "input_end_index": input_end,
             "target_start_index": target_start,
             "target_end_index": target_end,
         }
-        row.update({f"input_{key}": value for key, value in input_factors.items()})
-        row.update({f"target_{key}": value for key, value in target_factors.items()})
-        rows.append(row)
-    return pd.DataFrame(rows)
+    )
+    for column_index, column in enumerate(FACTOR_COLUMNS):
+        rows[f"input_{column}"] = input_factors[:, column_index]
+        rows[f"target_{column}"] = target_factors[:, column_index]
+    return rows
 
 
 def load_prediction_result(row, results_dir, factors_dir, lee_root):
@@ -176,6 +197,12 @@ def attach_prediction_rows(summary, results_dir, factors_dir, lee_root):
 
 def pair_against_baseline(samples):
     keys = ["dataset", "pred_len", "features", "target", "seed", "server_ip", "sample_index"]
+    samples = samples.copy().reset_index(drop=True)
+    samples["_row_id"] = np.arange(len(samples))
+    samples["baseline_activation"] = (
+        samples["activation"].map(BASELINE_BY_ACTIVATION).fillna("gelu")
+    )
+
     baseline_rows = samples[samples["activation"].isin(["gelu", "relu"])].copy()
     baseline_rows["baseline_activation"] = baseline_rows["activation"]
     baseline_rows = baseline_rows[
@@ -191,48 +218,73 @@ def pair_against_baseline(samples):
         columns={
             "sample_mse_all": "baseline_mse_all",
             "sample_mse_target": "baseline_mse_target",
+            "run_id": "baseline_run_id",
+            "des": "baseline_des",
         }
     )
 
-    rows = []
-    for _, row in samples.iterrows():
-        row = row.to_dict()
-        baseline_activation = BASELINE_BY_ACTIVATION.get(row["activation"], "gelu")
-        row["baseline_activation"] = baseline_activation
-        if row["activation"] == baseline_activation:
-            row["baseline_mse_all"] = row["sample_mse_all"]
-            row["baseline_mse_target"] = row["sample_mse_target"]
-        else:
-            candidates = baseline_rows[baseline_rows["baseline_activation"] == baseline_activation]
-            for key in keys:
-                candidates = candidates[candidates[key] == row[key]]
-            run_id = str(row.get("run_id", "") or "")
-            if run_id:
-                scoped = candidates[candidates["run_id"].fillna("").astype(str) == run_id]
-                if not scoped.empty:
-                    candidates = scoped
-            des = str(row.get("des", "") or "")
-            if des:
-                scoped = candidates[candidates["des"].fillna("").astype(str) == des]
-                if not scoped.empty:
-                    candidates = scoped
-            if candidates.empty:
-                row["baseline_mse_all"] = np.nan
-                row["baseline_mse_target"] = np.nan
-            else:
-                row["baseline_mse_all"] = float(candidates.iloc[0]["baseline_mse_all"])
-                row["baseline_mse_target"] = float(candidates.iloc[0]["baseline_mse_target"])
-        for metric in ["all", "target"]:
-            baseline = row[f"baseline_mse_{metric}"]
-            current = row[f"sample_mse_{metric}"]
-            row[f"relative_{metric}_mse_change"] = (
-                (baseline - current) / baseline if baseline and not np.isnan(baseline) else np.nan
-            )
-            row[f"win_{metric}_against_baseline"] = (
-                bool(current < baseline) if baseline and not np.isnan(baseline) else np.nan
-            )
-        rows.append(row)
-    return pd.DataFrame(rows)
+    merge_columns = ["_row_id"] + keys + [
+        "activation",
+        "baseline_activation",
+        "sample_mse_all",
+        "sample_mse_target",
+        "run_id",
+        "des",
+    ]
+    candidates = samples[merge_columns].merge(
+        baseline_rows,
+        on=keys + ["baseline_activation"],
+        how="left",
+    )
+
+    row_run_id = candidates["run_id"].fillna("").astype(str)
+    baseline_run_id = candidates["baseline_run_id"].fillna("").astype(str)
+    row_des = candidates["des"].fillna("").astype(str)
+    baseline_des = candidates["baseline_des"].fillna("").astype(str)
+
+    same_run = (row_run_id != "") & (row_run_id == baseline_run_id)
+    has_same_run = same_run.groupby(candidates["_row_id"]).transform("any")
+    valid_after_run = ~has_same_run | same_run
+
+    same_des = (row_des != "") & (row_des == baseline_des)
+    has_same_des = (valid_after_run & same_des).groupby(candidates["_row_id"]).transform("any")
+    valid_candidate = valid_after_run & (~has_same_des | same_des)
+    valid_candidate &= candidates["baseline_mse_all"].notna()
+
+    candidates["_valid_candidate"] = valid_candidate
+    candidates["_candidate_order"] = candidates.groupby("_row_id").cumcount()
+    selected = candidates.sort_values(
+        ["_row_id", "_valid_candidate", "_candidate_order"],
+        ascending=[True, False, True],
+    ).drop_duplicates("_row_id")
+
+    result = samples.drop(columns=["_row_id"]).copy()
+    result = result.merge(
+        selected[["_row_id", "baseline_mse_all", "baseline_mse_target"]],
+        left_index=True,
+        right_on="_row_id",
+        how="left",
+    ).sort_values("_row_id")
+    result = result.drop(columns=["_row_id"]).reset_index(drop=True)
+
+    self_baseline = result["activation"] == result["baseline_activation"]
+    result.loc[self_baseline, "baseline_mse_all"] = result.loc[self_baseline, "sample_mse_all"]
+    result.loc[self_baseline, "baseline_mse_target"] = result.loc[
+        self_baseline, "sample_mse_target"
+    ]
+
+    for metric in ["all", "target"]:
+        baseline = result[f"baseline_mse_{metric}"]
+        current = result[f"sample_mse_{metric}"]
+        valid = baseline.notna() & (baseline != 0)
+        result[f"relative_{metric}_mse_change"] = np.nan
+        result.loc[valid, f"relative_{metric}_mse_change"] = (
+            baseline.loc[valid] - current.loc[valid]
+        ) / baseline.loc[valid]
+        win_column = f"win_{metric}_against_baseline"
+        result[win_column] = pd.Series(pd.NA, index=result.index, dtype="boolean")
+        result.loc[valid, win_column] = (current.loc[valid] < baseline.loc[valid]).to_numpy()
+    return result
 
 
 def bin_series(series, factor_name):
@@ -272,12 +324,30 @@ def summarize_bins(samples):
             row["seed_count"] = group["seed"].nunique()
             row["baseline_target_mse_mean"] = group["baseline_mse_target"].mean()
             row["activation_target_mse_mean"] = group["sample_mse_target"].mean()
+            row["target_mse_delta_mean"] = (
+                row["baseline_target_mse_mean"] - row["activation_target_mse_mean"]
+            )
+            row["aggregate_relative_target_mse_change"] = (
+                row["target_mse_delta_mean"] / row["baseline_target_mse_mean"]
+                if row["baseline_target_mse_mean"]
+                and not pd.isna(row["baseline_target_mse_mean"])
+                else np.nan
+            )
             row["relative_target_mse_change_mean"] = group[
                 "relative_target_mse_change"
             ].mean()
             row["target_win_rate"] = group["win_target_against_baseline"].mean()
             row["baseline_all_mse_mean"] = group["baseline_mse_all"].mean()
             row["activation_all_mse_mean"] = group["sample_mse_all"].mean()
+            row["all_mse_delta_mean"] = (
+                row["baseline_all_mse_mean"] - row["activation_all_mse_mean"]
+            )
+            row["aggregate_relative_all_mse_change"] = (
+                row["all_mse_delta_mean"] / row["baseline_all_mse_mean"]
+                if row["baseline_all_mse_mean"]
+                and not pd.isna(row["baseline_all_mse_mean"])
+                else np.nan
+            )
             row["relative_all_mse_change_mean"] = group["relative_all_mse_change"].mean()
             row["all_win_rate"] = group["win_all_against_baseline"].mean()
             rows.append(row)
@@ -363,9 +433,13 @@ def summarize_factor_contrasts(samples, bin_summary):
         row["end_bin"] = end_bin
         for metric in [
             "target_win_rate",
+            "aggregate_relative_target_mse_change",
             "relative_target_mse_change_mean",
+            "target_mse_delta_mean",
             "all_win_rate",
+            "aggregate_relative_all_mse_change",
             "relative_all_mse_change_mean",
+            "all_mse_delta_mean",
         ]:
             start_value = value_for_bin(bin_values, metric, start_bin)
             middle_value = value_for_bin(bin_values, metric, middle_bin)
@@ -405,10 +479,19 @@ def summarize_factor_contrasts(samples, bin_summary):
         worst = bin_values.loc[bin_values[target_metric].idxmin()]
         row["best_target_bin"] = best["factor_bin"]
         row["worst_target_bin"] = worst["factor_bin"]
+        aggregate_target_metric = "aggregate_relative_target_mse_change"
+        aggregate_best = bin_values.loc[bin_values[aggregate_target_metric].idxmax()]
+        aggregate_worst = bin_values.loc[bin_values[aggregate_target_metric].idxmin()]
+        row["aggregate_best_target_bin"] = aggregate_best["factor_bin"]
+        row["aggregate_worst_target_bin"] = aggregate_worst["factor_bin"]
         row["factor_conditioned"] = (
             abs(row["relative_target_mse_change_mean_slope"]) >= 0.03
             or abs(row["relative_target_mse_change_spearman"]) >= 0.10
             or row["relative_target_mse_change_mean_spread"] >= 0.08
+        )
+        row["aggregate_factor_conditioned"] = (
+            abs(row["aggregate_relative_target_mse_change_slope"]) >= 0.03
+            or row["aggregate_relative_target_mse_change_spread"] >= 0.08
         )
         rows.append(row)
     return pd.DataFrame(rows)

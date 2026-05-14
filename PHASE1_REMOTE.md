@@ -8,6 +8,13 @@ This repository is prepared so local work handles code, scheduling, collection, 
 - Remote directory: `~/project/osc_informer`
 - Do not write SSH passwords to scripts, configs, logs, or result files.
 
+## Current Mechanism Notes
+
+- Keep the current conclusion: Lee-OC type1 is not the only plausible mechanism. On ETTh probes, cheap bounded sign-preserving activations such as `tanh` and `softsign` explain much of the gain; Lee-OC type1 should be treated as one candidate in that family, not as an independently dominant default.
+- Factor explanations should not rely on "every bin beats GELU" alone. Use high-minus-low differences, spread, slope/Spearman, and aggregate bin MSE ratios to test whether the gain is stronger under specific data states.
+- For Solar Site 1/5 seed `2024` (`phase1_solar_sites_20260514_234004`), bounded sign activations improved all-feature MSE across `pred_len=24` and `pred_len=96`. Power-only aggregate analysis is more nuanced: `pred_len=96` shows clearer high-volatility/high-turbulence gains, while `pred_len=24` can be flatter or stronger in low-volatility bins.
+- For Solar, prefer aggregate bin metrics such as `aggregate_relative_target_mse_change` because per-sample relative ratios can be distorted when nighttime baseline target errors are near zero.
+
 ## Sync Core Files
 
 Run from the local repository root:
@@ -22,6 +29,8 @@ The sync sends only:
 - `lee_ocil/ETT-small/ETTh1.csv`
 - `lee_ocil/ETT-small/ETTh2.csv`
 - `Solar/PV_Solar_Station_1.csv`
+- `Solar/Site_1_50MW.csv`
+- `Solar/Site_5_110MW.csv`
 
 ## Remote Smoke Checks
 
@@ -96,3 +105,20 @@ Outputs:
 
 - `analysis/phase1_detailed_results.csv`
 - `analysis/phase1_activation_summary.csv`
+
+Link predictions to factor bins:
+
+```bash
+python lee_ocil/scripts/analyze_factor_effects.py \
+  phase1_remote_results/10.20.12.248/results/summary.csv \
+  --results_dir phase1_remote_results/10.20.12.248/results \
+  --factors_dir lee_ocil/factors \
+  --lee_root lee_ocil \
+  --output_dir phase1_remote_results/10.20.12.248/analysis_factors
+```
+
+Key outputs:
+
+- `phase1_factor_sample_results.csv`
+- `phase1_factor_bin_summary.csv`
+- `phase1_factor_contrast_summary.csv`
