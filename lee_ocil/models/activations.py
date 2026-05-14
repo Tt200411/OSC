@@ -6,12 +6,16 @@ from lee_oc import LeeOscillator
 
 
 BASELINE_ACTIVATIONS = {"gelu", "relu"}
+BOUNDED_SIGN_ACTIVATIONS = {"tanh", "softsign", "scaled_tanh"}
+FUNCTIONAL_ACTIVATIONS = BASELINE_ACTIVATIONS | BOUNDED_SIGN_ACTIVATIONS
 SIN_ACTIVATIONS = {"gelu_sin", "relu_sin"}
 
 
 def activation_family(activation):
     if activation in BASELINE_ACTIVATIONS:
         return "baseline"
+    if activation in BOUNDED_SIGN_ACTIVATIONS:
+        return "bounded_sign"
     if activation in SIN_ACTIVATIONS:
         return "sin_perturb"
     if activation == "dynamic_gelu_sin":
@@ -24,8 +28,8 @@ def activation_family(activation):
 class FunctionalActivation(nn.Module):
     def __init__(self, name):
         super().__init__()
-        if name not in BASELINE_ACTIVATIONS:
-            raise ValueError(f"Unsupported base activation: {name}")
+        if name not in FUNCTIONAL_ACTIVATIONS:
+            raise ValueError(f"Unsupported functional activation: {name}")
         self.name = name
 
     def forward(self, x):
@@ -33,7 +37,13 @@ class FunctionalActivation(nn.Module):
             return F.gelu(x)
         if self.name == "relu":
             return F.relu(x)
-        raise RuntimeError(f"Unsupported base activation: {self.name}")
+        if self.name == "tanh":
+            return torch.tanh(x)
+        if self.name == "softsign":
+            return F.softsign(x)
+        if self.name == "scaled_tanh":
+            return torch.tanh(2.0 * x)
+        raise RuntimeError(f"Unsupported functional activation: {self.name}")
 
 
 class SinPerturbedActivation(nn.Module):
@@ -96,7 +106,7 @@ def build_activation(
     dynamic_default_amplitude=0.05,
 ):
     activation = activation.lower()
-    if activation in BASELINE_ACTIVATIONS:
+    if activation in FUNCTIONAL_ACTIVATIONS:
         return FunctionalActivation(activation)
     if activation == "gelu_sin":
         return SinPerturbedActivation(

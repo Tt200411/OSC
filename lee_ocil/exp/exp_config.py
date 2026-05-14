@@ -64,7 +64,7 @@ class InformerConfig:
         self.inverse = False  # 是否反转输出数据
         
         # 激活函数参数
-        self.activation = 'gelu'  # gelu, relu, gelu_sin, relu_sin, lee, dynamic_gelu_sin
+        self.activation = 'gelu'  # gelu, relu, tanh, softsign, scaled_tanh, gelu_sin, relu_sin, lee, dynamic_gelu_sin
         self.activation_family = 'baseline'
         self.perturb_amplitude = 0.0
         self.perturb_frequency = 1.0

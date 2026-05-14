@@ -95,7 +95,17 @@ def build_parser():
     parser.add_argument("--use_amp", type=str2bool, default=None)
 
     parser.add_argument("--activation", default=None,
-                        choices=["gelu", "relu", "gelu_sin", "relu_sin", "lee", "dynamic_gelu_sin"])
+                        choices=[
+                            "gelu",
+                            "relu",
+                            "tanh",
+                            "softsign",
+                            "scaled_tanh",
+                            "gelu_sin",
+                            "relu_sin",
+                            "lee",
+                            "dynamic_gelu_sin",
+                        ])
     parser.add_argument("--perturb_amplitude", "--amplitude", type=float, default=None)
     parser.add_argument("--perturb_frequency", "--frequency", type=float, default=None)
     parser.add_argument("--perturb_phase", "--phase", type=float, default=None)

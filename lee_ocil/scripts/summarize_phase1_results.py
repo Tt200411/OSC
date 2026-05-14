@@ -9,6 +9,9 @@ import pandas as pd
 BASELINE_BY_ACTIVATION = {
     "gelu": "gelu",
     "relu": "relu",
+    "tanh": "gelu",
+    "softsign": "gelu",
+    "scaled_tanh": "gelu",
     "gelu_sin": "gelu",
     "relu_sin": "relu",
     "dynamic_gelu_sin": "gelu",
