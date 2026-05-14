@@ -14,6 +14,7 @@ BASELINE_BY_ACTIVATION = {
     "scaled_tanh": "gelu",
     "gelu_sin": "gelu",
     "relu_sin": "relu",
+    "tanh_sin": "tanh",
     "dynamic_gelu_sin": "gelu",
     "lee": "gelu",
 }
@@ -51,6 +52,18 @@ def split_filter_values(values):
             if item:
                 result.append(item)
     return result
+
+
+def baseline_mapping(overrides):
+    mapping = BASELINE_BY_ACTIVATION.copy()
+    for override in split_filter_values(overrides):
+        if "=" not in override:
+            raise SystemExit(f"Invalid --baseline_override value: {override}")
+        activation, baseline = [part.strip().lower() for part in override.split("=", 1)]
+        if not activation or not baseline:
+            raise SystemExit(f"Invalid --baseline_override value: {override}")
+        mapping[activation] = baseline
+    return mapping
 
 
 def read_summary(path):
@@ -195,15 +208,16 @@ def attach_prediction_rows(summary, results_dir, factors_dir, lee_root):
     return pd.concat(frames, ignore_index=True)
 
 
-def pair_against_baseline(samples):
+def pair_against_baseline(samples, baseline_by_activation):
     keys = ["dataset", "pred_len", "features", "target", "seed", "server_ip", "sample_index"]
     samples = samples.copy().reset_index(drop=True)
     samples["_row_id"] = np.arange(len(samples))
     samples["baseline_activation"] = (
-        samples["activation"].map(BASELINE_BY_ACTIVATION).fillna("gelu")
+        samples["activation"].map(baseline_by_activation).fillna("gelu")
     )
 
-    baseline_rows = samples[samples["activation"].isin(["gelu", "relu"])].copy()
+    baseline_activations = sorted(set(baseline_by_activation.values()))
+    baseline_rows = samples[samples["activation"].isin(baseline_activations)].copy()
     baseline_rows["baseline_activation"] = baseline_rows["activation"]
     baseline_rows = baseline_rows[
         keys
@@ -506,6 +520,12 @@ def main():
     parser.add_argument("--output_dir", default="analysis_factors")
     parser.add_argument("--include_run_id", action="append", default=[])
     parser.add_argument("--include_des", action="append", default=[])
+    parser.add_argument(
+        "--baseline_override",
+        action="append",
+        default=[],
+        help="Override baseline mapping, e.g. --baseline_override lee=tanh",
+    )
     args = parser.parse_args()
 
     os.makedirs(args.output_dir, exist_ok=True)
@@ -513,7 +533,7 @@ def main():
     summary = read_summary(args.summary_csv)
     summary = apply_filters(summary, args.include_run_id, args.include_des)
     samples = attach_prediction_rows(summary, results_dir, args.factors_dir, args.lee_root)
-    detailed = pair_against_baseline(samples)
+    detailed = pair_against_baseline(samples, baseline_mapping(args.baseline_override))
     bin_summary = summarize_bins(detailed)
     contrast_summary = summarize_factor_contrasts(detailed, bin_summary)
 

@@ -14,6 +14,7 @@ BASELINE_BY_ACTIVATION = {
     "scaled_tanh": "gelu",
     "gelu_sin": "gelu",
     "relu_sin": "relu",
+    "tanh_sin": "tanh",
     "dynamic_gelu_sin": "gelu",
     "lee": "gelu",
 }
@@ -54,6 +55,18 @@ def split_filter_values(values):
     return result
 
 
+def baseline_mapping(overrides):
+    mapping = BASELINE_BY_ACTIVATION.copy()
+    for override in split_filter_values(overrides):
+        if "=" not in override:
+            raise SystemExit(f"Invalid --baseline_override value: {override}")
+        activation, baseline = [part.strip().lower() for part in override.split("=", 1)]
+        if not activation or not baseline:
+            raise SystemExit(f"Invalid --baseline_override value: {override}")
+        mapping[activation] = baseline
+    return mapping
+
+
 def apply_filters(df, include_run_id, include_des, exclude_setting_contains, exclude_des_contains):
     df = df.copy()
     include_run_ids = split_filter_values(include_run_id)
@@ -69,17 +82,18 @@ def apply_filters(df, include_run_id, include_des, exclude_setting_contains, exc
     return df
 
 
-def add_baseline_columns(df):
+def add_baseline_columns(df, baseline_by_activation):
     df = df.copy()
     keys = ["dataset", "pred_len", "features", "target", "seed", "server_ip"]
-    baseline_rows = df[df["activation"].isin(["gelu", "relu"])].copy()
+    baseline_activations = sorted(set(baseline_by_activation.values()))
+    baseline_rows = df[df["activation"].isin(baseline_activations)].copy()
     baseline_rows["baseline_activation"] = baseline_rows["activation"]
     baseline_rows = baseline_rows[keys + ["baseline_activation", "mse", "des", "run_id"]]
     baseline_rows = baseline_rows.rename(columns={"mse": "baseline_mse"})
 
     rows = []
     for _, row in df.iterrows():
-        baseline_activation = BASELINE_BY_ACTIVATION.get(row["activation"], "gelu")
+        baseline_activation = baseline_by_activation.get(row["activation"], "gelu")
         row = row.to_dict()
         if row["activation"] == baseline_activation:
             baseline_mse = float(row["mse"])
@@ -158,6 +172,12 @@ def main():
     parser.add_argument("--include_des", action="append", default=[])
     parser.add_argument("--exclude_setting_contains", action="append", default=[])
     parser.add_argument("--exclude_des_contains", action="append", default=[])
+    parser.add_argument(
+        "--baseline_override",
+        action="append",
+        default=[],
+        help="Override baseline mapping, e.g. --baseline_override lee=tanh",
+    )
     args = parser.parse_args()
 
     os.makedirs(args.output_dir, exist_ok=True)
@@ -169,7 +189,7 @@ def main():
         args.exclude_setting_contains,
         args.exclude_des_contains,
     )
-    detailed = add_baseline_columns(raw)
+    detailed = add_baseline_columns(raw, baseline_mapping(args.baseline_override))
     summary = aggregate(detailed)
 
     detailed_path = os.path.join(args.output_dir, "phase1_detailed_results.csv")

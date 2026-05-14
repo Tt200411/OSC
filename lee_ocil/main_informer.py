@@ -115,6 +115,7 @@ def build_parser():
                             "scaled_tanh",
                             "gelu_sin",
                             "relu_sin",
+                            "tanh_sin",
                             "lee",
                             "dynamic_gelu_sin",
                         ])

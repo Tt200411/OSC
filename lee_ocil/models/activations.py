@@ -8,7 +8,7 @@ from lee_oc import LeeOscillator
 BASELINE_ACTIVATIONS = {"gelu", "relu"}
 BOUNDED_SIGN_ACTIVATIONS = {"tanh", "softsign", "scaled_tanh"}
 FUNCTIONAL_ACTIVATIONS = BASELINE_ACTIVATIONS | BOUNDED_SIGN_ACTIVATIONS
-SIN_ACTIVATIONS = {"gelu_sin", "relu_sin"}
+SIN_ACTIVATIONS = {"gelu_sin", "relu_sin", "tanh_sin"}
 
 
 def activation_family(activation):
@@ -49,7 +49,7 @@ class FunctionalActivation(nn.Module):
 class SinPerturbedActivation(nn.Module):
     def __init__(self, base_activation, amplitude=0.0, frequency=1.0, phase=0.0):
         super().__init__()
-        if base_activation not in BASELINE_ACTIVATIONS:
+        if base_activation not in FUNCTIONAL_ACTIVATIONS:
             raise ValueError(f"Unsupported sin base activation: {base_activation}")
         self.base = FunctionalActivation(base_activation)
         self.amplitude = float(amplitude)
@@ -115,6 +115,10 @@ def build_activation(
     if activation == "relu_sin":
         return SinPerturbedActivation(
             "relu", perturb_amplitude, perturb_frequency, perturb_phase
+        )
+    if activation == "tanh_sin":
+        return SinPerturbedActivation(
+            "tanh", perturb_amplitude, perturb_frequency, perturb_phase
         )
     if activation == "dynamic_gelu_sin":
         return DynamicGeluSinActivation(
