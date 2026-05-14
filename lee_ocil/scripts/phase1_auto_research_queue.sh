@@ -18,6 +18,23 @@ RUN_LEE13_SOLAR="${RUN_LEE13_SOLAR:-1}"
 RUN_FORMS_ETT="${RUN_FORMS_ETT:-1}"
 RUN_FORMS_SOLAR="${RUN_FORMS_SOLAR:-1}"
 
+LEE13_ETT_DATASETS="${LEE13_ETT_DATASETS:-ETTh1 ETTh2}"
+LEE13_ETT_PRED_LENS="${LEE13_ETT_PRED_LENS:-24 168}"
+LEE13_SOLAR_DATASETS="${LEE13_SOLAR_DATASETS:-Solar1 Solar5}"
+LEE13_SOLAR_PRED_LENS="${LEE13_SOLAR_PRED_LENS:-24 96}"
+LEE13_SEEDS="${LEE13_SEEDS:-2024 2025 2026}"
+LEE13_TANH_SIN_AMPLITUDES="${LEE13_TANH_SIN_AMPLITUDES:-0.01 0.05 0.1}"
+LEE13_TYPES="${LEE13_TYPES:-1 3}"
+
+FORMS_ETT_DATASETS="${FORMS_ETT_DATASETS:-ETTh1 ETTh2}"
+FORMS_ETT_PRED_LENS="${FORMS_ETT_PRED_LENS:-24 168}"
+FORMS_SOLAR_DATASETS="${FORMS_SOLAR_DATASETS:-Solar1 Solar5}"
+FORMS_SOLAR_PRED_LENS="${FORMS_SOLAR_PRED_LENS:-24 96}"
+FORMS_SEEDS="${FORMS_SEEDS:-2024 2025 2026}"
+FORMS_BASE_ACTIVATIONS="${FORMS_BASE_ACTIVATIONS:-tanh}"
+FORMS_OSC_ACTIVATIONS="${FORMS_OSC_ACTIVATIONS:-tanh_sin tanh_cos tanh_rand}"
+FORMS_OSC_AMPLITUDES="${FORMS_OSC_AMPLITUDES:-0.01 0.1}"
+
 mkdir -p logs
 printf "%s\n" "${LOG_FILE}" > logs/current_phase1_auto_research_queue_log.txt
 
@@ -70,8 +87,8 @@ run_tanh_specificity_lee13_ett() {
   local run_id="phase1_tanh_specificity_lee13_ett_$(date +%Y%m%d_%H%M%S)"
   printf "%s\n" "${run_id}" > logs/current_phase1_tanh_specificity_lee13_ett_run_id.txt
   env SERVER_ID="${SERVER_ID}" SERVER_IP="${SERVER_IP}" GPU="${GPU}" \
-    DATASETS="ETTh1 ETTh2" PRED_LENS="24 168" SEEDS="2024 2025 2026" \
-    TANH_SIN_AMPLITUDES="0.01 0.05 0.1" LEE_TYPES="1 3" \
+    DATASETS="${LEE13_ETT_DATASETS}" PRED_LENS="${LEE13_ETT_PRED_LENS}" SEEDS="${LEE13_SEEDS}" \
+    TANH_SIN_AMPLITUDES="${LEE13_TANH_SIN_AMPLITUDES}" LEE_TYPES="${LEE13_TYPES}" \
     INCLUDE_GELU_BASELINE=0 INCLUDE_TANH_BASELINE=1 INCLUDE_TANH_SIN=1 INCLUDE_LEE=1 \
     EPOCHS="${EPOCHS}" BATCH_SIZE="${BATCH_SIZE}" PYTHON="${PYTHON}" \
     RUN_ID="${run_id}" RUN_TAG="${run_id}" \
@@ -82,8 +99,8 @@ run_tanh_specificity_lee13_solar() {
   local run_id="phase1_tanh_specificity_lee13_solar_$(date +%Y%m%d_%H%M%S)"
   printf "%s\n" "${run_id}" > logs/current_phase1_tanh_specificity_lee13_solar_run_id.txt
   env SERVER_ID="${SERVER_ID}" SERVER_IP="${SERVER_IP}" GPU="${GPU}" \
-    DATASETS="Solar1 Solar5" PRED_LENS="24 96" SEEDS="2024 2025 2026" \
-    TANH_SIN_AMPLITUDES="0.01 0.05 0.1" LEE_TYPES="1 3" \
+    DATASETS="${LEE13_SOLAR_DATASETS}" PRED_LENS="${LEE13_SOLAR_PRED_LENS}" SEEDS="${LEE13_SEEDS}" \
+    TANH_SIN_AMPLITUDES="${LEE13_TANH_SIN_AMPLITUDES}" LEE_TYPES="${LEE13_TYPES}" \
     INCLUDE_GELU_BASELINE=0 INCLUDE_TANH_BASELINE=1 INCLUDE_TANH_SIN=1 INCLUDE_LEE=1 \
     EPOCHS="${EPOCHS}" BATCH_SIZE="${BATCH_SIZE}" PYTHON="${PYTHON}" \
     RUN_ID="${run_id}" RUN_TAG="${run_id}" \
@@ -94,8 +111,8 @@ run_oscillation_forms_ett() {
   local run_id="phase1_oscillation_forms_ett_$(date +%Y%m%d_%H%M%S)"
   printf "%s\n" "${run_id}" > logs/current_phase1_oscillation_forms_ett_run_id.txt
   env SERVER_ID="${SERVER_ID}" SERVER_IP="${SERVER_IP}" GPU="${GPU}" \
-    DATASETS="ETTh1 ETTh2" PRED_LENS="24 168" SEEDS="2024 2025 2026" \
-    BASE_ACTIVATIONS="tanh" OSC_ACTIVATIONS="tanh_sin tanh_cos tanh_rand" OSC_AMPLITUDES="0.01 0.1" \
+    DATASETS="${FORMS_ETT_DATASETS}" PRED_LENS="${FORMS_ETT_PRED_LENS}" SEEDS="${FORMS_SEEDS}" \
+    BASE_ACTIVATIONS="${FORMS_BASE_ACTIVATIONS}" OSC_ACTIVATIONS="${FORMS_OSC_ACTIVATIONS}" OSC_AMPLITUDES="${FORMS_OSC_AMPLITUDES}" \
     EPOCHS="${EPOCHS}" BATCH_SIZE="${BATCH_SIZE}" PYTHON="${PYTHON}" \
     RUN_ID="${run_id}" RUN_TAG="${run_id}" \
     bash scripts/run_phase1_oscillation_forms_probe.sh
@@ -105,8 +122,8 @@ run_oscillation_forms_solar() {
   local run_id="phase1_oscillation_forms_solar_$(date +%Y%m%d_%H%M%S)"
   printf "%s\n" "${run_id}" > logs/current_phase1_oscillation_forms_solar_run_id.txt
   env SERVER_ID="${SERVER_ID}" SERVER_IP="${SERVER_IP}" GPU="${GPU}" \
-    DATASETS="Solar1 Solar5" PRED_LENS="24 96" SEEDS="2024 2025 2026" \
-    BASE_ACTIVATIONS="tanh" OSC_ACTIVATIONS="tanh_sin tanh_cos tanh_rand" OSC_AMPLITUDES="0.01 0.1" \
+    DATASETS="${FORMS_SOLAR_DATASETS}" PRED_LENS="${FORMS_SOLAR_PRED_LENS}" SEEDS="${FORMS_SEEDS}" \
+    BASE_ACTIVATIONS="${FORMS_BASE_ACTIVATIONS}" OSC_ACTIVATIONS="${FORMS_OSC_ACTIVATIONS}" OSC_AMPLITUDES="${FORMS_OSC_AMPLITUDES}" \
     EPOCHS="${EPOCHS}" BATCH_SIZE="${BATCH_SIZE}" PYTHON="${PYTHON}" \
     RUN_ID="${run_id}" RUN_TAG="${run_id}" \
     bash scripts/run_phase1_oscillation_forms_probe.sh
