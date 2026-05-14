@@ -33,6 +33,15 @@ FACTOR_COLUMNS = [
     "kurtosis",
 ]
 
+BIN_ORDER = {
+    "low": 0,
+    "mid": 1,
+    "high": 2,
+    "down": 0,
+    "flat": 1,
+    "up": 2,
+}
+
 
 def split_filter_values(values):
     result = []
@@ -275,6 +284,136 @@ def summarize_bins(samples):
     return pd.DataFrame(rows)
 
 
+def safe_corr(left, right):
+    frame = pd.DataFrame({"left": left, "right": right}).dropna()
+    if len(frame) < 3:
+        return np.nan
+    if frame["left"].nunique() < 2 or frame["right"].nunique() < 2:
+        return np.nan
+    return float(np.corrcoef(frame["left"], frame["right"])[0, 1])
+
+
+def safe_spearman(left, right):
+    frame = pd.DataFrame({"left": left, "right": right}).dropna()
+    if len(frame) < 3:
+        return np.nan
+    return safe_corr(frame["left"].rank(method="average"), frame["right"].rank(method="average"))
+
+
+def slope_from_bins(bin_values, metric):
+    points = [
+        (BIN_ORDER[str(row["factor_bin"])], row[metric])
+        for _, row in bin_values.iterrows()
+        if str(row["factor_bin"]) in BIN_ORDER and not pd.isna(row[metric])
+    ]
+    if len(points) < 2:
+        return np.nan
+    x = np.array([point[0] for point in points], dtype=float)
+    y = np.array([point[1] for point in points], dtype=float)
+    if len(np.unique(x)) < 2:
+        return np.nan
+    return float(np.polyfit(x, y, 1)[0])
+
+
+def value_for_bin(bin_values, metric, bin_name):
+    match = bin_values[bin_values["factor_bin"].astype(str) == bin_name]
+    if match.empty:
+        return np.nan
+    return float(match.iloc[0][metric])
+
+
+def edge_bins_for_factor(factor):
+    if factor == "trend":
+        return "down", "flat", "up"
+    return "low", "mid", "high"
+
+
+def summarize_factor_contrasts(samples, bin_summary):
+    comparison = samples[samples["activation"] != samples["baseline_activation"]].copy()
+    for factor in FACTOR_COLUMNS:
+        comparison[f"input_{factor}_bin"] = bin_series(comparison[f"input_{factor}"], factor)
+
+    group_cols = [
+        "dataset",
+        "pred_len",
+        "features",
+        "target",
+        "activation",
+        "activation_family",
+        "amplitude",
+        "lee_type",
+        "baseline_activation",
+        "factor",
+    ]
+    sample_group_cols = group_cols[:-1]
+    rows = []
+    for keys, bin_values in bin_summary.groupby(group_cols, dropna=False):
+        row = dict(zip(group_cols, keys))
+        factor = row["factor"]
+        start_bin, middle_bin, end_bin = edge_bins_for_factor(factor)
+
+        sample_candidates = comparison
+        for key, value in zip(sample_group_cols, keys[:-1]):
+            sample_candidates = sample_candidates[sample_candidates[key] == value]
+
+        row["sample_count"] = int(bin_values["sample_count"].sum())
+        row["seed_count"] = int(bin_values["seed_count"].max())
+        row["start_bin"] = start_bin
+        row["middle_bin"] = middle_bin
+        row["end_bin"] = end_bin
+        for metric in [
+            "target_win_rate",
+            "relative_target_mse_change_mean",
+            "all_win_rate",
+            "relative_all_mse_change_mean",
+        ]:
+            start_value = value_for_bin(bin_values, metric, start_bin)
+            middle_value = value_for_bin(bin_values, metric, middle_bin)
+            end_value = value_for_bin(bin_values, metric, end_bin)
+            row[f"{metric}_start"] = start_value
+            row[f"{metric}_middle"] = middle_value
+            row[f"{metric}_end"] = end_value
+            row[f"{metric}_end_minus_start"] = (
+                end_value - start_value
+                if not pd.isna(end_value) and not pd.isna(start_value)
+                else np.nan
+            )
+            row[f"{metric}_end_minus_middle"] = (
+                end_value - middle_value
+                if not pd.isna(end_value) and not pd.isna(middle_value)
+                else np.nan
+            )
+            row[f"{metric}_spread"] = float(bin_values[metric].max() - bin_values[metric].min())
+            row[f"{metric}_slope"] = slope_from_bins(bin_values, metric)
+
+        factor_values = sample_candidates[f"input_{factor}"]
+        row["relative_target_mse_change_spearman"] = safe_spearman(
+            factor_values, sample_candidates["relative_target_mse_change"]
+        )
+        row["target_win_spearman"] = safe_spearman(
+            factor_values, sample_candidates["win_target_against_baseline"].astype(float)
+        )
+        row["relative_all_mse_change_spearman"] = safe_spearman(
+            factor_values, sample_candidates["relative_all_mse_change"]
+        )
+        row["all_win_spearman"] = safe_spearman(
+            factor_values, sample_candidates["win_all_against_baseline"].astype(float)
+        )
+
+        target_metric = "relative_target_mse_change_mean"
+        best = bin_values.loc[bin_values[target_metric].idxmax()]
+        worst = bin_values.loc[bin_values[target_metric].idxmin()]
+        row["best_target_bin"] = best["factor_bin"]
+        row["worst_target_bin"] = worst["factor_bin"]
+        row["factor_conditioned"] = (
+            abs(row["relative_target_mse_change_mean_slope"]) >= 0.03
+            or abs(row["relative_target_mse_change_spearman"]) >= 0.10
+            or row["relative_target_mse_change_mean_spread"] >= 0.08
+        )
+        rows.append(row)
+    return pd.DataFrame(rows)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Link Phase 1 prediction errors to factor bins")
     parser.add_argument("summary_csv")
@@ -293,13 +432,17 @@ def main():
     samples = attach_prediction_rows(summary, results_dir, args.factors_dir, args.lee_root)
     detailed = pair_against_baseline(samples)
     bin_summary = summarize_bins(detailed)
+    contrast_summary = summarize_factor_contrasts(detailed, bin_summary)
 
     detailed_path = os.path.join(args.output_dir, "phase1_factor_sample_results.csv")
     summary_path = os.path.join(args.output_dir, "phase1_factor_bin_summary.csv")
+    contrast_path = os.path.join(args.output_dir, "phase1_factor_contrast_summary.csv")
     detailed.to_csv(detailed_path, index=False)
     bin_summary.to_csv(summary_path, index=False)
+    contrast_summary.to_csv(contrast_path, index=False)
     print(f"Wrote {detailed_path}: {len(detailed)} rows")
     print(f"Wrote {summary_path}: {len(bin_summary)} rows")
+    print(f"Wrote {contrast_path}: {len(contrast_summary)} rows")
 
 
 if __name__ == "__main__":
