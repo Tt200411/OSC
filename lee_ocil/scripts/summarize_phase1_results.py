@@ -15,6 +15,10 @@ BASELINE_BY_ACTIVATION = {
     "gelu_sin": "gelu",
     "relu_sin": "relu",
     "tanh_sin": "tanh",
+    "gelu_cos": "gelu",
+    "relu_cos": "relu",
+    "tanh_cos": "tanh",
+    "tanh_rand": "tanh",
     "dynamic_gelu_sin": "gelu",
     "lee": "gelu",
 }

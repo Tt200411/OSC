@@ -15,6 +15,7 @@ This repository is prepared so local work handles code, scheduling, collection, 
 - For Solar Site 1/5 seed `2024` (`phase1_solar_sites_20260514_234004`), bounded sign activations improved all-feature MSE across `pred_len=24` and `pred_len=96`. Power-only aggregate analysis is more nuanced: `pred_len=96` shows clearer high-volatility/high-turbulence gains, while `pred_len=24` can be flatter or stronger in low-volatility bins.
 - For Solar, prefer aggregate bin metrics such as `aggregate_relative_target_mse_change` because per-sample relative ratios can be distorted when nighttime baseline target errors are near zero.
 - The next specificity test is tanh-centered: compare `tanh_sin` against `tanh`, and compare Lee-OC type1 against both GELU and `tanh` using `--baseline_override lee=tanh` in analysis.
+- Heartbeat monitoring should run as a separate remote process and must not kill or restart training. The default interval is 20 minutes.
 
 ## Sync Core Files
 
@@ -102,6 +103,44 @@ SERVER_ID=4090-248 SERVER_IP=10.20.12.248 \
   INCLUDE_LEE=0 TANH_SIN_AMPLITUDES="0.01 0.05 0.1" \
   bash scripts/run_phase1_tanh_specificity_probe.sh
 ```
+
+## Oscillation Forms Probe
+
+After the tanh-specificity runs, compare alternate oscillatory forms against `tanh`:
+
+```bash
+SERVER_ID=4090-248 SERVER_IP=10.20.12.248 \
+  DATASETS="ETTh1 ETTh2" PRED_LENS="24 168" SEEDS="2024 2025 2026" \
+  OSC_ACTIVATIONS="tanh_sin tanh_cos tanh_rand" OSC_AMPLITUDES="0.01 0.1" \
+  bash scripts/run_phase1_oscillation_forms_probe.sh
+```
+
+For Solar:
+
+```bash
+SERVER_ID=4090-248 SERVER_IP=10.20.12.248 \
+  DATASETS="Solar1 Solar5" PRED_LENS="96" SEEDS="2024 2025 2026" \
+  OSC_ACTIVATIONS="tanh_sin tanh_cos tanh_rand" OSC_AMPLITUDES="0.01 0.1" \
+  bash scripts/run_phase1_oscillation_forms_probe.sh
+```
+
+Available tanh-centered perturbations:
+
+- `tanh_sin`: `tanh(x) + a*sin(x)`
+- `tanh_cos`: `tanh(x) + a*cos(x)`
+- `tanh_rand`: deterministic fixed random-Fourier perturbation around `tanh`
+
+## Heartbeat Monitor
+
+Run remotely:
+
+```bash
+cd ~/project/osc_informer/lee_ocil
+nohup env INTERVAL_SECONDS=1200 bash scripts/phase1_heartbeat_monitor.sh \
+  > logs/phase1_heartbeat_launcher.nohup.log 2>&1 &
+```
+
+Heartbeat logs are written to `logs/phase1_heartbeat_*.log`.
 
 ## Fetch Results
 

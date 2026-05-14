@@ -116,6 +116,10 @@ def build_parser():
                             "gelu_sin",
                             "relu_sin",
                             "tanh_sin",
+                            "gelu_cos",
+                            "relu_cos",
+                            "tanh_cos",
+                            "tanh_rand",
                             "lee",
                             "dynamic_gelu_sin",
                         ])

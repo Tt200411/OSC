@@ -9,6 +9,8 @@ BASELINE_ACTIVATIONS = {"gelu", "relu"}
 BOUNDED_SIGN_ACTIVATIONS = {"tanh", "softsign", "scaled_tanh"}
 FUNCTIONAL_ACTIVATIONS = BASELINE_ACTIVATIONS | BOUNDED_SIGN_ACTIVATIONS
 SIN_ACTIVATIONS = {"gelu_sin", "relu_sin", "tanh_sin"}
+COS_ACTIVATIONS = {"gelu_cos", "relu_cos", "tanh_cos"}
+RANDOM_OSC_ACTIVATIONS = {"tanh_rand"}
 
 
 def activation_family(activation):
@@ -18,6 +20,10 @@ def activation_family(activation):
         return "bounded_sign"
     if activation in SIN_ACTIVATIONS:
         return "sin_perturb"
+    if activation in COS_ACTIVATIONS:
+        return "cos_perturb"
+    if activation in RANDOM_OSC_ACTIVATIONS:
+        return "random_osc_perturb"
     if activation == "dynamic_gelu_sin":
         return "dynamic_sin_perturb"
     if activation in {"lee", "lee_oc", "lee-oc"}:
@@ -46,23 +52,46 @@ class FunctionalActivation(nn.Module):
         raise RuntimeError(f"Unsupported functional activation: {self.name}")
 
 
-class SinPerturbedActivation(nn.Module):
-    def __init__(self, base_activation, amplitude=0.0, frequency=1.0, phase=0.0):
+class OscillatoryPerturbedActivation(nn.Module):
+    def __init__(
+        self,
+        base_activation,
+        amplitude=0.0,
+        frequency=1.0,
+        phase=0.0,
+        waveform="sin",
+    ):
         super().__init__()
         if base_activation not in FUNCTIONAL_ACTIVATIONS:
-            raise ValueError(f"Unsupported sin base activation: {base_activation}")
+            raise ValueError(f"Unsupported oscillatory base activation: {base_activation}")
+        if waveform not in {"sin", "cos", "rand"}:
+            raise ValueError(f"Unsupported oscillatory waveform: {waveform}")
         self.base = FunctionalActivation(base_activation)
         self.amplitude = float(amplitude)
         self.frequency = float(frequency)
         self.phase = float(phase)
+        self.waveform = waveform
 
     def _amplitude_for(self, x):
         return self.amplitude
 
-    def forward(self, x):
-        return self.base(x) + self._amplitude_for(x) * torch.sin(
-            self.frequency * x + self.phase
+    def _oscillation(self, x):
+        argument = self.frequency * x + self.phase
+        if self.waveform == "sin":
+            return torch.sin(argument)
+        if self.waveform == "cos":
+            return torch.cos(argument)
+        # Fixed random-Fourier style perturbation. It is deterministic, so runs stay
+        # reproducible while still testing a non-single-frequency oscillatory shape.
+        return 0.5 * torch.sin(argument + 0.37) + 0.5 * torch.cos(
+            1.61803398875 * argument - 1.17
         )
+
+    def forward(self, x):
+        return self.base(x) + self._amplitude_for(x) * self._oscillation(x)
+
+
+SinPerturbedActivation = OscillatoryPerturbedActivation
 
 
 class DynamicGeluSinActivation(SinPerturbedActivation):
@@ -109,16 +138,32 @@ def build_activation(
     if activation in FUNCTIONAL_ACTIVATIONS:
         return FunctionalActivation(activation)
     if activation == "gelu_sin":
-        return SinPerturbedActivation(
-            "gelu", perturb_amplitude, perturb_frequency, perturb_phase
+        return OscillatoryPerturbedActivation(
+            "gelu", perturb_amplitude, perturb_frequency, perturb_phase, "sin"
         )
     if activation == "relu_sin":
-        return SinPerturbedActivation(
-            "relu", perturb_amplitude, perturb_frequency, perturb_phase
+        return OscillatoryPerturbedActivation(
+            "relu", perturb_amplitude, perturb_frequency, perturb_phase, "sin"
         )
     if activation == "tanh_sin":
-        return SinPerturbedActivation(
-            "tanh", perturb_amplitude, perturb_frequency, perturb_phase
+        return OscillatoryPerturbedActivation(
+            "tanh", perturb_amplitude, perturb_frequency, perturb_phase, "sin"
+        )
+    if activation == "gelu_cos":
+        return OscillatoryPerturbedActivation(
+            "gelu", perturb_amplitude, perturb_frequency, perturb_phase, "cos"
+        )
+    if activation == "relu_cos":
+        return OscillatoryPerturbedActivation(
+            "relu", perturb_amplitude, perturb_frequency, perturb_phase, "cos"
+        )
+    if activation == "tanh_cos":
+        return OscillatoryPerturbedActivation(
+            "tanh", perturb_amplitude, perturb_frequency, perturb_phase, "cos"
+        )
+    if activation == "tanh_rand":
+        return OscillatoryPerturbedActivation(
+            "tanh", perturb_amplitude, perturb_frequency, perturb_phase, "rand"
         )
     if activation == "dynamic_gelu_sin":
         return DynamicGeluSinActivation(
