@@ -141,6 +141,65 @@ nohup env INTERVAL_SECONDS=1200 bash scripts/phase1_heartbeat_monitor.sh \
 ```
 
 Heartbeat logs are written to `logs/phase1_heartbeat_*.log`.
+The active heartbeat log path is also written to
+`logs/current_phase1_heartbeat_log.txt`.
+
+## Autonomous Queue
+
+When a current remote training process should be preserved, start the queue with
+the existing runner PID in `WAIT_FOR_PIDS`. The queue waits for that PID and for
+`main_informer.py` to become idle before launching more work.
+
+```bash
+cd ~/project/osc_informer/lee_ocil
+nohup env WAIT_FOR_PIDS="3033586" CHECK_INTERVAL_SECONDS=300 \
+  SERVER_ID=4090-248 SERVER_IP=10.20.12.248 GPU=0 PYTHON=.venv/bin/python \
+  EPOCHS=6 BATCH_SIZE=32 \
+  bash scripts/phase1_auto_research_queue.sh \
+  > logs/phase1_auto_research_queue_launcher.nohup.log 2>&1 < /dev/null &
+```
+
+The queue runs, in order:
+
+- ETT `tanh`, `tanh_sin`, Lee type1/type3 on `ETTh1 ETTh2`, windows `24 168`.
+- Solar `tanh`, `tanh_sin`, Lee type1/type3 on `Solar1 Solar5`, windows `24 96`.
+- ETT `tanh_sin/tanh_cos/tanh_rand` form comparison.
+- Solar `tanh_sin/tanh_cos/tanh_rand` form comparison.
+
+The active queue log path is written to
+`logs/current_phase1_auto_research_queue_log.txt`.
+
+## Live Notes 2026-05-15
+
+Keep the bounded-sign conclusion, but do not yet treat oscillation as proven.
+The current evidence separates two effects:
+
+- `tanh`/`softsign` vs GELU is already strong on Solar1/Solar5 with three
+  seeds. This supports the bounded, sign-preserving activation hypothesis.
+- `tanh + a*sin(x)` vs `tanh` is not globally proven yet. In the first ETTh1
+  `pred_len=24` three-seed run, `a=0.01`, `a=0.05`, and `a=0.1` were all worse
+  on mean all-variable MSE than `tanh`, with win rates `0/3`, `1/3`, and `1/3`.
+  Lee type1 was also worse than `tanh` on that slice (`0/3` wins).
+- ETTh1 `pred_len=168` has only one fetched seed so far. On that seed,
+  `a=0.1` improved all-variable MSE by `2.34%`, `a=0.01` by `0.95%`, and
+  `a=0.05` was worse by `1.05%`. This is a signal, not a conclusion.
+- Solar1 `pred_len=96` three-seed tanh-centered results are not supportive so
+  far: `a=0.01`, `a=0.05`, and `a=0.1` changed all-variable MSE by `-0.46%`,
+  `-2.36%`, and `-1.00%`, each with `1/3` seed wins.
+- Factor analysis should focus on gradients across bins, not just bin win
+  rates. For ETTh1 `pred_len=168` seed 2024, `a=0.01` has a target-column
+  volatility gradient: low/mid/high relative target-MSE change
+  `+3.37%/+5.03%/+10.68%`, with target win rates `70.6%/78.2%/97.9%`.
+  This is the kind of pattern that would support "oscillation helps more under
+  high volatility" if it repeats across seeds and datasets.
+- Solar1 `pred_len=96` does not show that pattern yet. Its target-column
+  factor-bin changes are negative across volatility and turbulence bins for the
+  fetched `tanh_sin` settings.
+
+Current working hypothesis: bounded, sign-preserving activations are the main
+confirmed mechanism. Oscillation is likely parameter- and regime-conditioned;
+the next proof obligation is to show repeated high-volatility/high-turbulence
+lift against the `tanh` baseline, not just against GELU.
 
 ## Fetch Results
 
