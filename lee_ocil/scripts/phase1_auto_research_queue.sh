@@ -84,7 +84,7 @@ run_block() {
 }
 
 run_tanh_specificity_lee13_ett() {
-  local run_id="phase1_tanh_specificity_lee13_ett_$(date +%Y%m%d_%H%M%S)"
+  local run_id="phase1_tanh_specificity_lee13_ett_${SERVER_ID}_$(date +%Y%m%d_%H%M%S)"
   printf "%s\n" "${run_id}" > logs/current_phase1_tanh_specificity_lee13_ett_run_id.txt
   env SERVER_ID="${SERVER_ID}" SERVER_IP="${SERVER_IP}" GPU="${GPU}" \
     DATASETS="${LEE13_ETT_DATASETS}" PRED_LENS="${LEE13_ETT_PRED_LENS}" SEEDS="${LEE13_SEEDS}" \
@@ -96,7 +96,7 @@ run_tanh_specificity_lee13_ett() {
 }
 
 run_tanh_specificity_lee13_solar() {
-  local run_id="phase1_tanh_specificity_lee13_solar_$(date +%Y%m%d_%H%M%S)"
+  local run_id="phase1_tanh_specificity_lee13_solar_${SERVER_ID}_$(date +%Y%m%d_%H%M%S)"
   printf "%s\n" "${run_id}" > logs/current_phase1_tanh_specificity_lee13_solar_run_id.txt
   env SERVER_ID="${SERVER_ID}" SERVER_IP="${SERVER_IP}" GPU="${GPU}" \
     DATASETS="${LEE13_SOLAR_DATASETS}" PRED_LENS="${LEE13_SOLAR_PRED_LENS}" SEEDS="${LEE13_SEEDS}" \
@@ -108,7 +108,7 @@ run_tanh_specificity_lee13_solar() {
 }
 
 run_oscillation_forms_ett() {
-  local run_id="phase1_oscillation_forms_ett_$(date +%Y%m%d_%H%M%S)"
+  local run_id="phase1_oscillation_forms_ett_${SERVER_ID}_$(date +%Y%m%d_%H%M%S)"
   printf "%s\n" "${run_id}" > logs/current_phase1_oscillation_forms_ett_run_id.txt
   env SERVER_ID="${SERVER_ID}" SERVER_IP="${SERVER_IP}" GPU="${GPU}" \
     DATASETS="${FORMS_ETT_DATASETS}" PRED_LENS="${FORMS_ETT_PRED_LENS}" SEEDS="${FORMS_SEEDS}" \
@@ -119,7 +119,7 @@ run_oscillation_forms_ett() {
 }
 
 run_oscillation_forms_solar() {
-  local run_id="phase1_oscillation_forms_solar_$(date +%Y%m%d_%H%M%S)"
+  local run_id="phase1_oscillation_forms_solar_${SERVER_ID}_$(date +%Y%m%d_%H%M%S)"
   printf "%s\n" "${run_id}" > logs/current_phase1_oscillation_forms_solar_run_id.txt
   env SERVER_ID="${SERVER_ID}" SERVER_IP="${SERVER_IP}" GPU="${GPU}" \
     DATASETS="${FORMS_SOLAR_DATASETS}" PRED_LENS="${FORMS_SOLAR_PRED_LENS}" SEEDS="${FORMS_SEEDS}" \
