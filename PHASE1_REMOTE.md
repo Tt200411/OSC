@@ -254,3 +254,16 @@ For Lee-OC specificity over the `tanh` baseline, add:
 ```bash
 --baseline_override lee=tanh
 ```
+
+Generate a compact hypothesis report from the global and factor tables:
+
+```bash
+python lee_ocil/scripts/report_phase1_hypotheses.py \
+  --activation_summary phase1_remote_results/10.20.12.248/analysis_tanh_specificity_ett_lee_vs_tanh/phase1_activation_summary.csv \
+  --factor_contrast phase1_remote_results/10.20.12.248/analysis_factor_tanh_specificity_ett_lee_vs_tanh/phase1_factor_contrast_summary.csv \
+  --output_dir phase1_remote_results/10.20.12.248/hypothesis_tanh_specificity_ett
+```
+
+This report is designed to answer the current main question directly: whether
+an oscillatory activation is globally better, and whether high
+volatility/turbulence bins improve more than low bins.
