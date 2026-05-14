@@ -65,7 +65,7 @@ wait_for_pids() {
 }
 
 wait_for_training_idle() {
-  while pgrep -f "main_informer.py" >/dev/null 2>&1; do
+  while pgrep -f "[m]ain_informer.py" >/dev/null 2>&1; do
     log "main_informer.py still active; waiting before starting next queued block"
     sleep "${CHECK_INTERVAL_SECONDS}"
   done
