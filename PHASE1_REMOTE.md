@@ -11,6 +11,7 @@ This repository is prepared so local work handles code, scheduling, collection, 
 ## Current Mechanism Notes
 
 - Keep the current conclusion: Lee-OC type1 is not the only plausible mechanism. On ETTh probes, cheap bounded sign-preserving activations such as `tanh` and `softsign` explain much of the gain; Lee-OC type1 should be treated as one candidate in that family, not as an independently dominant default.
+- The current Informer prediction head is already linear (`nn.Linear(d_model, c_out)`) and no output-side `tanh` is applied in existing phase-1 runs. Therefore the observed bounded-activation gains are not explained by accidental output-range compression. A new output-activation counterfactual is available only through `--output_activation tanh`.
 - Factor explanations should not rely on "every bin beats GELU" alone. Use high-minus-low differences, spread, slope/Spearman, and aggregate bin MSE ratios to test whether the gain is stronger under specific data states.
 - For Solar Site 1/5 seed `2024` (`phase1_solar_sites_20260514_234004`), bounded sign activations improved all-feature MSE across `pred_len=24` and `pred_len=96`. Power-only aggregate analysis is more nuanced: `pred_len=96` shows clearer high-volatility/high-turbulence gains, while `pred_len=24` can be flatter or stronger in low-volatility bins.
 - For Solar, prefer aggregate bin metrics such as `aggregate_relative_target_mse_change` because per-sample relative ratios can be distorted when nighttime baseline target errors are near zero.
@@ -103,6 +104,37 @@ SERVER_ID=4090-248 SERVER_IP=10.20.12.248 \
   INCLUDE_LEE=0 TANH_SIN_AMPLITUDES="0.01 0.05 0.1" \
   bash scripts/run_phase1_tanh_specificity_probe.sh
 ```
+
+## Layer Activation Mechanism Probe
+
+Use this to test whether the bounded-activation improvement localizes to the
+encoder FFN, decoder FFN, both hidden FFNs, or an output-range artifact:
+
+```bash
+cd ~/project/osc_informer/lee_ocil
+SERVER_ID=4090-248 SERVER_IP=10.20.12.248 \
+  DATASET_PRED_PAIRS="Solar1:96 Solar5:96 ETTh1:24" \
+  SEEDS="2024 2025 2026" \
+  bash scripts/run_phase1_layer_activation_probe.sh
+```
+
+The default script compares:
+
+- GELU encoder / GELU decoder / linear output.
+- tanh encoder / tanh decoder / linear output.
+- tanh encoder / GELU decoder / linear output.
+- GELU encoder / tanh decoder / linear output.
+- tanh encoder / tanh decoder / tanh output.
+- `tanh_sin` with `a=0.01` in hidden FFNs / linear output.
+
+Interpretation:
+
+- If the output-`tanh` counterfactual is worse than tanh-hidden + linear output,
+  then output saturation is not the source of the previous gain.
+- If encoder-only or decoder-only tanh recovers most of all-tanh performance,
+  that localizes the useful bounded hidden transformation.
+- If both partial variants are weak, the effect likely needs bounded hidden
+  transformations on both sides of the encoder-decoder stack.
 
 ## Oscillation Forms Probe
 

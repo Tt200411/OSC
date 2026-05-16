@@ -70,12 +70,83 @@ def baseline_mapping(overrides):
     return mapping
 
 
+def make_activation_signature(activation, encoder_activation, decoder_activation, output_activation, amplitude, lee_type):
+    try:
+        amplitude_value = float(amplitude)
+    except (TypeError, ValueError):
+        amplitude_value = 0.0
+    try:
+        lee_value = int(float(lee_type))
+    except (TypeError, ValueError):
+        lee_value = 1
+    return (
+        f"act={activation}|enc={encoder_activation}|dec={decoder_activation}|"
+        f"out={output_activation}|a={amplitude_value:g}|lee={lee_value}"
+    )
+
+
+def baseline_for_row(row, baseline_by_activation):
+    activation = row["activation"]
+    encoder_activation = row.get("encoder_activation", activation) or activation
+    decoder_activation = row.get("decoder_activation", activation) or activation
+    output_activation = row.get("output_activation", "linear") or "linear"
+
+    if output_activation != "linear":
+        return activation, make_activation_signature(
+            activation,
+            encoder_activation,
+            decoder_activation,
+            "linear",
+            row.get("amplitude", 0.0),
+            row.get("lee_type", 1),
+        )
+
+    baseline_activation = baseline_by_activation.get(activation, "gelu")
+    return baseline_activation, make_activation_signature(
+        baseline_activation,
+        baseline_activation,
+        baseline_activation,
+        "linear",
+        0.0,
+        1,
+    )
+
+
 def read_summary(path):
     frame = pd.read_csv(path)
-    for column in ["target", "server_ip", "run_id", "des"]:
+    for column in [
+        "target",
+        "server_ip",
+        "run_id",
+        "des",
+        "encoder_activation",
+        "decoder_activation",
+        "output_activation",
+        "activation_signature",
+    ]:
         if column not in frame.columns:
             frame[column] = ""
         frame[column] = frame[column].fillna("")
+    frame.loc[frame["encoder_activation"] == "", "encoder_activation"] = frame.loc[
+        frame["encoder_activation"] == "", "activation"
+    ]
+    frame.loc[frame["decoder_activation"] == "", "decoder_activation"] = frame.loc[
+        frame["decoder_activation"] == "", "activation"
+    ]
+    frame.loc[frame["output_activation"] == "", "output_activation"] = "linear"
+    missing_signature = frame["activation_signature"] == ""
+    if missing_signature.any():
+        frame.loc[missing_signature, "activation_signature"] = frame[missing_signature].apply(
+            lambda row: make_activation_signature(
+                row["activation"],
+                row["encoder_activation"],
+                row["decoder_activation"],
+                row["output_activation"],
+                row.get("amplitude", 0.0),
+                row.get("lee_type", 1),
+            ),
+            axis=1,
+        )
     return frame
 
 
@@ -216,17 +287,21 @@ def pair_against_baseline(samples, baseline_by_activation):
     keys = ["dataset", "pred_len", "features", "target", "seed", "server_ip", "sample_index"]
     samples = samples.copy().reset_index(drop=True)
     samples["_row_id"] = np.arange(len(samples))
-    samples["baseline_activation"] = (
-        samples["activation"].map(baseline_by_activation).fillna("gelu")
+    baseline_pairs = samples.apply(
+        lambda row: baseline_for_row(row, baseline_by_activation), axis=1, result_type="expand"
     )
+    samples["baseline_activation"] = baseline_pairs[0]
+    samples["baseline_activation_signature"] = baseline_pairs[1]
 
     baseline_activations = sorted(set(baseline_by_activation.values()))
     baseline_rows = samples[samples["activation"].isin(baseline_activations)].copy()
     baseline_rows["baseline_activation"] = baseline_rows["activation"]
+    baseline_rows["baseline_activation_signature"] = baseline_rows["activation_signature"]
     baseline_rows = baseline_rows[
         keys
         + [
             "baseline_activation",
+            "baseline_activation_signature",
             "sample_mse_all",
             "sample_mse_target",
             "run_id",
@@ -243,7 +318,9 @@ def pair_against_baseline(samples, baseline_by_activation):
 
     merge_columns = ["_row_id"] + keys + [
         "activation",
+        "activation_signature",
         "baseline_activation",
+        "baseline_activation_signature",
         "sample_mse_all",
         "sample_mse_target",
         "run_id",
@@ -251,7 +328,7 @@ def pair_against_baseline(samples, baseline_by_activation):
     ]
     candidates = samples[merge_columns].merge(
         baseline_rows,
-        on=keys + ["baseline_activation"],
+        on=keys + ["baseline_activation", "baseline_activation_signature"],
         how="left",
     )
 
@@ -285,7 +362,7 @@ def pair_against_baseline(samples, baseline_by_activation):
     ).sort_values("_row_id")
     result = result.drop(columns=["_row_id"]).reset_index(drop=True)
 
-    self_baseline = result["activation"] == result["baseline_activation"]
+    self_baseline = result["activation_signature"] == result["baseline_activation_signature"]
     result.loc[self_baseline, "baseline_mse_all"] = result.loc[self_baseline, "sample_mse_all"]
     result.loc[self_baseline, "baseline_mse_target"] = result.loc[
         self_baseline, "sample_mse_target"
@@ -315,7 +392,7 @@ def bin_series(series, factor_name):
 
 def summarize_bins(samples):
     comparison = samples[
-        samples["activation"] != samples["baseline_activation"]
+        samples["activation_signature"] != samples["baseline_activation_signature"]
     ].copy()
     rows = []
     for factor in FACTOR_COLUMNS:
@@ -327,10 +404,15 @@ def summarize_bins(samples):
             "features",
             "target",
             "activation",
+            "encoder_activation",
+            "decoder_activation",
+            "output_activation",
+            "activation_signature",
             "activation_family",
             "amplitude",
             "lee_type",
             "baseline_activation",
+            "baseline_activation_signature",
             bin_column,
         ]
         grouped = comparison.groupby(group_cols, dropna=False, observed=False)
@@ -424,7 +506,9 @@ def edge_bins_for_factor(factor):
 
 
 def summarize_factor_contrasts(samples, bin_summary):
-    comparison = samples[samples["activation"] != samples["baseline_activation"]].copy()
+    comparison = samples[
+        samples["activation_signature"] != samples["baseline_activation_signature"]
+    ].copy()
     for factor in FACTOR_COLUMNS:
         comparison[f"input_{factor}_bin"] = bin_series(comparison[f"input_{factor}"], factor)
 
@@ -434,10 +518,15 @@ def summarize_factor_contrasts(samples, bin_summary):
         "features",
         "target",
         "activation",
+        "encoder_activation",
+        "decoder_activation",
+        "output_activation",
+        "activation_signature",
         "activation_family",
         "amplitude",
         "lee_type",
         "baseline_activation",
+        "baseline_activation_signature",
         "factor",
     ]
     sample_group_cols = group_cols[:-1]

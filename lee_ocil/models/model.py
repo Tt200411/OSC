@@ -14,11 +14,15 @@ class Informer(nn.Module):
                 output_attention = False, distil=True, mix=True,
                 device=torch.device('cuda:0'), encoder_lee_types=None, decoder_lee_types=None,
                 perturb_amplitude=0.0, perturb_frequency=1.0, perturb_phase=0.0,
-                lee_type=1):
+                lee_type=1, encoder_activation=None, decoder_activation=None,
+                output_activation='linear'):
         super(Informer, self).__init__()
         self.pred_len = out_len
         self.attn = attn
         self.output_attention = output_attention
+        self.encoder_activation = encoder_activation or activation
+        self.decoder_activation = decoder_activation or activation
+        self.output_activation = output_activation
 
         # Encoding
         self.enc_embedding = DataEmbedding(enc_in, d_model, embed, freq, dropout)
@@ -34,7 +38,7 @@ class Informer(nn.Module):
                     d_model,
                     d_ff,
                     dropout=dropout,
-                    activation=activation,
+                    activation=self.encoder_activation,
                     lee_type=encoder_lee_types[l] if encoder_lee_types else lee_type,
                     perturb_amplitude=perturb_amplitude,
                     perturb_frequency=perturb_frequency,
@@ -59,7 +63,7 @@ class Informer(nn.Module):
                     d_model,
                     d_ff,
                     dropout=dropout,
-                    activation=activation,
+                    activation=self.decoder_activation,
                     lee_type=decoder_lee_types[l] if decoder_lee_types else lee_type,
                     perturb_amplitude=perturb_amplitude,
                     perturb_frequency=perturb_frequency,
@@ -72,6 +76,13 @@ class Informer(nn.Module):
         # self.end_conv1 = nn.Conv1d(in_channels=label_len+out_len, out_channels=out_len, kernel_size=1, bias=True)
         # self.end_conv2 = nn.Conv1d(in_channels=d_model, out_channels=c_out, kernel_size=1, bias=True)
         self.projection = nn.Linear(d_model, c_out, bias=True)
+
+    def _apply_output_activation(self, x):
+        if self.output_activation == 'linear':
+            return x
+        if self.output_activation == 'tanh':
+            return torch.tanh(x)
+        raise ValueError(f"Unsupported output activation: {self.output_activation}")
         
     def forward(self, x_enc, x_mark_enc, x_dec, x_mark_dec, 
                 enc_self_mask=None, dec_self_mask=None, dec_enc_mask=None):
@@ -80,7 +91,7 @@ class Informer(nn.Module):
 
         dec_out = self.dec_embedding(x_dec, x_mark_dec)
         dec_out = self.decoder(dec_out, enc_out, x_mask=dec_self_mask, cross_mask=dec_enc_mask)
-        dec_out = self.projection(dec_out)
+        dec_out = self._apply_output_activation(self.projection(dec_out))
         
         # dec_out = self.end_conv1(dec_out)
         # dec_out = self.end_conv2(dec_out.transpose(2,1)).transpose(1,2)
@@ -96,11 +107,16 @@ class InformerStack(nn.Module):
                 dropout=0.0, attn='prob', embed='fixed', freq='h', activation='gelu',
                 output_attention = False, distil=True, mix=True,
                 device=torch.device('cuda:0'), perturb_amplitude=0.0,
-                perturb_frequency=1.0, perturb_phase=0.0, lee_type=1):
+                perturb_frequency=1.0, perturb_phase=0.0, lee_type=1,
+                encoder_activation=None, decoder_activation=None,
+                output_activation='linear'):
         super(InformerStack, self).__init__()
         self.pred_len = out_len
         self.attn = attn
         self.output_attention = output_attention
+        self.encoder_activation = encoder_activation or activation
+        self.decoder_activation = decoder_activation or activation
+        self.output_activation = output_activation
 
         # Encoding
         self.enc_embedding = DataEmbedding(enc_in, d_model, embed, freq, dropout)
@@ -119,7 +135,7 @@ class InformerStack(nn.Module):
                         d_model,
                         d_ff,
                         dropout=dropout,
-                        activation=activation,
+                        activation=self.encoder_activation,
                         lee_type=lee_type,
                         perturb_amplitude=perturb_amplitude,
                         perturb_frequency=perturb_frequency,
@@ -145,7 +161,7 @@ class InformerStack(nn.Module):
                     d_model,
                     d_ff,
                     dropout=dropout,
-                    activation=activation,
+                    activation=self.decoder_activation,
                     lee_type=lee_type,
                     perturb_amplitude=perturb_amplitude,
                     perturb_frequency=perturb_frequency,
@@ -158,6 +174,13 @@ class InformerStack(nn.Module):
         # self.end_conv1 = nn.Conv1d(in_channels=label_len+out_len, out_channels=out_len, kernel_size=1, bias=True)
         # self.end_conv2 = nn.Conv1d(in_channels=d_model, out_channels=c_out, kernel_size=1, bias=True)
         self.projection = nn.Linear(d_model, c_out, bias=True)
+
+    def _apply_output_activation(self, x):
+        if self.output_activation == 'linear':
+            return x
+        if self.output_activation == 'tanh':
+            return torch.tanh(x)
+        raise ValueError(f"Unsupported output activation: {self.output_activation}")
         
     def forward(self, x_enc, x_mark_enc, x_dec, x_mark_dec, 
                 enc_self_mask=None, dec_self_mask=None, dec_enc_mask=None):
@@ -166,7 +189,7 @@ class InformerStack(nn.Module):
 
         dec_out = self.dec_embedding(x_dec, x_mark_dec)
         dec_out = self.decoder(dec_out, enc_out, x_mask=dec_self_mask, cross_mask=dec_enc_mask)
-        dec_out = self.projection(dec_out)
+        dec_out = self._apply_output_activation(self.projection(dec_out))
         
         # dec_out = self.end_conv1(dec_out)
         # dec_out = self.end_conv2(dec_out.transpose(2,1)).transpose(1,2)

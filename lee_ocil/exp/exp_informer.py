@@ -56,6 +56,9 @@ class Exp_Informer(Exp_Basic):
             perturb_frequency=self.config.perturb_frequency,
             perturb_phase=self.config.perturb_phase,
             lee_type=self.config.lee_type,
+            encoder_activation=self.config.encoder_activation,
+            decoder_activation=self.config.decoder_activation,
+            output_activation=self.config.output_activation,
         ).to(self.device)
         
         return model
@@ -408,6 +411,10 @@ class Exp_Informer(Exp_Basic):
             'dataset': self.config.data,
             'pred_len': self.config.pred_len,
             'activation': self.config.activation,
+            'encoder_activation': self.config.encoder_activation,
+            'decoder_activation': self.config.decoder_activation,
+            'output_activation': self.config.output_activation,
+            'activation_signature': self.config.activation_signature,
             'activation_family': self.config.activation_family,
             'amplitude': self.config.perturb_amplitude,
             'frequency': self.config.perturb_frequency,

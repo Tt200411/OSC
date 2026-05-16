@@ -42,11 +42,55 @@ def read_summaries(paths):
 
 def normalize_columns(df):
     df = df.copy()
-    for column in ["target", "server_ip", "des", "run_id"]:
+    for column in [
+        "target",
+        "server_ip",
+        "des",
+        "run_id",
+        "encoder_activation",
+        "decoder_activation",
+        "output_activation",
+        "activation_signature",
+    ]:
         if column not in df.columns:
             df[column] = ""
         df[column] = df[column].fillna("")
+    df.loc[df["encoder_activation"] == "", "encoder_activation"] = df.loc[
+        df["encoder_activation"] == "", "activation"
+    ]
+    df.loc[df["decoder_activation"] == "", "decoder_activation"] = df.loc[
+        df["decoder_activation"] == "", "activation"
+    ]
+    df.loc[df["output_activation"] == "", "output_activation"] = "linear"
+    missing_signature = df["activation_signature"] == ""
+    if missing_signature.any():
+        df.loc[missing_signature, "activation_signature"] = df[missing_signature].apply(
+            lambda row: make_activation_signature(
+                row["activation"],
+                row["encoder_activation"],
+                row["decoder_activation"],
+                row["output_activation"],
+                row.get("amplitude", 0.0),
+                row.get("lee_type", 1),
+            ),
+            axis=1,
+        )
     return df
+
+
+def make_activation_signature(activation, encoder_activation, decoder_activation, output_activation, amplitude, lee_type):
+    try:
+        amplitude_value = float(amplitude)
+    except (TypeError, ValueError):
+        amplitude_value = 0.0
+    try:
+        lee_value = int(float(lee_type))
+    except (TypeError, ValueError):
+        lee_value = 1
+    return (
+        f"act={activation}|enc={encoder_activation}|dec={decoder_activation}|"
+        f"out={output_activation}|a={amplitude_value:g}|lee={lee_value}"
+    )
 
 
 def split_filter_values(values):
@@ -92,17 +136,23 @@ def add_baseline_columns(df, baseline_by_activation):
     baseline_activations = sorted(set(baseline_by_activation.values()))
     baseline_rows = df[df["activation"].isin(baseline_activations)].copy()
     baseline_rows["baseline_activation"] = baseline_rows["activation"]
-    baseline_rows = baseline_rows[keys + ["baseline_activation", "mse", "des", "run_id"]]
+    baseline_rows["baseline_activation_signature"] = baseline_rows["activation_signature"]
+    baseline_rows = baseline_rows[
+        keys + ["baseline_activation", "baseline_activation_signature", "mse", "des", "run_id"]
+    ]
     baseline_rows = baseline_rows.rename(columns={"mse": "baseline_mse"})
 
     rows = []
     for _, row in df.iterrows():
-        baseline_activation = baseline_by_activation.get(row["activation"], "gelu")
         row = row.to_dict()
-        if row["activation"] == baseline_activation:
+        baseline_activation, baseline_signature = baseline_for_row(row, baseline_by_activation)
+        if row["activation_signature"] == baseline_signature:
             baseline_mse = float(row["mse"])
         else:
             candidates = baseline_rows[baseline_rows["baseline_activation"] == baseline_activation]
+            candidates = candidates[
+                candidates["baseline_activation_signature"].fillna("").astype(str) == baseline_signature
+            ]
             for key in keys:
                 candidates = candidates[candidates[key] == row[key]]
 
@@ -120,6 +170,7 @@ def add_baseline_columns(df, baseline_by_activation):
 
             baseline_mse = np.nan if candidates.empty else float(candidates.iloc[0]["baseline_mse"])
         row["baseline_activation"] = baseline_activation
+        row["baseline_activation_signature"] = baseline_signature
         row["baseline_mse"] = baseline_mse
         row["relative_mse_change"] = (
             (baseline_mse - row["mse"]) / baseline_mse if baseline_mse and not np.isnan(baseline_mse) else np.nan
@@ -131,18 +182,53 @@ def add_baseline_columns(df, baseline_by_activation):
     return pd.DataFrame(rows)
 
 
+def baseline_for_row(row, baseline_by_activation):
+    activation = row["activation"]
+    encoder_activation = row.get("encoder_activation", activation) or activation
+    decoder_activation = row.get("decoder_activation", activation) or activation
+    output_activation = row.get("output_activation", "linear") or "linear"
+
+    if output_activation != "linear":
+        baseline_activation = activation
+        baseline_signature = make_activation_signature(
+            activation,
+            encoder_activation,
+            decoder_activation,
+            "linear",
+            row.get("amplitude", 0.0),
+            row.get("lee_type", 1),
+        )
+        return baseline_activation, baseline_signature
+
+    baseline_activation = baseline_by_activation.get(activation, "gelu")
+    baseline_signature = make_activation_signature(
+        baseline_activation,
+        baseline_activation,
+        baseline_activation,
+        "linear",
+        0.0,
+        1,
+    )
+    return baseline_activation, baseline_signature
+
+
 def aggregate(df):
     group_cols = [
         "dataset",
         "pred_len",
         "features",
         "activation",
+        "encoder_activation",
+        "decoder_activation",
+        "output_activation",
+        "activation_signature",
         "activation_family",
         "amplitude",
         "frequency",
         "phase",
         "lee_type",
         "baseline_activation",
+        "baseline_activation_signature",
     ]
     grouped = df.groupby(group_cols, dropna=False)
     summary = grouped.agg(

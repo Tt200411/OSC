@@ -46,6 +46,23 @@ DATASET_DEFAULTS = {
     },
 }
 
+ACTIVATION_CHOICES = [
+    "gelu",
+    "relu",
+    "tanh",
+    "softsign",
+    "scaled_tanh",
+    "gelu_sin",
+    "relu_sin",
+    "tanh_sin",
+    "gelu_cos",
+    "relu_cos",
+    "tanh_cos",
+    "tanh_rand",
+    "lee",
+    "dynamic_gelu_sin",
+]
+
 
 def str2bool(value):
     if isinstance(value, bool):
@@ -106,23 +123,10 @@ def build_parser():
     parser.add_argument("--lradj", default=None)
     parser.add_argument("--use_amp", type=str2bool, default=None)
 
-    parser.add_argument("--activation", default=None,
-                        choices=[
-                            "gelu",
-                            "relu",
-                            "tanh",
-                            "softsign",
-                            "scaled_tanh",
-                            "gelu_sin",
-                            "relu_sin",
-                            "tanh_sin",
-                            "gelu_cos",
-                            "relu_cos",
-                            "tanh_cos",
-                            "tanh_rand",
-                            "lee",
-                            "dynamic_gelu_sin",
-                        ])
+    parser.add_argument("--activation", default=None, choices=ACTIVATION_CHOICES)
+    parser.add_argument("--encoder_activation", default=None, choices=ACTIVATION_CHOICES)
+    parser.add_argument("--decoder_activation", default=None, choices=ACTIVATION_CHOICES)
+    parser.add_argument("--output_activation", default=None, choices=["linear", "tanh"])
     parser.add_argument("--perturb_amplitude", "--amplitude", type=float, default=None)
     parser.add_argument("--perturb_frequency", "--frequency", type=float, default=None)
     parser.add_argument("--perturb_phase", "--phase", type=float, default=None)
@@ -175,6 +179,14 @@ def apply_overrides(config, args):
         config.detail_freq = config.freq
 
     config.activation = config.activation.lower()
+    config.encoder_activation = (config.encoder_activation or config.activation).lower()
+    config.decoder_activation = (config.decoder_activation or config.activation).lower()
+    config.output_activation = (config.output_activation or "linear").lower()
+    config.activation_signature = (
+        f"act={config.activation}|enc={config.encoder_activation}|"
+        f"dec={config.decoder_activation}|out={config.output_activation}|"
+        f"a={config.perturb_amplitude:g}|lee={config.lee_type}"
+    )
     config.activation_family = activation_family(config.activation)
     config.use_lee = config.activation == "lee"
     config.lee_oscillator = config.use_lee
@@ -243,6 +255,18 @@ def build_setting(config):
     ]
     if config.activation == "lee":
         parts.append(f"lee{config.lee_type}")
+    if (
+        config.encoder_activation != config.activation
+        or config.decoder_activation != config.activation
+        or config.output_activation != "linear"
+    ):
+        parts.append(
+            "enc{}_dec{}_out{}".format(
+                config.encoder_activation,
+                config.decoder_activation,
+                config.output_activation,
+            )
+        )
     parts.extend([
         f"ft{config.features}",
         f"sl{config.seq_len}",
