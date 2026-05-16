@@ -18,7 +18,7 @@ rsync -av -e "ssh ${SSH_OPTS}" --delete \
   --exclude 'checkpoints/' \
   --exclude 'results/' \
   --exclude 'logs/' \
-  --exclude '.venv/' \
+  --exclude '.venv*/' \
   --exclude '__pycache__/' \
   --exclude '*.pyc' \
   --exclude 'ETT-small/*.csv' \
