@@ -50,6 +50,36 @@ def safe_kurtosis(values):
     return float(np.mean(z ** 4) - 3.0)
 
 
+def safe_lag_autocorr(values, lag=1):
+    if len(values) <= lag:
+        return 0.0
+    left = values[:-lag]
+    right = values[lag:]
+    if left.std(ddof=0) < 1e-12 or right.std(ddof=0) < 1e-12:
+        return 0.0
+    return float(np.corrcoef(left, right)[0, 1])
+
+
+def sign_entropy(diffs):
+    if len(diffs) == 0:
+        return 0.0
+    signs = np.sign(diffs)
+    counts = np.array([(signs < 0).mean(), (signs == 0).mean(), (signs > 0).mean()])
+    counts = counts[counts > 0]
+    entropy = -np.sum(counts * np.log(counts))
+    return float(entropy / np.log(3.0))
+
+
+def max_drawdown_drawup(values):
+    if len(values) == 0:
+        return 0.0, 0.0
+    running_max = np.maximum.accumulate(values)
+    running_min = np.minimum.accumulate(values)
+    drawdown = running_max - values
+    drawup = values - running_min
+    return float(drawdown.max()), float(drawup.max())
+
+
 def window_factors(values, reference_values, alpha, beta, method):
     values = np.asarray(values, dtype=float)
     reference_values = np.asarray(reference_values, dtype=float)
@@ -60,6 +90,7 @@ def window_factors(values, reference_values, alpha, beta, method):
     ref_std = float(reference_values.std(ddof=0))
     ref_mean = float(reference_values.mean())
     ref_abs_diffs = np.abs(np.diff(reference_values))
+    ref_diff_std = float(np.diff(reference_values).std(ddof=0)) if len(reference_values) > 1 else 0.0
     volatility = std / (abs(ref_mean) + 1e-8)
     z = (values - ref_mean) / (ref_std + 1e-8)
     anomaly_mask = np.abs(z) > 2.0
@@ -70,6 +101,38 @@ def window_factors(values, reference_values, alpha, beta, method):
     mean_abs_change = float(abs_diffs.mean()) if len(abs_diffs) else 0.0
     max_abs_change = float(abs_diffs.max()) if len(abs_diffs) else 0.0
     ref_mean_abs_change = float(ref_abs_diffs.mean()) if len(ref_abs_diffs) else 0.0
+    realized_volatility = float(np.sqrt(np.mean(diffs ** 2))) if len(diffs) else 0.0
+    half = max(1, len(diffs) // 2)
+    early_vol = float(np.sqrt(np.mean(diffs[:half] ** 2))) if len(diffs[:half]) else 0.0
+    late_vol = float(np.sqrt(np.mean(diffs[half:] ** 2))) if len(diffs[half:]) else early_vol
+    volatility_shock = (realized_volatility - ref_diff_std) / (ref_diff_std + 1e-8)
+    positive_diffs = diffs[diffs > 0]
+    negative_diffs = diffs[diffs < 0]
+    upside_volatility = float(np.sqrt(np.mean(positive_diffs ** 2))) if len(positive_diffs) else 0.0
+    downside_volatility = float(np.sqrt(np.mean(negative_diffs ** 2))) if len(negative_diffs) else 0.0
+    cumulative_change = float(values[-1] - values[0]) if len(values) > 1 else 0.0
+    recent = diffs[-max(1, len(diffs) // 4):] if len(diffs) else np.array([])
+    momentum = float(recent.sum()) if len(recent) else 0.0
+    sign = np.sign(diffs)
+    nonzero_sign = sign[sign != 0]
+    if len(nonzero_sign):
+        trend_consistency = float(max((nonzero_sign > 0).mean(), (nonzero_sign < 0).mean()))
+    else:
+        trend_consistency = 0.0
+    reversal_count = int(np.sum(nonzero_sign[1:] * nonzero_sign[:-1] < 0)) if len(nonzero_sign) > 1 else 0
+    reversal_rate = float(reversal_count / max(len(nonzero_sign) - 1, 1)) if len(nonzero_sign) else 0.0
+    centered = values - mean
+    centered_sign = np.sign(centered)
+    nonzero_centered = centered_sign[centered_sign != 0]
+    mean_crossing_count = int(np.sum(nonzero_centered[1:] * nonzero_centered[:-1] < 0)) if len(nonzero_centered) > 1 else 0
+    mean_crossing_rate = float(mean_crossing_count / max(len(nonzero_centered) - 1, 1)) if len(nonzero_centered) else 0.0
+    lag1_autocorr = safe_lag_autocorr(diffs, lag=1)
+    mean_reversion_strength = float(mean_crossing_rate + max(0.0, -lag1_autocorr))
+    jump_threshold = max(2.0 * ref_diff_std, ref_mean_abs_change + 2.0 * ref_diff_std, 1e-8)
+    jump_intensity = float((abs_diffs > jump_threshold).mean()) if len(abs_diffs) else 0.0
+    median_abs_change = float(np.median(abs_diffs)) if len(abs_diffs) else 0.0
+    tail_ratio = float(np.percentile(abs_diffs, 95) / (median_abs_change + 1e-8)) if len(abs_diffs) else 0.0
+    max_drawdown, max_drawup = max_drawdown_drawup(values)
     volatility_component = std / (ref_std + 1e-8)
     anomaly_component = anomaly_density + anomaly_intensity
     change_component = mean_abs_change / (ref_mean_abs_change + 1e-8)
@@ -88,6 +151,23 @@ def window_factors(values, reference_values, alpha, beta, method):
         "max_abs_change": max_abs_change,
         "skewness": safe_skew(values),
         "kurtosis": safe_kurtosis(values),
+        "realized_volatility": realized_volatility,
+        "volatility_shock": volatility_shock,
+        "volatility_ratio_late_early": float(late_vol / (early_vol + 1e-8)),
+        "upside_volatility": upside_volatility,
+        "downside_volatility": downside_volatility,
+        "cumulative_change": cumulative_change,
+        "momentum": momentum,
+        "trend_consistency": trend_consistency,
+        "reversal_rate": reversal_rate,
+        "mean_crossing_rate": mean_crossing_rate,
+        "lag1_autocorr": lag1_autocorr,
+        "mean_reversion_strength": mean_reversion_strength,
+        "jump_intensity": jump_intensity,
+        "tail_ratio": tail_ratio,
+        "max_drawdown": max_drawdown,
+        "max_drawup": max_drawup,
+        "direction_entropy": sign_entropy(diffs),
     }
 
 

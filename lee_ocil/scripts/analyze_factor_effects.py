@@ -9,6 +9,8 @@ import pandas as pd
 BASELINE_BY_ACTIVATION = {
     "gelu": "gelu",
     "relu": "relu",
+    "swish": "swish",
+    "silu": "silu",
     "tanh": "gelu",
     "softsign": "gelu",
     "scaled_tanh": "gelu",
@@ -36,6 +38,23 @@ FACTOR_COLUMNS = [
     "max_abs_change",
     "skewness",
     "kurtosis",
+    "realized_volatility",
+    "volatility_shock",
+    "volatility_ratio_late_early",
+    "upside_volatility",
+    "downside_volatility",
+    "cumulative_change",
+    "momentum",
+    "trend_consistency",
+    "reversal_rate",
+    "mean_crossing_rate",
+    "lag1_autocorr",
+    "mean_reversion_strength",
+    "jump_intensity",
+    "tail_ratio",
+    "max_drawdown",
+    "max_drawup",
+    "direction_entropy",
 ]
 
 BIN_ORDER = {
