@@ -64,7 +64,7 @@ class InformerConfig:
         self.inverse = False  # 是否反转输出数据
         
         # 激活函数参数
-        self.activation = 'gelu'  # gelu, relu, tanh, softsign, scaled_tanh, gelu_sin, relu_sin, tanh_sin, tanh_cos, tanh_rand, lee, dynamic_gelu_sin
+        self.activation = 'gelu'  # gelu, relu, swish/silu, tanh, softsign, scaled_tanh, gelu_sin, relu_sin, tanh_sin, tanh_cos, tanh_rand, lee, dynamic_gelu_sin
         self.encoder_activation = None  # None means use activation
         self.decoder_activation = None  # None means use activation
         self.output_activation = 'linear'  # linear or tanh; output remains linear by default

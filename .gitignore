@@ -182,3 +182,9 @@ lee_ocil/factors/
 lee_ocil/analysis/
 *.pth
 *.npy
+
+# Large Phase-4 diagnostics/intermediates
+phase4_remote_results/analysis_current/factors/phase4_factor_sample_results.csv
+phase4_remote_results/analysis_current/factors/_factor_work/
+phase4_remote_results/analysis_current/factors/_oracle_work/
+phase4_remote_results/analysis_current/factors/phase4_factor_results_links/

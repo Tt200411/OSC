@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from lee_oc import LeeOscillator
 
 
-BASELINE_ACTIVATIONS = {"gelu", "relu"}
+BASELINE_ACTIVATIONS = {"gelu", "relu", "swish", "silu"}
 BOUNDED_SIGN_ACTIVATIONS = {"tanh", "softsign", "scaled_tanh"}
 FUNCTIONAL_ACTIVATIONS = BASELINE_ACTIVATIONS | BOUNDED_SIGN_ACTIVATIONS
 SIN_ACTIVATIONS = {"gelu_sin", "relu_sin", "tanh_sin"}
@@ -43,6 +43,8 @@ class FunctionalActivation(nn.Module):
             return F.gelu(x)
         if self.name == "relu":
             return F.relu(x)
+        if self.name in {"swish", "silu"}:
+            return F.silu(x)
         if self.name == "tanh":
             return torch.tanh(x)
         if self.name == "softsign":
