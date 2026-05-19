@@ -189,7 +189,18 @@ def split_host(row, hosts):
     return hosts[solar_idx % len(hosts)]
 
 
-def build_manifests(missing, hosts, run_tag, remote_cwd, conda_env, max_parallel, gpus, save_arrays):
+def build_manifests(
+    missing,
+    hosts,
+    run_tag,
+    remote_cwd,
+    conda_env,
+    venv_path,
+    python,
+    max_parallel,
+    gpus,
+    save_arrays,
+):
     manifests = {host: [] for host in hosts}
     rows = sorted(missing.to_dict("records"), key=job_priority)
     for row in rows:
@@ -240,6 +251,8 @@ def build_manifests(missing, hosts, run_tag, remote_cwd, conda_env, max_parallel
             "project": f"phase4_full_grid_{host}",
             "cwd": remote_cwd,
             "conda": conda_env,
+            "venv_path": venv_path,
+            "python": python,
             "gpus": gpus,
             "max_parallel": max_parallel,
             "gpu_free_threshold_mib": 500,
@@ -256,7 +269,9 @@ def main():
     parser.add_argument("--run_tag", default="")
     parser.add_argument("--host", action="append", default=[])
     parser.add_argument("--remote_cwd", default="/home/testsv/project/osc_informer/lee_ocil")
-    parser.add_argument("--conda_env", default="osc_informer")
+    parser.add_argument("--conda_env", default="none")
+    parser.add_argument("--venv_path", default="/home/testsv/project/osc_informer/lee_ocil/.venv")
+    parser.add_argument("--python", default="")
     parser.add_argument("--max_parallel", type=int, default=1)
     parser.add_argument("--gpus", default="0")
     parser.add_argument("--save_arrays", action="store_true")
@@ -281,6 +296,8 @@ def main():
         run_tag=run_tag,
         remote_cwd=args.remote_cwd,
         conda_env=args.conda_env,
+        venv_path=args.venv_path,
+        python=args.python,
         max_parallel=args.max_parallel,
         gpus=gpus,
         save_arrays=args.save_arrays,

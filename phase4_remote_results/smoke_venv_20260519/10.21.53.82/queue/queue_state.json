@@ -1,0 +1,30 @@
+{
+  "meta": {
+    "project": "phase4_full_grid_10.21.53.82",
+    "started": "2026-05-19T09:04:13.670670Z",
+    "manifest_path": "/home/testsv/.aris_queue/runs/20260519_phase4_smoke_venv_10_21_53_82/manifest.json"
+  },
+  "phases": [
+    {
+      "name": "smoke",
+      "depends_on": [],
+      "status": "completed"
+    }
+  ],
+  "jobs": [
+    {
+      "id": "p4_Solar2_pl96_gelu_all_s2024",
+      "phase": "smoke",
+      "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data Solar2 --root_path ../Solar --data_path Site_2_130MW.csv --target Power --freq t --detail_freq t --seq_len 96 --label_len 48 --pred_len 96 --e_layers 2 --d_layers 1 --factor 5 --activation gelu --encoder_activation gelu --decoder_activation gelu --output_activation linear --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2024 --gpu '${GPU}' --server_id 4090-82 --server_ip 10.21.53.82 --run_id phase4_smoke_20260519_venv --des phase4_smoke_20260519_venv_gelu_all",
+      "expected_output": "results/informer_Solar2_gelu_a0_ftM_sl96_ll48_pl96_dm512_nh8_el2_dl1_df2048_fc5_seed2024_4090-82_phase4_smoke_20260519_venv_gelu_all/config.json",
+      "status": "completed",
+      "gpu": 0,
+      "screen_name": "EQ_p4_Solar2_pl96_gelu_all_s2024",
+      "pid": 70363,
+      "attempts": 1,
+      "started": "2026-05-19T09:04:15.718701Z",
+      "completed": "2026-05-19T09:06:15.748581Z",
+      "error": null
+    }
+  ]
+}

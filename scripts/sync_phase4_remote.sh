@@ -19,19 +19,27 @@ fi
 
 run_with_auth() {
   if [[ -n "${PHASE4_SSH_PASSWORD:-}" ]]; then
-    expect <<'EOF' "${PHASE4_SSH_PASSWORD}" "$@"
+    export PHASE4_SSH_PASSWORD
+    expect -f - "$@" <<'EOF'
 set timeout -1
-set password [lindex $argv 0]
-set command [lrange $argv 1 end]
+set password $env(PHASE4_SSH_PASSWORD)
+set command [lrange $argv 0 end]
+log_user 0
 spawn {*}$command
+set output ""
 expect {
   -re "(?i)password:" {
     send -- "$password\r"
     exp_continue
   }
+  -re ".+" {
+    append output $expect_out(buffer)
+    exp_continue
+  }
   eof
 }
 catch wait result
+puts -nonewline $output
 exit [lindex $result 3]
 EOF
   else
@@ -44,7 +52,11 @@ if [[ -n "${SSH_OPTS}" ]]; then
   RSYNC_RSH="ssh ${SSH_OPTS}"
 fi
 
-run_with_auth ssh "${SSH_ARGS[@]}" "${REMOTE}" "mkdir -p ${REMOTE_DIR}/Solar ${REMOTE_DIR}/lee_ocil/ETT-small"
+if [[ ${#SSH_ARGS[@]} -gt 0 ]]; then
+  run_with_auth ssh "${SSH_ARGS[@]}" "${REMOTE}" "mkdir -p ${REMOTE_DIR}/Solar ${REMOTE_DIR}/lee_ocil/ETT-small"
+else
+  run_with_auth ssh "${REMOTE}" "mkdir -p ${REMOTE_DIR}/Solar ${REMOTE_DIR}/lee_ocil/ETT-small"
+fi
 
 run_with_auth rsync -av -e "${RSYNC_RSH}" --delete \
   --exclude 'checkpoints/' \

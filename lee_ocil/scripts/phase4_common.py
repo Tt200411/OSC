@@ -195,6 +195,7 @@ SUMMARY_GLOBS = [
     "phase2_remote_results/*/results/summary.csv",
     "phase3_remote_results/*/results/summary.csv",
     "phase4_remote_results/*/results/summary.csv",
+    "phase4_remote_results/*/*/results/summary.csv",
 ]
 
 PROTOCOL_COLUMNS = [

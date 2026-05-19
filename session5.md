@@ -110,3 +110,51 @@ Supported by complete reused cells only: activation choice is dataset- and horiz
 ## Blocker
 
 Remote execution cannot proceed in this context because SSH needs password authentication. Use only transient environment or interactive expect when resuming; do not put passwords in files, scripts, logs, git commits, or command history.
+
+## 2026-05-19 Venv Resume Update
+
+The SSH password was provided transiently by the user and was only passed through interactive stdin/environment for each command. No password is stored in scripts, logs, notes, or manifests.
+
+Remote runtime checks found that the candidate hosts do not have a usable conda installation for this project, but they do have a project venv at `/home/testsv/project/osc_informer/lee_ocil/.venv`. Phase-4 queue launch was switched to venv mode.
+
+Venv smoke completed on all four smoke jobs:
+
+| host | smoke job | status |
+| --- | --- | --- |
+| 10.21.53.82 | Solar2/96 gelu seed2024 | completed |
+| 10.21.53.113 | Solar8/96 gelu seed2024 | completed |
+| 10.21.53.142 | ETTm1/96 gelu seed2024 | completed |
+| 10.21.53.162 | ETTm2/96 gelu seed2024 | completed |
+
+Smoke artifacts were pulled to `phase4_remote_results/smoke_venv_20260519/`. The post-smoke reuse scan is:
+
+- Expected seed-runs: `972`
+- Reusable seed-runs: `120`
+- Missing seed-runs: `852`
+- Data integrity: `12/12` local CSVs valid
+
+Current post-smoke matrix files:
+
+- `.aris/phase4_expected_matrix_20260519_phase4_post_smoke_venv2.csv`
+- `.aris/phase4_reusable_runs_20260519_phase4_post_smoke_venv2.csv`
+- `.aris/phase4_missing_runs_20260519_phase4_post_smoke_venv2.csv`
+- `.aris/phase4_reuse_report_20260519_phase4_post_smoke_venv2.md`
+
+Main full-grid manifests were rebuilt from the post-smoke missing matrix in `.aris/phase4_queue_20260519_phase4_full_venv_post_smoke/`:
+
+| host | jobs |
+| --- | ---: |
+| 10.21.53.62 | 216 |
+| 10.21.53.82 | 227 |
+| 10.21.53.113 | 146 |
+| 10.21.53.142 | 108 |
+| 10.21.53.162 | 155 |
+
+Full-grid launch notes:
+
+- Active queue list: `.aris/phase4_active_queues_20260519.txt`
+- `10.21.53.62` first full-grid queue used a venv `activate` file path that was unavailable at job runtime, causing non-training failures. The queue manager was patched to use `VIRTUAL_ENV`/`PATH` instead of sourcing `activate`, and `.62` was relaunched as `20260519_phase4_full_venv62_retry`.
+- The old `.62` queue should be ignored for aggregation; use the active queue list above.
+- Other four hosts continue under `20260519_phase4_full_venv`.
+
+Latest monitored state showed all five active queues progressing with no OOM/Traceback/NaN alerts. The `.62` retry queue is healthy.
