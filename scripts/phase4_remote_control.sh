@@ -240,6 +240,19 @@ launch_queues() {
   done
 }
 
+resume_queues() {
+  local launched_file="${1:?launched queue file required}"
+  local poll="${2:-10}"
+  while read -r host remote_rel; do
+    [[ -n "${host:-}" && -n "${remote_rel:-}" ]] || continue
+    local run_id="${remote_rel##*/}"
+    local screen_name="P4QM_${run_id}"
+    scp_cmd "${QUEUE_MANAGER}" "${host}" ".aris_queue/phase4_queue_manager.py"
+    ssh_cmd "${host}" "screen -S ${screen_name} -X quit >/dev/null 2>&1 || true; screen -dmS ${screen_name} bash -lc 'cd ${REMOTE_DIR}/lee_ocil && .venv/bin/python \"\$HOME/.aris_queue/phase4_queue_manager.py\" --manifest \"\$HOME/${remote_rel}/manifest.json\" --state \"\$HOME/${remote_rel}/queue_state.json\" --log-dir \"\$HOME/${remote_rel}/logs\" --poll ${poll} > \"\$HOME/${remote_rel}/queue_mgr.log\" 2>&1'"
+    echo "resumed ${host} ${remote_rel} poll=${poll}"
+  done < "${launched_file}"
+}
+
 queue_state() {
   local launched_file="${1:?launched queue file required}"
   while read -r host remote_rel; do
@@ -415,12 +428,13 @@ case "${1:-inventory}" in
   inventory) inventory ;;
   sync) sync_all ;;
   launch) shift; launch_queues "$@" ;;
+  resume) shift; resume_queues "$@" ;;
   state) shift; queue_state "$@" ;;
   summary) shift; queue_summary "$@" ;;
   fetch) shift; fetch_queues "$@" ;;
   runtime) runtime_check ;;
   *)
-    echo "Usage: $0 {inventory|sync|launch <manifest-dir>|state <launched-file>|summary <launched-file>|fetch <launched-file> <dest-root>|runtime}" >&2
+    echo "Usage: $0 {inventory|sync|launch <manifest-dir>|resume <launched-file> [poll]|state <launched-file>|summary <launched-file>|fetch <launched-file> <dest-root>|runtime}" >&2
     exit 2
     ;;
 esac
