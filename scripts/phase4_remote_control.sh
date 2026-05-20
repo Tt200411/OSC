@@ -424,6 +424,27 @@ PY
   done
 }
 
+data_check() {
+  for host in ${HOSTS}; do
+    case " ${DISABLED_HOSTS} " in
+      *" ${host} "*) continue ;;
+    esac
+    echo "## ${host}"
+    ssh_cmd "${host}" "cd ${REMOTE_DIR} && \
+      sha=\$(sha256sum Solar/Site_4_130MW.csv | awk '{print \$1}'); \
+      cd lee_ocil && .venv/bin/python - <<'PY'
+import pandas as pd
+path = '../Solar/Site_4_130MW.csv'
+frame = pd.read_csv(path)
+print('rows', len(frame))
+print('total_nan', int(frame.isna().sum().sum()))
+print('power_nan', int(frame['Power'].isna().sum()))
+PY
+      echo solar4_sha256:\${sha}; \
+      nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu --format=csv,noheader,nounits 2>/dev/null | head -4 || true"
+  done
+}
+
 case "${1:-inventory}" in
   inventory) inventory ;;
   sync) sync_all ;;
@@ -433,8 +454,9 @@ case "${1:-inventory}" in
   summary) shift; queue_summary "$@" ;;
   fetch) shift; fetch_queues "$@" ;;
   runtime) runtime_check ;;
+  data-check) data_check ;;
   *)
-    echo "Usage: $0 {inventory|sync|launch <manifest-dir>|resume <launched-file> [poll]|state <launched-file>|summary <launched-file>|fetch <launched-file> <dest-root>|runtime}" >&2
+    echo "Usage: $0 {inventory|sync|launch <manifest-dir>|resume <launched-file> [poll]|state <launched-file>|summary <launched-file>|fetch <launched-file> <dest-root>|runtime|data-check}" >&2
     exit 2
     ;;
 esac

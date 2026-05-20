@@ -200,11 +200,12 @@ def build_manifests(
     max_parallel,
     gpus,
     save_arrays,
+    assignment,
 ):
     manifests = {host: [] for host in hosts}
     rows = sorted(missing.to_dict("records"), key=job_priority)
-    for row in rows:
-        host = split_host(row, hosts)
+    for idx, row in enumerate(rows):
+        host = hosts[idx % len(hosts)] if assignment == "round_robin" else split_host(row, hosts)
         server_id = server_id_for_host(host)
         job_id = (
             f"p4_{row['dataset']}_pl{int(row['pred_len'])}_{row['config_name']}_s{int(row['seed'])}"
@@ -275,6 +276,7 @@ def main():
     parser.add_argument("--max_parallel", type=int, default=1)
     parser.add_argument("--gpus", default="0")
     parser.add_argument("--save_arrays", action="store_true")
+    parser.add_argument("--assignment", choices=["dataset", "round_robin"], default="dataset")
     parser.add_argument("--only_smoke", action="store_true")
     parser.add_argument("--exclude_smoke", action="store_true")
     args = parser.parse_args()
@@ -301,6 +303,7 @@ def main():
         max_parallel=args.max_parallel,
         gpus=gpus,
         save_arrays=args.save_arrays,
+        assignment=args.assignment,
     )
 
     summary_rows = []
