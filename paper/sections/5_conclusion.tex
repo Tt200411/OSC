@@ -1,0 +1,7 @@
+\section{Conclusion}
+
+Activation-only changes materially affect Informer forecasting under the completed Phase-4 official-script protocol. The full grid contains 972 eligible seed-runs and complete three-seed coverage for all 324 dataset-horizon-configuration cells. The strongest supported result is that activation choice is dataset- and horizon-sensitive: non-GELU activations are best in 34 of 36 dataset-horizon cells, and bounded or tanh-family configurations have the strongest average ranks.
+
+The evidence also narrows the mechanism. Output \texttt{tanh} is not generally beneficial: it wins selected ETT/ETTm cells but ranks poorly on average. Decoder-only \texttt{tanh} is weak. Solar gains are smaller and site-specific, and Solar3 remains GELU-best at both tested horizons. Factor-bin and oracle diagnostics show regime dependence, but not a simple rule such as ``high volatility always prefers tanh.'' 
+
+The next step is not to claim a new universal activation, but to use the completed grid as a map for targeted activation-placement studies. The most defensible design lesson is practical: GELU should not be treated as a harmless default in Informer-style forecasting, but activation choice should be validated per dataset, horizon, and placement rather than promoted as a single global replacement.

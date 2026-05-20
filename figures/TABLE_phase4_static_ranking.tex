@@ -1,0 +1,22 @@
+\begin{table*}[t]
+\centering
+\caption{Static activation ranking across the 36 completed dataset-horizon cells. Rank is computed within each cell over the nine Phase-4 configurations.}
+\label{tab:phase4_static_ranking}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrr}
+\toprule
+Config & mean rank & best cells & top-3 cells & mean gain & positive cells \\
+\midrule
+tanh\_sin & 2.78 & 8 & 27 & +11.7\% & 83.3\% \\
+tanh & 3.19 & 7 & 25 & +11.9\% & 80.6\% \\
+softsign & 3.47 & 8 & 22 & +11.2\% & 80.6\% \\
+enc-tanh & 4.83 & 3 & 11 & +5.1\% & 66.7\% \\
+Swish & 4.89 & 2 & 5 & +3.6\% & 77.8\% \\
+dec-tanh & 5.67 & 0 & 3 & +1.9\% & 66.7\% \\
+GELU & 6.22 & 2 & 4 & +0.0\% & 0.0\% \\
+ReLU & 6.83 & 1 & 4 & -2.3\% & 36.1\% \\
+tanh+out & 7.11 & 5 & 7 & -36.3\% & 25.0\% \\
+\bottomrule
+\end{tabular}%
+}
+\end{table*}

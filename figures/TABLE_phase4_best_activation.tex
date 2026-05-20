@@ -1,0 +1,49 @@
+\begin{table*}[t]
+\centering
+\caption{Best activation per dataset-horizon in the completed Phase-4 grid. Improvements are relative MSE reductions against the same-protocol GELU row with matched seeds; GELU-best cells have no relative-improvement entry.}
+\label{tab:phase4_best_activation}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llcccc}
+\toprule
+Dataset & H & best config & MSE & gain vs GELU & seed win rate \\
+\midrule
+ETTh1 & 24 & softsign & 0.532 $\pm$ 0.026 & +5.2\% & 66.7\% \\
+ETTh1 & 48 & softsign & 0.646 $\pm$ 0.073 & +12.6\% & 100.0\% \\
+ETTh1 & 168 & tanh & 0.912 $\pm$ 0.131 & +12.9\% & 66.7\% \\
+ETTh1 & 336 & softsign & 1.219 $\pm$ 0.042 & +10.4\% & 100.0\% \\
+ETTh1 & 720 & tanh+out & 1.328 $\pm$ 0.030 & +6.0\% & 100.0\% \\
+ETTh2 & 24 & tanh\_sin & 0.516 $\pm$ 0.023 & +27.8\% & 100.0\% \\
+ETTh2 & 48 & softsign & 1.606 $\pm$ 0.386 & +38.8\% & 100.0\% \\
+ETTh2 & 168 & tanh\_sin & 2.963 $\pm$ 0.509 & +41.3\% & 100.0\% \\
+ETTh2 & 336 & tanh+out & 2.054 $\pm$ 0.219 & +47.7\% & 100.0\% \\
+ETTh2 & 720 & tanh+out & 3.298 $\pm$ 0.186 & +18.6\% & 100.0\% \\
+ETTm1 & 24 & tanh & 0.314 $\pm$ 0.015 & +13.4\% & 100.0\% \\
+ETTm1 & 48 & tanh & 0.453 $\pm$ 0.023 & +10.8\% & 100.0\% \\
+ETTm1 & 96 & tanh\_sin & 0.559 $\pm$ 0.050 & +9.3\% & 100.0\% \\
+ETTm1 & 288 & tanh & 0.802 $\pm$ 0.044 & +7.2\% & 66.7\% \\
+ETTm1 & 672 & softsign & 0.922 $\pm$ 0.023 & +7.3\% & 66.7\% \\
+ETTm2 & 24 & tanh & 0.685 $\pm$ 0.191 & +42.5\% & 100.0\% \\
+ETTm2 & 48 & softsign & 0.309 $\pm$ 0.014 & +21.6\% & 100.0\% \\
+ETTm2 & 96 & tanh\_sin & 1.335 $\pm$ 0.214 & +16.4\% & 100.0\% \\
+ETTm2 & 288 & tanh+out & 2.355 $\pm$ 0.359 & +55.7\% & 100.0\% \\
+ETTm2 & 672 & tanh+out & 2.851 $\pm$ 0.162 & +62.7\% & 100.0\% \\
+Solar1 & 24 & Swish & 0.150 $\pm$ 0.000 & +1.7\% & 66.7\% \\
+Solar1 & 96 & softsign & 0.224 $\pm$ 0.001 & +2.6\% & 100.0\% \\
+Solar2 & 24 & tanh & 0.066 $\pm$ 0.003 & +6.4\% & 100.0\% \\
+Solar2 & 96 & tanh & 0.108 $\pm$ 0.005 & +10.8\% & 100.0\% \\
+Solar3 & 24 & GELU & 0.198 $\pm$ 0.009 & -- & -- \\
+Solar3 & 96 & GELU & 0.349 $\pm$ 0.007 & -- & -- \\
+Solar4 & 24 & tanh\_sin & 0.220 $\pm$ 0.003 & +1.9\% & 100.0\% \\
+Solar4 & 96 & enc-tanh & 0.290 $\pm$ 0.005 & +1.9\% & 66.7\% \\
+Solar5 & 24 & Swish & 0.109 $\pm$ 0.002 & +4.2\% & 100.0\% \\
+Solar5 & 96 & enc-tanh & 0.180 $\pm$ 0.003 & +7.6\% & 100.0\% \\
+Solar6 & 24 & tanh\_sin & 0.265 $\pm$ 0.002 & +1.1\% & 100.0\% \\
+Solar6 & 96 & tanh\_sin & 0.358 $\pm$ 0.009 & +2.3\% & 100.0\% \\
+Solar7 & 24 & ReLU & 3.281 $\pm$ 1.035 & +12.0\% & 66.7\% \\
+Solar7 & 96 & enc-tanh & 4.970 $\pm$ 1.353 & +38.2\% & 100.0\% \\
+Solar8 & 24 & tanh\_sin & 0.216 $\pm$ 0.003 & +0.8\% & 100.0\% \\
+Solar8 & 96 & softsign & 0.306 $\pm$ 0.005 & +2.6\% & 100.0\% \\
+\bottomrule
+\end{tabular}%
+}
+\end{table*}

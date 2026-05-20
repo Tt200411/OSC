@@ -1,0 +1,18 @@
+\section{Introduction}
+
+Long-sequence time-series forecasting work usually emphasizes architecture: sparse attention, encoder-decoder shape, temporal embeddings, and horizon-specific training recipes. The nonlinearity inside the feed-forward blocks is often inherited from a default implementation. This is a weak assumption. In a fixed transformer, the activation controls saturation, sign preservation, gradient scale, and the response to large input excursions, all of which can affect forecasting error when the data distribution changes across horizons or regimes.
+
+We study this issue in Informer \citep{zhou2021informer}. Informer is a useful substrate because its public scripts specify horizon-dependent configurations for the ETT benchmarks. We keep attention, depth, hidden width, embeddings, optimizer, and training schedule fixed, and change only the activation configuration in hidden blocks or the explicitly marked output-placement variant. The resulting question is deliberately narrow: under the same training environment, does the default GELU-style nonlinearity leave performance on the table?
+
+The answer in our full Phase-4 grid is yes, but not in the form of a universal activation rule. We evaluate 36 dataset-horizon cells across ETTh1, ETTh2, ETTm1, ETTm2, and Solar1--Solar8. Each of the nine activation configurations has three seeds under the same batch-size-32, six-epoch protocol, yielding 972 eligible seed-runs. A non-GELU configuration is best in 34 of the 36 dataset-horizon cells. The strongest average ranks belong to \texttt{tanh\_sin}, \texttt{tanh}, and \texttt{softsign}; together they are best in 23 cells. At the same time, the evidence is heterogeneous: Solar3 remains GELU-best at both horizons, output \texttt{tanh} wins several ETT/ETTm cells but is poor on average, and ReLU wins only Solar7/24.
+
+This paper makes three contributions.
+\begin{enumerate}
+    \item We implement an activation-only Informer interface that switches GELU, ReLU, Swish, bounded activations, a small oscillatory \texttt{tanh\_sin} variant, encoder/decoder placement, and output activations without changing attention or model width.
+    \item We report a complete full-grid evaluation with 36 dataset-horizon cells, nine configurations, and three seeds per configuration, reusing exact-matching earlier runs and filling only missing seed-runs.
+    \item We separate robust same-protocol findings from overclaims: activation choice is dataset- and horizon-sensitive, bounded/tanh-family activations are strong static choices, but no single activation or factor-conditioned router is supported as universally best.
+\end{enumerate}
+
+\Cref{fig:phase4_best_gain_heatmap} summarizes the main pattern. The rest of the paper describes the controlled activation interface, the protocol, the full-grid results, and the limits of the current evidence.
+
+\input{figures/phase4_latex_includes}

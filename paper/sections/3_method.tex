@@ -1,0 +1,27 @@
+\section{Method and Experimental Protocol}
+
+\subsection{Forecasting setup}
+
+Given an input sequence \(X_{t-L+1:t}\in\mathbb{R}^{L\times C}\), Informer predicts the next \(H\) values \(Y_{t+1:t+H}\). We use multivariate forecasting and report mean squared error (MSE) as the primary metric, with mean absolute error (MAE) as a secondary metric. The Phase-4 protocol follows the official-script style used for Informer ETT runs: ProbSparse attention, time-feature embedding, \(d_{\mathrm{model}}=512\), \(d_{\mathrm{ff}}=2048\), \(8\) heads, batch size \(32\), learning rate \(10^{-4}\), patience \(3\), dropout \(0.05\), and six training epochs.
+
+The sequence and label lengths are horizon-specific. ETTh cells use horizons \(24,48,168,336,720\); ETTm cells use \(24,48,96,288,672\); Solar cells use \(24,96\). Each horizon uses the corresponding Informer-style sequence length, label length, encoder depth, decoder depth, and ProbSparse factor recorded in the experiment manifest. We call this an official-script protocol rather than an exact reproduction of every number in the original Informer paper.
+
+\subsection{Activation families}
+
+Let \(z\) denote the pre-activation tensor in an Informer feed-forward block. The main hidden activations are
+\begin{equation}
+    f(z) \in \{\mathrm{GELU}(z), \mathrm{ReLU}(z), \mathrm{Swish}(z), \tanh(z), \mathrm{softsign}(z), \tanh(z)+0.01\sin(z)\}.
+\end{equation}
+ReLU and Swish are included as non-bounded controls: ReLU tests whether a simpler monotone activation is sufficient, while Swish tests whether smoothness rather than boundedness explains the gains. Output activations are treated as placement variants because they change the final prediction range and can therefore act as target clipping, while hidden activations modify the representation inside the encoder and decoder feed-forward blocks. Lee-style variants and smaller-batch probes are excluded from the Phase-4 main matrix.
+
+\subsection{Controlled implementation}
+
+The architecture, attention type, embedding, width, depth, optimizer, and dataset splits are held fixed within each dataset-horizon cell. Activation choices are selected through command-line/config fields and injected into encoder and decoder feed-forward blocks. Placement variants independently set encoder hidden activation, decoder hidden activation, and output activation. This lets us distinguish three hypotheses: a bounded hidden-state effect, a decoder-only effect, and an output-range clipping effect.
+
+\subsection{Evidence policy}
+
+The main tables require batch size \(32\), six epochs, three seeds, and matched protocol fields. Repeated remote rows are deduplicated by dataset, horizon, seed, protocol, and activation signature before aggregation. Runs with smaller batch sizes, partial seed coverage, non-finite metrics, or mismatched configs are not used to support the main claim. Comparisons to Informer Table 2 are reported only as context: our GELU baseline does not fully reproduce Table 2, so the central claim is same-environment activation improvement over our own GELU runs.
+
+\subsection{Regime diagnostics}
+
+We additionally compute input-window regime factors such as volatility, realized volatility, volatility shock, max absolute change, tail ratio, jump intensity, trend consistency, reversal rate, and mean-reversion strength. These factors are not used as training labels in the main model. Summary-level factor bins cover all completed dataset-horizon cells. Sample-level same-split and leave-one-seed-out oracles are reported only where prediction arrays are available. Same-split oracles are optimistic diagnostics; leave-one-seed-out results are the stricter evidence for whether a factor is stable enough to guide selection.

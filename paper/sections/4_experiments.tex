@@ -1,0 +1,33 @@
+\section{Experiments}
+
+\subsection{Full-grid coverage}
+
+The completed Phase-4 matrix contains \(972\) eligible seed-runs: 36 dataset-horizon cells, nine activation configurations, and three seeds per configuration. All \(324\) dataset-horizon-configuration cells have complete three-seed coverage under batch size \(32\) and six epochs. \Cref{tab:phase4_coverage} summarizes the coverage split across ETTh, ETTm, and Solar.
+
+\input{figures/TABLE_phase4_coverage}
+
+The aggregation is strict. A row is reusable only when dataset, horizon, sequence length, label length, layer counts, factor, batch size, epochs, activation signature, and seed all match the canonical key. Batch-adjusted diagnostics and mismatched summaries are excluded from the main table. The Solar4 source file contained six missing target values; those values were repaired before relaunching the exact 54 missing Solar4 seed-runs, and the repaired file is recorded by checksum in the experiment audit.
+
+\subsection{Best activation by dataset and horizon}
+
+\Cref{tab:phase4_best_activation} reports the best activation in each completed dataset-horizon cell. A non-GELU activation is best in \(34/36\) cells. The only GELU-best cases are Solar3 at horizons 24 and 96. ETT and ETTm cells show the largest gains: all 20 ETT/ETTm cells prefer non-GELU activations, with mean best-cell MSE reductions of \(22.1\%\) on ETTh and \(24.7\%\) on ETTm. Solar gains are smaller and more site-specific: 14 of 16 Solar cells prefer non-GELU activations, with a mean best-cell reduction of \(6.7\%\) over GELU among those non-GELU-best cells.
+
+\input{figures/TABLE_phase4_best_activation}
+
+The heatmap in \Cref{fig:phase4_best_gain_heatmap} shows the same conclusion visually. Strong positive cells are concentrated in ETTh2 and ETTm2, but the best configuration changes across horizons. \texttt{tanh\_sin} and \texttt{softsign} each win eight cells, \texttt{tanh} wins seven, output \texttt{tanh} wins five, encoder-side \texttt{tanh} wins three, Swish wins two, GELU wins two, and ReLU wins one. This spread is the main empirical reason not to claim a universal activation.
+
+\subsection{Static ranking and placement}
+
+\Cref{tab:phase4_static_ranking} ranks each static configuration within every dataset-horizon cell. The best average ranks are \texttt{tanh\_sin} (\(2.78\)), \texttt{tanh} (\(3.19\)), and \texttt{softsign} (\(3.47\)). These three configurations also have high positive-cell rates against GELU, above \(80\%\). Swish is often better than GELU but rarely best, and ReLU is weak overall despite winning Solar7/24.
+
+\input{figures/TABLE_phase4_static_ranking}
+
+Placement remains dataset- and horizon-dependent. Output \texttt{tanh} is best in five cells, including ETTh1/720, ETTh2/336, ETTh2/720, ETTm2/288, and ETTm2/672. However, its mean rank is \(7.11\) and its mean relative result is negative because it performs poorly in many other cells. Encoder-side \texttt{tanh} is best in three Solar cells, while decoder-side \texttt{tanh} wins none. Thus output bounding and encoder placement are real effects, but neither substitutes for a full per-cell activation choice.
+
+\subsection{Factor-bin diagnostics}
+
+Summary-level factor bins cover all 36 completed dataset-horizon cells and produce 783 factor-bin rows. They confirm that activation differences vary with regime summaries, but they do not by themselves prove a deployable selection rule because the bins are computed after observing completed static runs. Sample-level oracles are stricter and are limited to cells with saved prediction arrays. Among 84 leave-one-seed-out oracle rows, only seven are positive, all on Solar1/96. \Cref{tab:phase4_loso_oracle} lists the positive cases.
+
+\input{figures/TABLE_phase4_loso_oracle}
+
+The factor evidence is therefore diagnostic rather than causal. Same-split oracles can be read as upper bounds, while the leave-one-seed-out results provide only weak generalization evidence for regime-conditioned selection. The current results support using factors to design targeted follow-up ablations, not deploying a factor-based activation router.

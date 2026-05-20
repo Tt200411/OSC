@@ -1,0 +1,13 @@
+\section{Related Work}
+
+\paragraph{Transformers for time-series forecasting.}
+The transformer architecture \citep{vaswani2017attention} introduced attention-based sequence modeling that later became a foundation for long-horizon forecasting architectures. Informer \citep{zhou2021informer} adapts this family to long sequence time-series forecasting through efficient attention and an encoder-decoder design. Our study does not propose a new attention mechanism. Instead, it uses Informer as a fixed experimental substrate to isolate the effect of activation functions.
+
+\paragraph{Activation functions.}
+ReLU \citep{nair2010relu} and GELU \citep{hendrycks2016gelu} are canonical activation baselines for testing nonlinear alternatives. Bounded nonlinearities such as \texttt{tanh} and \texttt{softsign} are older but still useful controls because they preserve sign while constraining output magnitude. Our experiments show that these bounded controls are essential: without them, a Lee or sinusoidal perturbation may appear useful against GELU while offering little or no advantage over a simpler bounded baseline.
+
+\paragraph{Periodic and Fourier-style representations.}
+Periodic activations and Fourier features have been studied for representing high-frequency functions \citep{sitzmann2020siren,tancik2020fourier}. Our use of oscillatory activations is different. We do not train an implicit neural representation; we perturb the feed-forward activation inside a forecasting transformer and test whether the perturbation improves forecasting error under fixed capacity. This framing makes the comparison against the unperturbed base activation critical.
+
+\paragraph{Regime-conditioned forecasting analysis.}
+Forecasting errors often depend on the state of the input window, such as volatility, trend, anomaly density, or turbulence. We therefore avoid interpreting global MSE alone as a mechanism explanation. Instead, we bind each test sample to input-window factors and ask whether the activation's relative error improves more in high-factor bins than in low-factor bins. This diagnostic is especially important when every factor bin beats GELU due to a broad bounded-activation effect.

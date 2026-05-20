@@ -1,0 +1,20 @@
+\begin{table*}[t]
+\centering
+\caption{Top positive leave-one-seed-out factor-oracle diagnostics among array-ready Phase-4 cells. These are diagnostic upper bounds for regime sensitivity, not deployed activation-routing results.}
+\label{tab:phase4_loso_oracle}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lllccc}
+\toprule
+Dataset & H & factor & LOSO oracle MSE & best static MSE & gain \\
+\midrule
+Solar1 & 96 & max\_abs\_change & 0.174 & 0.178 & +2.0\% \\
+Solar1 & 96 & volatility & 0.175 & 0.178 & +1.4\% \\
+Solar1 & 96 & volatility\_shock & 0.175 & 0.178 & +1.3\% \\
+Solar1 & 96 & trend\_consistency & 0.177 & 0.178 & +0.4\% \\
+Solar1 & 96 & max\_drawdown & 0.177 & 0.178 & +0.2\% \\
+Solar1 & 96 & max\_drawup & 0.177 & 0.178 & +0.2\% \\
+Solar1 & 96 & range & 0.177 & 0.178 & +0.2\% \\
+\bottomrule
+\end{tabular}%
+}
+\end{table*}
