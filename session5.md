@@ -158,3 +158,96 @@ Full-grid launch notes:
 - Other four hosts continue under `20260519_phase4_full_venv`.
 
 Latest monitored state showed all five active queues progressing with no OOM/Traceback/NaN alerts. The `.62` retry queue is healthy.
+
+## 2026-05-21 Full-Grid Collection And Solar4 Nanfix
+
+Full-grid queue results were pulled to `phase4_remote_results/full_venv_20260521/`.
+The strict reuse scan after collection found:
+
+- Expected seed-runs: `972`
+- Reusable seed-runs: `918`
+- Missing seed-runs: `54`
+
+All missing canonical seed-runs were `Solar4` for horizons `24` and `96`
+across the 9 configs and 3 seeds. The remote `Solar4` queue rows completed,
+but had non-finite metrics; job logs showed NaN losses from epoch 1.
+
+Root cause was a data issue in `Solar/Site_4_130MW.csv`: six missing values
+in the target column `Power`. The six values were filled in place using a
+minimal local policy: nighttime zero-irradiance gaps were filled with `0.0`,
+and daytime gaps were filled by immediate-neighbor linear interpolation. The
+repair audit is recorded in `.aris/phase4_solar4_nanfix_20260521.md`.
+
+After the repair:
+
+- `Solar4` total NaN: `0`
+- `Solar4 Power` NaN: `0`
+- Solar4 SHA256: `47c851e6e04642770cd94e76e5b6782bcf4203fb08cf4695a8d08fa6bbd70672`
+
+Next action: sync the repaired dataset to candidate hosts, relaunch only the
+54 missing Solar4 seed-runs, fetch summaries, and rerun the strict reuse scan.
+
+## 2026-05-21 Completion, Analysis, And Paper Update
+
+The repaired Solar4 dataset was synced to the candidate hosts and only the 54
+missing canonical Solar4 seed-runs were relaunched. The relaunch completed with
+no stuck jobs and no NaN alerts. Results were pulled to
+`phase4_remote_results/solar4_nanfix_20260521/`.
+
+The final strict reuse scan is:
+
+- Expected seed-runs: `972`
+- Reusable seed-runs: `972`
+- Missing seed-runs: `0`
+- Data integrity: `12/12` local CSVs valid, `0` target NaNs, `0` total NaNs
+- Complete dataset-horizon-config cells: `324/324`
+
+Current final matrix files:
+
+- `.aris/phase4_expected_matrix_20260521_phase4_full_complete_arrays_pref.csv`
+- `.aris/phase4_reusable_runs_20260521_phase4_full_complete_arrays_pref.csv`
+- `.aris/phase4_missing_runs_20260521_phase4_full_complete_arrays_pref.csv`
+- `.aris/phase4_reuse_report_20260521_phase4_full_complete_arrays_pref.md`
+- `.aris/phase4_data_integrity_20260521_phase4_full_complete_arrays_pref.csv`
+
+Main aggregation files:
+
+- `phase4_remote_results/analysis_current/phase4_protocol_raw_dedup.csv`
+- `phase4_remote_results/analysis_current/phase4_protocol_aggregate.csv`
+- `phase4_remote_results/analysis_current/phase4_completion_matrix.csv`
+- `phase4_remote_results/analysis_current/phase4_paired_vs_gelu.csv`
+- `phase4_remote_results/analysis_current/phase4_claim_summary.md`
+
+Full-matrix factor-bin files:
+
+- `phase4_remote_results/analysis_current/factors/phase4_factor_cell_summary.csv`
+- `phase4_remote_results/analysis_current/factors/phase4_factor_bin_summary.csv`
+- `phase4_remote_results/analysis_current/factors/phase4_factor_contrast_summary.csv`
+- `phase4_remote_results/analysis_current/factors/phase4_static_activation_ranking.csv`
+- `phase4_remote_results/analysis_current/factors/phase4_factor_bin_best_activation.csv`
+- `phase4_remote_results/analysis_current/factors/phase4_factor_claim_summary.md`
+
+Sample-level oracle files remain array-limited diagnostics:
+
+- `phase4_remote_results/analysis_current/factors/phase4_factor_sample_results.csv`
+- `phase4_remote_results/analysis_current/factors/phase4_factor_oracle_summary.csv`
+- `phase4_remote_results/analysis_current/factors/phase4_factor_oracle_loso_summary.csv`
+
+Result-to-claim boundary:
+
+- Supported: activation choice is dataset- and horizon-sensitive under matched
+  Phase-4 Informer settings.
+- Supported with scope: bounded and tanh-family activations are strong static
+  choices by mean rank.
+- Not supported: a universal activation, a universal bounded/oscillatory win,
+  or a deployable factor-conditioned activation router.
+- Dataset-specific: Solar3 remains GELU-best at both horizons.
+
+Paper update:
+
+- Added Phase-4 figure/table generation in `figures/gen_phase4_paper_assets.py`.
+- Generated Phase-4 coverage, best-activation, static-ranking, and LOSO-oracle
+  tables plus full-grid heatmap/ranking figures.
+- Updated `paper/main.tex` and sections to use the full-grid evidence.
+- Compiled `paper/main.pdf` successfully with `tectonic --keep-logs main.tex`
+  because `latexmk`/`pdflatex` are not installed locally.

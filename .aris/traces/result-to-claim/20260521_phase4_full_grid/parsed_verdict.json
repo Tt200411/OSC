@@ -1,0 +1,8 @@
+{
+  "claim_supported": "partial",
+  "narrowed_claim_supported": "yes",
+  "confidence": "high_for_narrowed_claim",
+  "integrity_status": "pass",
+  "routing_action": "update paper with narrowed full-grid claim; do not claim universal activation or deployable factor router",
+  "pending_external_review": true
+}

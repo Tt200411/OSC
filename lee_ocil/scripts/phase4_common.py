@@ -533,8 +533,9 @@ def reusable_runs(expected, summaries):
     candidate["_run_key"] = candidate.apply(run_key, axis=1)
     candidate = candidate[candidate["_run_key"].isin(set(exp["_run_key"]))]
     candidate["_dedupe_order"] = np.arange(len(candidate))
+    candidate["_has_arrays_order"] = candidate["has_arrays"].astype(bool).astype(int)
     candidate = (
-        candidate.sort_values(["source_summary", "_source_order", "_dedupe_order"])
+        candidate.sort_values(["_has_arrays_order", "source_summary", "_source_order", "_dedupe_order"])
         .drop_duplicates("_run_key", keep="last")
         .copy()
     )
@@ -583,13 +584,26 @@ def validate_local_data(project_root="."):
             frame = pd.read_csv(path)
             columns = frame.columns.tolist()
             target = required[dataset]["target"]
-            ok = "date" in columns and target in columns and len(frame) >= required[dataset]["min_rows"]
+            total_nan = int(frame.isna().sum().sum())
+            target_nan = int(frame[target].isna().sum()) if target in columns else -1
+            schema_ok = "date" in columns and target in columns and len(frame) >= required[dataset]["min_rows"]
+            ok = bool(schema_ok and total_nan == 0 and target_nan == 0)
+            reasons = []
+            if not schema_ok:
+                reasons.append(f"need date/{target} and >= {required[dataset]['min_rows']} rows")
+            if target_nan > 0:
+                reasons.append(f"{target} has {target_nan} NaN")
+            if total_nan > 0:
+                reasons.append(f"file has {total_nan} total NaN")
             row.update(
                 {
-                    "ok": bool(ok),
+                    "ok": ok,
                     "rows": len(frame),
                     "columns": ",".join(columns),
-                    "reason": "" if ok else f"need date/{target} and >= {required[dataset]['min_rows']} rows",
+                    "target_nan": target_nan,
+                    "total_nan": total_nan,
+                    "sha256": file_sha256(path),
+                    "reason": "; ".join(reasons),
                 }
             )
         except Exception as exc:

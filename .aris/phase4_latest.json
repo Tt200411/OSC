@@ -1,12 +1,12 @@
 {
-  "timestamp": "20260519_phase4_post_smoke_venv2",
-  "expected_matrix": ".aris/phase4_expected_matrix_20260519_phase4_post_smoke_venv2.csv",
-  "reusable_runs": ".aris/phase4_reusable_runs_20260519_phase4_post_smoke_venv2.csv",
-  "missing_runs": ".aris/phase4_missing_runs_20260519_phase4_post_smoke_venv2.csv",
-  "data_integrity": ".aris/phase4_data_integrity_20260519_phase4_post_smoke_venv2.csv",
-  "reuse_report": ".aris/phase4_reuse_report_20260519_phase4_post_smoke_venv2.md",
+  "timestamp": "20260521_phase4_full_complete_arrays_pref",
+  "expected_matrix": ".aris/phase4_expected_matrix_20260521_phase4_full_complete_arrays_pref.csv",
+  "reusable_runs": ".aris/phase4_reusable_runs_20260521_phase4_full_complete_arrays_pref.csv",
+  "missing_runs": ".aris/phase4_missing_runs_20260521_phase4_full_complete_arrays_pref.csv",
+  "data_integrity": ".aris/phase4_data_integrity_20260521_phase4_full_complete_arrays_pref.csv",
+  "reuse_report": ".aris/phase4_reuse_report_20260521_phase4_full_complete_arrays_pref.md",
   "required_seed_runs": 972,
-  "reusable_seed_runs": 120,
-  "missing_seed_runs": 852,
+  "reusable_seed_runs": 972,
+  "missing_seed_runs": 0,
   "data_ok": true
 }

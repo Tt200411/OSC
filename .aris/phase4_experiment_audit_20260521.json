@@ -1,0 +1,58 @@
+{
+  "date": "2026-05-21",
+  "auditor": "local-codex-pending-external-review",
+  "overall_verdict": "pass_with_scope_caveats",
+  "integrity_status": "pass",
+  "matrix": {
+    "expected_seed_runs": 972,
+    "reusable_seed_runs": 972,
+    "missing_seed_runs": 0,
+    "raw_dedup_rows": 972,
+    "aggregate_rows": 324,
+    "complete_config_cells": 324,
+    "expected_config_cells": 324,
+    "paired_vs_gelu_rows": 864
+  },
+  "checks": {
+    "ground_truth_provenance": {
+      "status": "pass",
+      "details": "Targets are loaded from ETT/Solar CSV datasets via Dataset_ETT_hour, Dataset_ETT_minute, and Dataset_Custom; saved trues are produced independently from predictions."
+    },
+    "score_normalization": {
+      "status": "pass",
+      "details": "Primary MSE/MAE are raw metrics against true arrays; relative gains divide by matched same-seed GELU MSE, not by prediction statistics."
+    },
+    "result_existence": {
+      "status": "pass",
+      "details": "972/972 canonical seed-runs are reusable; all 324 config cells have three seeds."
+    },
+    "duplicates_and_protocol": {
+      "status": "pass",
+      "details": "No duplicate canonical keys; no wrong batch/epoch rows; no non-finite MSE/MAE rows in the main raw file."
+    },
+    "scope": {
+      "status": "pass_with_caveats",
+      "details": "Scope supports matched-protocol activation sensitivity, not a universal activation, deployed router, or original Informer reproduction claim."
+    },
+    "eval_type": "real_gt"
+  },
+  "claim_impact": [
+    {
+      "claim": "Activation choice is dataset- and horizon-sensitive under matched Informer settings.",
+      "impact": "supported"
+    },
+    {
+      "claim": "Bounded/tanh-family activations are strong static choices.",
+      "impact": "supported_with_scope"
+    },
+    {
+      "claim": "A single activation universally dominates.",
+      "impact": "unsupported"
+    },
+    {
+      "claim": "A factor-conditioned activation router is deployable.",
+      "impact": "unsupported"
+    }
+  ],
+  "external_review": "pending"
+}

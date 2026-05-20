@@ -1,0 +1,30 @@
+{
+  "date": "2026-05-21",
+  "claim_supported": "partial",
+  "narrowed_claim_supported": "yes",
+  "integrity_status": "pass",
+  "confidence": {
+    "same_protocol_activation_sensitivity": "high",
+    "mechanism_interpretation": "medium",
+    "factor_router_generalization": "low"
+  },
+  "what_results_support": [
+    "972/972 canonical seed-runs complete",
+    "324/324 dataset-horizon-config cells have three seeds",
+    "34/36 dataset-horizon cells have a non-GELU best activation",
+    "bounded/tanh-family activations have the strongest average ranks"
+  ],
+  "what_results_do_not_support": [
+    "universal activation dominance",
+    "universal bounded or oscillatory win",
+    "deployed factor-conditioned routing",
+    "claim of reproducing and surpassing original Informer Table 2"
+  ],
+  "suggested_claim_revision": "Under a matched Informer official-script protocol with complete three-seed coverage, activation choice is a dataset- and horizon-sensitive design variable. Bounded and tanh-family activations are strong static choices on average, but the full grid rejects a universal activation or deployable factor-router claim.",
+  "next_experiments_needed": [
+    "targeted placement ablations on high-gain output-tanh ETT/ETTm cells",
+    "exact-protocol Lee-style variants before main-claim use",
+    "prospective held-out validation for factor-conditioned routing"
+  ],
+  "external_review": "pending"
+}
