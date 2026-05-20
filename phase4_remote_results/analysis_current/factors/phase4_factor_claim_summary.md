@@ -1,22 +1,32 @@
 # Phase-4 Factor Claim Summary
 
-- Array-ready seed-runs: 60
-- Same-split oracle rows: 84
-- LOSO oracle rows: 84
+- Summary-level factor-bin coverage: 36 dataset-horizon cells.
+- Factor-bin rows: 783.
+- Factor-conditioned contrasts with |end-start improvement| >= 0.02: 196.
 
-Same-split oracle results are diagnostic upper bounds. Treat only LOSO gains as weak generalization evidence.
+Summary-level factor bins cover the full completed matrix. Sample-level oracle files in this directory remain diagnostic and are restricted to rows with prediction arrays.
 
-## Strongest LOSO Signals
+## Static Activation Ranking
 
-| dataset | pred_len | factor | loso_oracle_mse | eval_seed_count | best_static_signature | best_static_placement | best_static_mse | loso_gain_vs_best_static |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Solar1 | 96 | max_abs_change | 0.1740786491939535 | 3 | act=gelu\|enc=tanh\|dec=gelu\|out=linear\|a=0\|lee=1 | encoder-only | 0.1775579776519971 | 0.0195954499147477 |
-| Solar1 | 96 | volatility | 0.1750451658247246 | 3 | act=gelu\|enc=tanh\|dec=gelu\|out=linear\|a=0\|lee=1 | encoder-only | 0.1775579776519971 | 0.0141520637962967 |
-| Solar1 | 96 | volatility_shock | 0.1753172454663362 | 3 | act=gelu\|enc=tanh\|dec=gelu\|out=linear\|a=0\|lee=1 | encoder-only | 0.1775579776519971 | 0.0126197212611456 |
-| Solar1 | 96 | trend_consistency | 0.1767630426784817 | 3 | act=gelu\|enc=tanh\|dec=gelu\|out=linear\|a=0\|lee=1 | encoder-only | 0.1775579776519971 | 0.0044770445351285 |
-| Solar1 | 96 | range | 0.1772750232621719 | 3 | act=gelu\|enc=tanh\|dec=gelu\|out=linear\|a=0\|lee=1 | encoder-only | 0.1775579776519971 | 0.0015935887171442 |
-| Solar1 | 96 | max_drawup | 0.1772750232621719 | 3 | act=gelu\|enc=tanh\|dec=gelu\|out=linear\|a=0\|lee=1 | encoder-only | 0.1775579776519971 | 0.0015935887171442 |
-| Solar1 | 96 | max_drawdown | 0.1772750232621719 | 3 | act=gelu\|enc=tanh\|dec=gelu\|out=linear\|a=0\|lee=1 | encoder-only | 0.1775579776519971 | 0.0015935887171442 |
-| ETTh2 | 168 | reversal_rate | 2.29435691062748 | 3 | act=swish\|enc=swish\|dec=swish\|out=linear\|a=0\|lee=1 | full-hidden | 2.29435691062748 | 0.0 |
-| ETTh1 | 336 | volatility_shock | 0.5995427262456487 | 3 | act=swish\|enc=swish\|dec=swish\|out=linear\|a=0\|lee=1 | full-hidden | 0.5995427262456487 | 0.0 |
-| ETTh2 | 168 | jump_intensity | 2.29435691062748 | 3 | act=swish\|enc=swish\|dec=swish\|out=linear\|a=0\|lee=1 | full-hidden | 2.29435691062748 | 0.0 |
+| config_name | mean_rank_in_cell | best_cell_count | improvement_vs_gelu_mean | positive_cell_rate |
+| --- | --- | --- | --- | --- |
+| tanh_sin001_all | 2.7777777777777777 | 8 | 0.11684794465819258 | 0.8333333333333334 |
+| tanh_all | 3.1944444444444446 | 7 | 0.11925067580881696 | 0.8055555555555556 |
+| softsign_all | 3.4722222222222223 | 8 | 0.11177396747111211 | 0.8055555555555556 |
+| enc_tanh_dec_gelu | 4.833333333333333 | 3 | 0.050981801360899456 | 0.6666666666666666 |
+| swish_all | 4.888888888888889 | 2 | 0.03649532228179982 | 0.7777777777777778 |
+
+## Strongest Factor-Conditioned Contrasts
+
+| factor | config_name | start_bin | end_bin | improvement_start | improvement_end | improvement_end_minus_start |
+| --- | --- | --- | --- | --- | --- | --- |
+| jump_intensity | tanh_all_outtanh | low | high | 0.01101028627517115 | -0.8984515570758204 | -0.9094618433509916 |
+| turbulence_score | tanh_all_outtanh | low | high | 0.01101028627517115 | -0.854065286983663 | -0.8650755732588342 |
+| skewness | tanh_all_outtanh | low | high | 0.023558131263866616 | -0.8195650938187033 | -0.84312322508257 |
+| volatility | tanh_all_outtanh | low | high | 0.01101028627517115 | -0.8195650938187033 | -0.8305753800938745 |
+| realized_volatility | tanh_all_outtanh | low | high | -0.11706783283201465 | -0.9038455784126732 | -0.7867777455806586 |
+| downside_volatility | tanh_all_outtanh | low | high | -0.11706783283201465 | -0.9038455784126732 | -0.7867777455806586 |
+| upside_volatility | tanh_all_outtanh | low | high | -0.11706783283201465 | -0.9038455784126732 | -0.7867777455806586 |
+| max_abs_change | tanh_all_outtanh | low | high | -0.11706783283201465 | -0.9038455784126732 | -0.7867777455806586 |
+| volatility_ratio_late_early | tanh_all_outtanh | low | high | -0.06795287641725979 | -0.854065286983663 | -0.7861124105664032 |
+| range | tanh_all_outtanh | low | high | 0.01101028627517115 | -0.7287040397165776 | -0.7397143259917488 |

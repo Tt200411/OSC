@@ -60,6 +60,7 @@ def main():
     parser.add_argument("--factors_dir", required=True)
     parser.add_argument("--lee_root", default="lee_ocil")
     parser.add_argument("--min_seed_count", type=int, default=3)
+    parser.add_argument("--force", action="store_true")
     args = parser.parse_args()
 
     os.makedirs(args.output_dir, exist_ok=True)
@@ -90,7 +91,10 @@ def main():
     oracle_work = os.path.join(args.output_dir, "_oracle_work")
     os.makedirs(factor_work, exist_ok=True)
     os.makedirs(oracle_work, exist_ok=True)
-    if not (os.path.exists(sample_path) and os.path.exists(bin_path) and os.path.exists(contrast_path)):
+    should_run_factor = args.force or not (
+        os.path.exists(sample_path) and os.path.exists(bin_path) and os.path.exists(contrast_path)
+    )
+    if should_run_factor:
         run(
             [
                 "python",
