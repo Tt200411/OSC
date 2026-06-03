@@ -1,0 +1,1 @@
+phase,dataset,pred_len,config_name,seed,root_path,data_path,target,freq,seq_len,label_len,e_layers,d_layers,factor,batch_size,train_epochs,run_tag,save_arrays,cmd,activation_signature

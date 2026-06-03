@@ -1,0 +1,24 @@
+\begin{table}[t]
+\centering
+\caption{Activation results against GELU for bounded controls and Lee-OC rows with at least three seeds.}
+\label{tab:bounded_vs_gelu}
+\begin{tabular}{lrlrrrr}
+\toprule
+Dataset & Pred. & Activation & MSE & MAE & $\Delta$MSE & Win \\
+\midrule
+ETTh1 & 24 & Lee1 & 0.6832 & 0.6046 & +6.87\% & 0.900 \\
+ETTh1 & 24 & softsign & 0.7122 & 0.6232 & +4.61\% & 0.667 \\
+ETTh1 & 24 & tanh & 0.6869 & 0.6085 & +6.26\% & 0.778 \\
+Solar1 & 24 & Lee1 & 0.1625 & 0.1797 & +5.95\% & 1.000 \\
+Solar1 & 24 & softsign & 0.1658 & 0.1843 & +4.03\% & 1.000 \\
+Solar1 & 24 & tanh & 0.1648 & 0.1838 & +5.14\% & 1.000 \\
+Solar1 & 96 & Lee1 & 0.2538 & 0.2479 & +11.91\% & 1.000 \\
+Solar1 & 96 & softsign & 0.2429 & 0.2426 & +15.71\% & 1.000 \\
+Solar1 & 96 & tanh & 0.2509 & 0.2454 & +12.84\% & 1.000 \\
+Solar5 & 24 & softsign & 0.1171 & 0.1761 & +8.10\% & 1.000 \\
+Solar5 & 24 & tanh & 0.1156 & 0.1732 & +10.48\% & 1.000 \\
+Solar5 & 96 & softsign & 0.2046 & 0.2430 & +13.34\% & 1.000 \\
+Solar5 & 96 & tanh & 0.2038 & 0.2437 & +14.39\% & 1.000 \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,473 @@
+diff --git a/PatchTST_supervised/exp/exp_main.py b/PatchTST_supervised/exp/exp_main.py
+index 6ab36b2..57f8c21 100644
+--- a/PatchTST_supervised/exp/exp_main.py
++++ b/PatchTST_supervised/exp/exp_main.py
+@@ -4,6 +4,7 @@ from models import Informer, Autoformer, Transformer, DLinear, Linear, NLinear,
+ from utils.tools import EarlyStopping, adjust_learning_rate, visual, test_params_flop
+ from utils.metrics import metric
+ 
++import json
+ import numpy as np
+ import torch
+ import torch.nn as nn
+@@ -16,9 +17,22 @@ import time
+ import warnings
+ import matplotlib.pyplot as plt
+ import numpy as np
++import pandas as pd
+ 
+ warnings.filterwarnings('ignore')
+ 
++
++def activation_signature(args):
++    activation = getattr(args, 'activation', 'gelu')
++    output_activation = getattr(args, 'output_activation', 'linear')
++    amplitude = float(getattr(args, 'perturb_amplitude', 0.0))
++    return f"act={activation}|ffn={activation}|out={output_activation}|a={amplitude:g}"
++
++
++def placement_name(args):
++    output_activation = str(getattr(args, 'output_activation', 'linear')).lower()
++    return "ffn_linear" if output_activation in {"linear", "identity", "none"} else f"ffn_out{output_activation}"
++
+ class Exp_Main(Exp_Basic):
+     def __init__(self, args):
+         super(Exp_Main, self).__init__(args)
+@@ -278,8 +292,8 @@ class Exp_Main(Exp_Basic):
+                 if i % 20 == 0:
+                     input = batch_x.detach().cpu().numpy()
+                     gt = np.concatenate((input[0, :, -1], true[0, :, -1]), axis=0)
+-                    pd = np.concatenate((input[0, :, -1], pred[0, :, -1]), axis=0)
+-                    visual(gt, pd, os.path.join(folder_path, str(i) + '.pdf'))
++                    pred_line = np.concatenate((input[0, :, -1], pred[0, :, -1]), axis=0)
++                    visual(gt, pred_line, os.path.join(folder_path, str(i) + '.pdf'))
+ 
+         if self.args.test_flop:
+             test_params_flop((batch_x.shape[1],batch_x.shape[2]))
+@@ -298,6 +312,7 @@ class Exp_Main(Exp_Basic):
+             os.makedirs(folder_path)
+ 
+         mae, mse, rmse, mape, mspe, rse, corr = metric(preds, trues)
++        corr_scalar = float(np.nanmean(corr))
+         print('mse:{}, mae:{}, rse:{}'.format(mse, mae, rse))
+         f = open("result.txt", 'a')
+         f.write(setting + "  \n")
+@@ -306,10 +321,67 @@ class Exp_Main(Exp_Basic):
+         f.write('\n')
+         f.close()
+ 
+-        # np.save(folder_path + 'metrics.npy', np.array([mae, mse, rmse, mape, mspe,rse, corr]))
+-        np.save(folder_path + 'pred.npy', preds)
+-        # np.save(folder_path + 'true.npy', trues)
++        np.save(folder_path + 'metrics.npy', np.array([mae, mse, rmse, mape, mspe, rse, corr_scalar], dtype=float))
++        if not getattr(self.args, 'no_save_pred', False):
++            np.save(folder_path + 'pred.npy', preds)
++        if not getattr(self.args, 'no_save_true', False):
++            np.save(folder_path + 'true.npy', trues)
+         # np.save(folder_path + 'x.npy', inputx)
++
++        config_path = os.path.join(folder_path, 'config.json')
++        with open(config_path, 'w', encoding='utf-8') as handle:
++            json.dump(vars(self.args), handle, indent=2, sort_keys=True)
++
++        summary_path = './results/summary.csv'
++        row = {
++            'setting': setting,
++            'model': self.args.model,
++            'dataset': self.args.data if self.args.data != 'custom' else self.args.model_id.split('_')[0],
++            'data': self.args.data,
++            'data_path': self.args.data_path,
++            'features': self.args.features,
++            'target': self.args.target,
++            'freq': self.args.freq,
++            'seq_len': self.args.seq_len,
++            'label_len': self.args.label_len,
++            'pred_len': self.args.pred_len,
++            'patch_len': self.args.patch_len,
++            'stride': self.args.stride,
++            'e_layers': self.args.e_layers,
++            'd_model': self.args.d_model,
++            'n_heads': self.args.n_heads,
++            'd_ff': self.args.d_ff,
++            'dropout': self.args.dropout,
++            'fc_dropout': self.args.fc_dropout,
++            'head_dropout': self.args.head_dropout,
++            'batch_size': self.args.batch_size,
++            'train_epochs': self.args.train_epochs,
++            'learning_rate': self.args.learning_rate,
++            'activation': self.args.activation,
++            'output_activation': getattr(self.args, 'output_activation', 'linear'),
++            'perturb_amplitude': getattr(self.args, 'perturb_amplitude', 0.0),
++            'perturb_frequency': getattr(self.args, 'perturb_frequency', 1.0),
++            'perturb_phase': getattr(self.args, 'perturb_phase', 0.0),
++            'activation_signature': activation_signature(self.args),
++            'placement': placement_name(self.args),
++            'seed': self.args.random_seed,
++            'mse': float(mse),
++            'mae': float(mae),
++            'rmse': float(rmse),
++            'mape': float(mape),
++            'mspe': float(mspe),
++            'rse': float(rse),
++            'corr': corr_scalar,
++            'server_id': getattr(self.args, 'server_id', ''),
++            'server_ip': getattr(self.args, 'server_ip', ''),
++            'run_id': getattr(self.args, 'run_id', ''),
++            'des': self.args.des,
++            'config_path': config_path,
++            'pred_path': os.path.join(folder_path, 'pred.npy'),
++            'true_path': os.path.join(folder_path, 'true.npy'),
++        }
++        frame = pd.DataFrame([row])
++        frame.to_csv(summary_path, mode='a', header=not os.path.exists(summary_path), index=False)
+         return
+ 
+     def predict(self, setting, load=False):
+diff --git a/PatchTST_supervised/layers/PatchTST_backbone.py b/PatchTST_supervised/layers/PatchTST_backbone.py
+index 55f7956..5889686 100644
+--- a/PatchTST_supervised/layers/PatchTST_backbone.py
++++ b/PatchTST_supervised/layers/PatchTST_backbone.py
+@@ -20,6 +20,7 @@ class PatchTST_backbone(nn.Module):
+                  padding_var:Optional[int]=None, attn_mask:Optional[Tensor]=None, res_attention:bool=True, pre_norm:bool=False, store_attn:bool=False,
+                  pe:str='zeros', learn_pe:bool=True, fc_dropout:float=0., head_dropout = 0, padding_patch = None,
+                  pretrain_head:bool=False, head_type = 'flatten', individual = False, revin = True, affine = True, subtract_last = False,
++                 output_activation:str='linear', perturb_amplitude:float=0.0, perturb_frequency:float=1.0, perturb_phase:float=0.0,
+                  verbose:bool=False, **kwargs):
+         
+         super().__init__()
+@@ -42,7 +43,9 @@ class PatchTST_backbone(nn.Module):
+                                 n_layers=n_layers, d_model=d_model, n_heads=n_heads, d_k=d_k, d_v=d_v, d_ff=d_ff,
+                                 attn_dropout=attn_dropout, dropout=dropout, act=act, key_padding_mask=key_padding_mask, padding_var=padding_var,
+                                 attn_mask=attn_mask, res_attention=res_attention, pre_norm=pre_norm, store_attn=store_attn,
+-                                pe=pe, learn_pe=learn_pe, verbose=verbose, **kwargs)
++                                pe=pe, learn_pe=learn_pe, perturb_amplitude=perturb_amplitude,
++                                perturb_frequency=perturb_frequency, perturb_phase=perturb_phase,
++                                verbose=verbose, **kwargs)
+ 
+         # Head
+         self.head_nf = d_model * patch_num
+@@ -54,7 +57,17 @@ class PatchTST_backbone(nn.Module):
+         if self.pretrain_head: 
+             self.head = self.create_pretrain_head(self.head_nf, c_in, fc_dropout) # custom head passed as a partial func with all its kwargs
+         elif head_type == 'flatten': 
+-            self.head = Flatten_Head(self.individual, self.n_vars, self.head_nf, target_window, head_dropout=head_dropout)
++            self.head = Flatten_Head(
++                self.individual,
++                self.n_vars,
++                self.head_nf,
++                target_window,
++                head_dropout=head_dropout,
++                output_activation=output_activation,
++                perturb_amplitude=perturb_amplitude,
++                perturb_frequency=perturb_frequency,
++                perturb_phase=perturb_phase,
++            )
+         
+     
+     def forward(self, z):                                                                   # z: [bs x nvars x seq_len]
+@@ -88,7 +101,18 @@ class PatchTST_backbone(nn.Module):
+ 
+ 
+ class Flatten_Head(nn.Module):
+-    def __init__(self, individual, n_vars, nf, target_window, head_dropout=0):
++    def __init__(
++        self,
++        individual,
++        n_vars,
++        nf,
++        target_window,
++        head_dropout=0,
++        output_activation='linear',
++        perturb_amplitude=0.0,
++        perturb_frequency=1.0,
++        perturb_phase=0.0,
++    ):
+         super().__init__()
+         
+         self.individual = individual
+@@ -106,6 +130,12 @@ class Flatten_Head(nn.Module):
+             self.flatten = nn.Flatten(start_dim=-2)
+             self.linear = nn.Linear(nf, target_window)
+             self.dropout = nn.Dropout(head_dropout)
++        self.output_activation = get_output_activation_fn(
++            output_activation,
++            perturb_amplitude,
++            perturb_frequency,
++            perturb_phase,
++        )
+             
+     def forward(self, x):                                 # x: [bs x nvars x d_model x patch_num]
+         if self.individual:
+@@ -120,7 +150,7 @@ class Flatten_Head(nn.Module):
+             x = self.flatten(x)
+             x = self.linear(x)
+             x = self.dropout(x)
+-        return x
++        return self.output_activation(x)
+         
+         
+     
+@@ -130,7 +160,8 @@ class TSTiEncoder(nn.Module):  #i means channel-independent
+                  n_layers=3, d_model=128, n_heads=16, d_k=None, d_v=None,
+                  d_ff=256, norm='BatchNorm', attn_dropout=0., dropout=0., act="gelu", store_attn=False,
+                  key_padding_mask='auto', padding_var=None, attn_mask=None, res_attention=True, pre_norm=False,
+-                 pe='zeros', learn_pe=True, verbose=False, **kwargs):
++                 pe='zeros', learn_pe=True, perturb_amplitude=0.0, perturb_frequency=1.0, perturb_phase=0.0,
++                 verbose=False, **kwargs):
+         
+         
+         super().__init__()
+@@ -151,7 +182,9 @@ class TSTiEncoder(nn.Module):  #i means channel-independent
+ 
+         # Encoder
+         self.encoder = TSTEncoder(q_len, d_model, n_heads, d_k=d_k, d_v=d_v, d_ff=d_ff, norm=norm, attn_dropout=attn_dropout, dropout=dropout,
+-                                   pre_norm=pre_norm, activation=act, res_attention=res_attention, n_layers=n_layers, store_attn=store_attn)
++                                   pre_norm=pre_norm, activation=act, res_attention=res_attention, n_layers=n_layers, store_attn=store_attn,
++                                   perturb_amplitude=perturb_amplitude, perturb_frequency=perturb_frequency,
++                                   perturb_phase=perturb_phase)
+ 
+         
+     def forward(self, x) -> Tensor:                                              # x: [bs x nvars x patch_len x patch_num]
+@@ -177,13 +210,17 @@ class TSTiEncoder(nn.Module):  #i means channel-independent
+ class TSTEncoder(nn.Module):
+     def __init__(self, q_len, d_model, n_heads, d_k=None, d_v=None, d_ff=None, 
+                         norm='BatchNorm', attn_dropout=0., dropout=0., activation='gelu',
+-                        res_attention=False, n_layers=1, pre_norm=False, store_attn=False):
++                        res_attention=False, n_layers=1, pre_norm=False, store_attn=False,
++                        perturb_amplitude=0.0, perturb_frequency=1.0, perturb_phase=0.0):
+         super().__init__()
+ 
+         self.layers = nn.ModuleList([TSTEncoderLayer(q_len, d_model, n_heads=n_heads, d_k=d_k, d_v=d_v, d_ff=d_ff, norm=norm,
+                                                       attn_dropout=attn_dropout, dropout=dropout,
+                                                       activation=activation, res_attention=res_attention,
+-                                                      pre_norm=pre_norm, store_attn=store_attn) for i in range(n_layers)])
++                                                      pre_norm=pre_norm, store_attn=store_attn,
++                                                      perturb_amplitude=perturb_amplitude,
++                                                      perturb_frequency=perturb_frequency,
++                                                      perturb_phase=perturb_phase) for i in range(n_layers)])
+         self.res_attention = res_attention
+ 
+     def forward(self, src:Tensor, key_padding_mask:Optional[Tensor]=None, attn_mask:Optional[Tensor]=None):
+@@ -200,7 +237,8 @@ class TSTEncoder(nn.Module):
+ 
+ class TSTEncoderLayer(nn.Module):
+     def __init__(self, q_len, d_model, n_heads, d_k=None, d_v=None, d_ff=256, store_attn=False,
+-                 norm='BatchNorm', attn_dropout=0, dropout=0., bias=True, activation="gelu", res_attention=False, pre_norm=False):
++                 norm='BatchNorm', attn_dropout=0, dropout=0., bias=True, activation="gelu", res_attention=False, pre_norm=False,
++                 perturb_amplitude=0.0, perturb_frequency=1.0, perturb_phase=0.0):
+         super().__init__()
+         assert not d_model%n_heads, f"d_model ({d_model}) must be divisible by n_heads ({n_heads})"
+         d_k = d_model // n_heads if d_k is None else d_k
+@@ -219,7 +257,7 @@ class TSTEncoderLayer(nn.Module):
+ 
+         # Position-wise Feed-Forward
+         self.ff = nn.Sequential(nn.Linear(d_model, d_ff, bias=bias),
+-                                get_activation_fn(activation),
++                                get_activation_fn(activation, perturb_amplitude, perturb_frequency, perturb_phase),
+                                 nn.Dropout(dropout),
+                                 nn.Linear(d_ff, d_model, bias=bias))
+ 
+@@ -376,4 +414,3 @@ class _ScaledDotProductAttention(nn.Module):
+ 
+         if self.res_attention: return output, attn_weights, attn_scores
+         else: return output, attn_weights
+-
+diff --git a/PatchTST_supervised/layers/PatchTST_layers.py b/PatchTST_supervised/layers/PatchTST_layers.py
+index 11b5bd6..1eef8b4 100644
+--- a/PatchTST_supervised/layers/PatchTST_layers.py
++++ b/PatchTST_supervised/layers/PatchTST_layers.py
+@@ -1,9 +1,42 @@
+-__all__ = ['Transpose', 'get_activation_fn', 'moving_avg', 'series_decomp', 'PositionalEncoding', 'SinCosPosEncoding', 'Coord2dPosEncoding', 'Coord1dPosEncoding', 'positional_encoding']           
++__all__ = ['Transpose', 'get_activation_fn', 'get_output_activation_fn', 'moving_avg', 'series_decomp', 'PositionalEncoding', 'SinCosPosEncoding', 'Coord2dPosEncoding', 'Coord1dPosEncoding', 'positional_encoding']           
+ 
+ import torch
+ from torch import nn
++import torch.nn.functional as F
+ import math
+ 
++
++class PerturbedActivation(nn.Module):
++    def __init__(self, base, amplitude=0.0, frequency=1.0, phase=0.0, waveform="sin"):
++        super().__init__()
++        self.base = base.lower()
++        self.amplitude = float(amplitude)
++        self.frequency = float(frequency)
++        self.phase = float(phase)
++        self.waveform = waveform
++
++    def _base(self, x):
++        if self.base == "gelu":
++            return F.gelu(x)
++        if self.base == "relu":
++            return F.relu(x)
++        if self.base in {"swish", "silu"}:
++            return F.silu(x)
++        if self.base == "tanh":
++            return torch.tanh(x)
++        if self.base == "softsign":
++            return F.softsign(x)
++        raise RuntimeError(f"Unsupported activation base: {self.base}")
++
++    def forward(self, x):
++        y = self._base(x)
++        argument = self.frequency * x + self.phase
++        if self.waveform == "sin":
++            return y + self.amplitude * torch.sin(argument)
++        if self.waveform == "cos":
++            return y + self.amplitude * torch.cos(argument)
++        raise RuntimeError(f"Unsupported perturbation waveform: {self.waveform}")
++
+ class Transpose(nn.Module):
+     def __init__(self, *dims, contiguous=False): 
+         super().__init__()
+@@ -13,11 +46,22 @@ class Transpose(nn.Module):
+         else: return x.transpose(*self.dims)
+ 
+     
+-def get_activation_fn(activation):
++def get_activation_fn(activation, perturb_amplitude=0.0, perturb_frequency=1.0, perturb_phase=0.0):
+     if callable(activation): return activation()
+     elif activation.lower() == "relu": return nn.ReLU()
+     elif activation.lower() == "gelu": return nn.GELU()
+-    raise ValueError(f'{activation} is not available. You can use "relu", "gelu", or a callable') 
++    elif activation.lower() in {"swish", "silu"}: return nn.SiLU()
++    elif activation.lower() == "tanh": return nn.Tanh()
++    elif activation.lower() == "softsign": return nn.Softsign()
++    elif activation.lower() == "tanh_sin": return PerturbedActivation("tanh", perturb_amplitude, perturb_frequency, perturb_phase, "sin")
++    elif activation.lower() == "tanh_sin001": return PerturbedActivation("tanh", 0.01, perturb_frequency, perturb_phase, "sin")
++    raise ValueError(f'{activation} is not available. Use relu, gelu, swish, tanh, softsign, tanh_sin, tanh_sin001, or a callable')
++
++
++def get_output_activation_fn(activation, perturb_amplitude=0.0, perturb_frequency=1.0, perturb_phase=0.0):
++    if activation is None or str(activation).lower() in {"linear", "identity", "none"}:
++        return nn.Identity()
++    return get_activation_fn(activation, perturb_amplitude, perturb_frequency, perturb_phase)
+     
+     
+ # decomposition
+@@ -118,4 +162,4 @@ def positional_encoding(pe, learn_pe, q_len, d_model):
+     elif pe == 'sincos': W_pos = PositionalEncoding(q_len, d_model, normalize=True)
+     else: raise ValueError(f"{pe} is not a valid pe (positional encoder. Available types: 'gauss'=='normal', \
+         'zeros', 'zero', uniform', 'lin1d', 'exp1d', 'lin2d', 'exp2d', 'sincos', None.)")
+-    return nn.Parameter(W_pos, requires_grad=learn_pe)
+\ No newline at end of file
++    return nn.Parameter(W_pos, requires_grad=learn_pe)
+diff --git a/PatchTST_supervised/models/PatchTST.py b/PatchTST_supervised/models/PatchTST.py
+index 5906049..090059f 100644
+--- a/PatchTST_supervised/models/PatchTST.py
++++ b/PatchTST_supervised/models/PatchTST.py
+@@ -41,6 +41,11 @@ class Model(nn.Module):
+         revin = configs.revin
+         affine = configs.affine
+         subtract_last = configs.subtract_last
++        output_activation = getattr(configs, 'output_activation', 'linear')
++        act = getattr(configs, 'activation', act)
++        perturb_amplitude = getattr(configs, 'perturb_amplitude', 0.0)
++        perturb_frequency = getattr(configs, 'perturb_frequency', 1.0)
++        perturb_phase = getattr(configs, 'perturb_phase', 0.0)
+         
+         decomposition = configs.decomposition
+         kernel_size = configs.kernel_size
+@@ -57,7 +62,9 @@ class Model(nn.Module):
+                                   attn_mask=attn_mask, res_attention=res_attention, pre_norm=pre_norm, store_attn=store_attn,
+                                   pe=pe, learn_pe=learn_pe, fc_dropout=fc_dropout, head_dropout=head_dropout, padding_patch = padding_patch,
+                                   pretrain_head=pretrain_head, head_type=head_type, individual=individual, revin=revin, affine=affine,
+-                                  subtract_last=subtract_last, verbose=verbose, **kwargs)
++                                  subtract_last=subtract_last, output_activation=output_activation,
++                                  perturb_amplitude=perturb_amplitude, perturb_frequency=perturb_frequency,
++                                  perturb_phase=perturb_phase, verbose=verbose, **kwargs)
+             self.model_res = PatchTST_backbone(c_in=c_in, context_window = context_window, target_window=target_window, patch_len=patch_len, stride=stride, 
+                                   max_seq_len=max_seq_len, n_layers=n_layers, d_model=d_model,
+                                   n_heads=n_heads, d_k=d_k, d_v=d_v, d_ff=d_ff, norm=norm, attn_dropout=attn_dropout,
+@@ -65,7 +72,9 @@ class Model(nn.Module):
+                                   attn_mask=attn_mask, res_attention=res_attention, pre_norm=pre_norm, store_attn=store_attn,
+                                   pe=pe, learn_pe=learn_pe, fc_dropout=fc_dropout, head_dropout=head_dropout, padding_patch = padding_patch,
+                                   pretrain_head=pretrain_head, head_type=head_type, individual=individual, revin=revin, affine=affine,
+-                                  subtract_last=subtract_last, verbose=verbose, **kwargs)
++                                  subtract_last=subtract_last, output_activation=output_activation,
++                                  perturb_amplitude=perturb_amplitude, perturb_frequency=perturb_frequency,
++                                  perturb_phase=perturb_phase, verbose=verbose, **kwargs)
+         else:
+             self.model = PatchTST_backbone(c_in=c_in, context_window = context_window, target_window=target_window, patch_len=patch_len, stride=stride, 
+                                   max_seq_len=max_seq_len, n_layers=n_layers, d_model=d_model,
+@@ -74,7 +83,9 @@ class Model(nn.Module):
+                                   attn_mask=attn_mask, res_attention=res_attention, pre_norm=pre_norm, store_attn=store_attn,
+                                   pe=pe, learn_pe=learn_pe, fc_dropout=fc_dropout, head_dropout=head_dropout, padding_patch = padding_patch,
+                                   pretrain_head=pretrain_head, head_type=head_type, individual=individual, revin=revin, affine=affine,
+-                                  subtract_last=subtract_last, verbose=verbose, **kwargs)
++                                  subtract_last=subtract_last, output_activation=output_activation,
++                                  perturb_amplitude=perturb_amplitude, perturb_frequency=perturb_frequency,
++                                  perturb_phase=perturb_phase, verbose=verbose, **kwargs)
+     
+     
+     def forward(self, x):           # x: [Batch, Input length, Channel]
+@@ -89,4 +100,4 @@ class Model(nn.Module):
+             x = x.permute(0,2,1)    # x: [Batch, Channel, Input length]
+             x = self.model(x)
+             x = x.permute(0,2,1)    # x: [Batch, Input length, Channel]
+-        return x
+\ No newline at end of file
++        return x
+diff --git a/PatchTST_supervised/run_longExp.py b/PatchTST_supervised/run_longExp.py
+index fc4a0e6..5019bd5 100644
+--- a/PatchTST_supervised/run_longExp.py
++++ b/PatchTST_supervised/run_longExp.py
+@@ -69,8 +69,17 @@ if __name__ == '__main__':
+     parser.add_argument('--embed', type=str, default='timeF',
+                         help='time features encoding, options:[timeF, fixed, learned]')
+     parser.add_argument('--activation', type=str, default='gelu', help='activation')
++    parser.add_argument('--output_activation', type=str, default='linear', help='forecast-head output activation')
++    parser.add_argument('--perturb_amplitude', type=float, default=0.0, help='oscillatory perturbation amplitude')
++    parser.add_argument('--perturb_frequency', type=float, default=1.0, help='oscillatory perturbation frequency')
++    parser.add_argument('--perturb_phase', type=float, default=0.0, help='oscillatory perturbation phase')
+     parser.add_argument('--output_attention', action='store_true', help='whether to output attention in ecoder')
+     parser.add_argument('--do_predict', action='store_true', help='whether to predict unseen future data')
++    parser.add_argument('--server_id', type=str, default='', help='remote server identifier for summaries')
++    parser.add_argument('--server_ip', type=str, default='', help='remote server IP for summaries')
++    parser.add_argument('--run_id', type=str, default='', help='batch run identifier for summaries')
++    parser.add_argument('--no_save_pred', action='store_true', help='skip saving pred.npy')
++    parser.add_argument('--no_save_true', action='store_true', help='skip saving true.npy')
+ 
+     # optimization
+     parser.add_argument('--num_workers', type=int, default=10, help='data loader num workers')
+@@ -170,4 +179,4 @@ if __name__ == '__main__':
+         print('>>>>>>>testing : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(setting))
+         exp.test(setting, test=1)
+         torch.cuda.empty_cache()
+-        
+\ No newline at end of file
++        
+diff --git a/PatchTST_supervised/utils/timefeatures.py b/PatchTST_supervised/utils/timefeatures.py
+index f5678f0..87439eb 100644
+--- a/PatchTST_supervised/utils/timefeatures.py
++++ b/PatchTST_supervised/utils/timefeatures.py
+@@ -107,7 +107,8 @@ def time_features_from_frequency_str(freq_str: str) -> List[TimeFeature]:
+         ],
+     }
+ 
+-    offset = to_offset(freq_str)
++    normalized_freq = {'t': 'min'}.get(str(freq_str).lower(), freq_str)
++    offset = to_offset(normalized_freq)
+ 
+     for offset_type, feature_classes in features_by_offsets.items():
+         if isinstance(offset, offset_type):
+diff --git a/PatchTST_supervised/utils/tools.py b/PatchTST_supervised/utils/tools.py
+index ff90a6a..c47c27c 100644
+--- a/PatchTST_supervised/utils/tools.py
++++ b/PatchTST_supervised/utils/tools.py
+@@ -44,7 +44,7 @@ class EarlyStopping:
+         self.counter = 0
+         self.best_score = None
+         self.early_stop = False
+-        self.val_loss_min = np.Inf
++        self.val_loss_min = np.inf
+         self.delta = delta
+ 
+     def __call__(self, val_loss, model, path):
+@@ -113,4 +113,4 @@ def test_params_flop(model,x_shape):
+         # print('Flops:' + flops)
+         # print('Params:' + params)
+         print('{:<30}  {:<8}'.format('Computational complexity: ', macs))
+-        print('{:<30}  {:<8}'.format('Number of parameters: ', params))
+\ No newline at end of file
++        print('{:<30}  {:<8}'.format('Number of parameters: ', params))

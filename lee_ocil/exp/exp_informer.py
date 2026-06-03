@@ -76,6 +76,9 @@ class Exp_Informer(Exp_Basic):
             'Solar':Dataset_Custom,
             'Solar1':Dataset_Custom,
             'Solar5':Dataset_Custom,
+            'Weather':Dataset_Custom,
+            'Exchange':Dataset_Custom,
+            'ILI':Dataset_Custom,
             'custom':Dataset_Custom,
         }
         Data = data_dict[self.config.data]

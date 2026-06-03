@@ -20,6 +20,9 @@ DATASETS = {
     "Solar6": {"path": "../Solar/Site_6_35MW.csv", "target": "Power", "points_per_day": 96},
     "Solar7": {"path": "../Solar/Site_7_30MW.csv", "target": "Power", "points_per_day": 96},
     "Solar8": {"path": "../Solar/Site_8_30MW.csv", "target": "Power", "points_per_day": 96},
+    "Weather": {"path": "../Weather/weather.csv", "target": "OT", "points_per_day": 144},
+    "Exchange": {"path": "../Exchange/exchange_rate.csv", "target": "OT", "points_per_day": 1},
+    "ILI": {"path": "../ILI/national_illness.csv", "target": "OT", "points_per_day": 1},
 }
 
 

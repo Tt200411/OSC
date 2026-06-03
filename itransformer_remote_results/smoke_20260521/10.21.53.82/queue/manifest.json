@@ -1,0 +1,27 @@
+{
+  "project": "itransformer_activation_transfer_10.21.53.82",
+  "cwd": "/home/testsv/project/osc_informer/iTransformer",
+  "venv_path": "/home/testsv/project/osc_informer/lee_ocil/.venv",
+  "gpus": [
+    0
+  ],
+  "max_parallel": 1,
+  "gpu_free_threshold_mib": 500,
+  "oom_retry": {
+    "delay": 180,
+    "max_attempts": 2
+  },
+  "phases": [
+    {
+      "name": "stage1",
+      "depends_on": [],
+      "jobs": [
+        {
+          "id": "it_stage1_ETTh2_pl96_gelu_ffn_linear_s2024",
+          "cmd": "python -u run.py --random_seed 2024 --is_training 1 --root_path ../lee_ocil/ETT-small/ --data_path ETTh2.csv --model_id ETTh2_pl96_gelu_ffn_linear_s2024 --model iTransformer --data ETTh2 --features M --target OT --freq h --seq_len 96 --label_len 48 --pred_len 96 --enc_in 7 --dec_in 7 --c_out 7 --e_layers 2 --d_layers 1 --n_heads 8 --d_model 128 --d_ff 128 --factor 1 --dropout 0.1 --embed timeF --des itransformer_smoke_20260521_actfix_gelu_ffn_linear_s2024 --train_epochs 10 --patience 3 --itr 1 --batch_size 32 --learning_rate 0.0001 --num_workers 4 --activation gelu --gpu '${GPU}' --config_name gelu_ffn_linear --stage stage1 --server_id 4090-82 --server_ip 10.21.53.82 --run_id itransformer_smoke_20260521_actfix",
+          "expected_output": "results/ETTh2_pl96_gelu_ffn_linear_s2024_iTransformer_ETTh2_ftM_sl96_ll48_pl96_dm128_nh8_el2_dl1_df128_fc1_ebtimeF_dtTrue_itransformer_smoke_20260521_actfix_gelu_ffn_linear_s2024_projection_0/config.json"
+        }
+      ]
+    }
+  ]
+}

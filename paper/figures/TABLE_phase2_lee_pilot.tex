@@ -1,0 +1,15 @@
+\begin{table*}[t]
+\centering
+\caption{Memory-adjusted Lee probes. These runs use smaller batches than the Phase-2 main table and are therefore diagnostic rather than main evidence.}
+\label{tab:phase2_lee_pilot}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lllcccccc}
+\toprule
+Dataset & H & batch & GELU & tanh & softsign & Lee1 & Lee3 & seed counts \\
+\midrule
+ETTh1 & 168 & 8 & 1.039 $\pm$ 0.040 & \textbf{0.947 $\pm$ 0.057} & 0.961 $\pm$ 0.086 & 0.979 $\pm$ 0.010 & 1.091 $\pm$ 0.086 & 3, 3, 3, 3, 3 \\
+ETTh2 & 168 & 4 & 5.359 $\pm$ 0.028 & 3.691 $\pm$ 0.183 & 3.329 $\pm$ 0.542 & 2.657 & \textbf{2.337} & 2, 2, 2, 1, 1 \\
+\bottomrule
+\end{tabular}%
+}
+\end{table*}

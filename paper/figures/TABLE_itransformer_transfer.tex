@@ -1,0 +1,17 @@
+\begin{table}[t]
+\centering
+\caption{iTransformer activation-transfer stress test. In this one-seed pilot, GELU remains best in 5 of 6 ETTh2/ETTm2 cells; the only non-GELU win is a narrow \texttt{tanh\_sin001} gain on ETTm2/96.}
+\label{tab:itransformer_transfer}
+\begin{tabular}{llrrlr}
+\toprule
+Model & Dataset & Horizon & GELU MSE & Best config & Gain \\
+\midrule
+iTransformer & ETTh2 & 96 & 0.301598 & \texttt{gelu\_ffn\_linear} & 0.00\% \\
+iTransformer & ETTh2 & 336 & 0.422894 & \texttt{gelu\_ffn\_linear} & 0.00\% \\
+iTransformer & ETTh2 & 720 & 0.428986 & \texttt{gelu\_ffn\_linear} & 0.00\% \\
+iTransformer & ETTm2 & 96 & 0.184226 & \texttt{tanh\_sin001\_ffn\_linear} & 0.19\% \\
+iTransformer & ETTm2 & 336 & 0.313418 & \texttt{gelu\_ffn\_linear} & 0.00\% \\
+iTransformer & ETTm2 & 720 & 0.414092 & \texttt{gelu\_ffn\_linear} & 0.00\% \\
+\bottomrule
+\end{tabular}
+\end{table}

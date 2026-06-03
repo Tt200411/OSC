@@ -1,0 +1,9 @@
+action,target,feature,direction,threshold,fired_count,fired_rate,precision,mean_uplift_if_fired,policy_mean_uplift
+regime_tanh_vs_gelu,gain_tanh_all_vs_gelu,router_time_robust_scale_ratio,high,1.629118158125354,4,0.4444444444444444,1.0,0.03243511631226018,0.014415607249893412
+regime_softsign_vs_gelu,gain_softsign_all_vs_gelu,input_anomaly_density_intensity,high,0.10107087650411668,3,0.3333333333333333,1.0,0.02263557787510187,0.007545192625033957
+regime_tanh_sin_vs_gelu,gain_tanh_sin001_all_vs_gelu,router_time_robust_scale_ratio,high,1.629118158125354,4,0.4444444444444444,1.0,0.03469013095400028,0.015417835979555681
+placement_encoder_tanh_vs_gelu,gain_enc_tanh_dec_gelu_vs_gelu,input_anomaly_density_intensity,high,0.10107087650411668,3,0.3333333333333333,1.0,0.026349652122663717,0.008783217374221238
+placement_decoder_tanh_vs_gelu,gain_enc_gelu_dec_tanh_vs_gelu,input_anomaly_density_intensity,high,0.0693576643630816,7,0.7777777777777778,1.0,0.012196573624398743,0.009486223930087911
+placement_output_tanh_vs_tanh,gain_outtanh_vs_tanh,input_volatility,high,0.018955023769364737,2,0.2222222222222222,1.0,0.015951479112184194,0.0035447731360409318
+placement_all_tanh_vs_best_split,gain_alltanh_vs_best_split,router_time_robust_scale_ratio,high,1.629118158125354,4,0.4444444444444444,0.75,0.033252499599362204,0.014778888710827645
+oracle_gain_vs_gelu,oracle_gain_vs_gelu,input_volatility,high,0.0,9,1.0,1.0,0.024035504463226345,0.024035504463226345

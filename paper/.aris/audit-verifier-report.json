@@ -1,0 +1,14 @@
+{
+  "verifier_version": "1",
+  "paper_dir": "/Users/tangbao/project/Oscillatory-Neural-Behavior-Leveraging-Dynamic-Activations-for-Improved-Learning-main/paper",
+  "assurance": "submission",
+  "generated_at": "2026-05-15T16:44:25Z",
+  "any_problem": true,
+  "submission_blocking": true,
+  "audits": [
+    {"audit":"proof-checker","status":"OK","verdict":"NOT_APPLICABLE","stale":false,"issues":[]},
+    {"audit":"paper-claim-audit","status":"OK","verdict":"WARN","stale":false,"issues":[]},
+    {"audit":"citation-audit","status":"OK","verdict":"WARN","stale":false,"issues":[]},
+    {"audit":"kill-argument","status":"BLOCKING_VERDICT","verdict":"FAIL","stale":false,"issues":[]}
+  ]
+}

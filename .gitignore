@@ -188,3 +188,8 @@ phase4_remote_results/analysis_current/factors/phase4_factor_sample_results.csv
 phase4_remote_results/analysis_current/factors/_factor_work/
 phase4_remote_results/analysis_current/factors/_oracle_work/
 phase4_remote_results/analysis_current/factors/phase4_factor_results_links/
+
+# External cloned baseline repositories; current worktree deltas are archived under .aris/external_worktree_deltas_*/.
+LTSF-Linear/
+PatchTST/
+iTransformer/

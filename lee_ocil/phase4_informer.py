@@ -34,6 +34,12 @@ SOLAR_DEFAULTS = {
     "Solar8": ("../Solar", "Site_8_30MW.csv", "Power", "t"),
 }
 
+CROSS_DATASET_DEFAULTS = {
+    "Weather": ("../Weather", "weather.csv", "OT", "t"),
+    "Exchange": ("../Exchange", "exchange_rate.csv", "OT", "d"),
+    "ILI": ("../ILI", "national_illness.csv", "OT", "w"),
+}
+
 DATASET_DEFAULTS = {
     **{
         name: {"root_path": root, "data_path": data_path, "target": target, "freq": freq}
@@ -42,6 +48,10 @@ DATASET_DEFAULTS = {
     **{
         name: {"root_path": root, "data_path": data_path, "target": target, "freq": freq}
         for name, (root, data_path, target, freq) in SOLAR_DEFAULTS.items()
+    },
+    **{
+        name: {"root_path": root, "data_path": data_path, "target": target, "freq": freq}
+        for name, (root, data_path, target, freq) in CROSS_DATASET_DEFAULTS.items()
     },
 }
 
@@ -72,7 +82,7 @@ class Phase4ExpInformer(Exp_Informer):
             Data = Dataset_ETT_hour
         elif args.data in {"ETTm1", "ETTm2"}:
             Data = Dataset_ETT_minute
-        elif args.data.startswith("Solar") or args.data in {"WTH", "ECL", "custom"}:
+        elif args.data.startswith("Solar") or args.data in {"Weather", "Exchange", "ILI", "WTH", "ECL", "custom"}:
             Data = Dataset_Custom
         else:
             raise ValueError(f"Unsupported Phase-4 dataset: {args.data}")
@@ -155,6 +165,9 @@ def build_parser():
             "Solar6",
             "Solar7",
             "Solar8",
+            "Weather",
+            "Exchange",
+            "ILI",
             "custom",
             "WTH",
             "ECL",

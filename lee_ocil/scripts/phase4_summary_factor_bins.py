@@ -5,12 +5,14 @@ import os
 import numpy as np
 import pandas as pd
 
-from analyze_factor_effects import FACTOR_COLUMNS, factor_rows_for_prediction
+from analyze_factor_effects import FACTOR_COLUMNS, factor_rows_for_prediction, test_border1
+from generate_factors import window_factors
 from phase4_common import data_path_for_dataset, root_path_for_dataset
 from phase4_report_utils import markdown_table
 
 
 BIN_ORDER = {"low": 0, "mid": 1, "high": 2, "down": 0, "flat": 1, "up": 2}
+MIN_DYNAMIC_FACTOR_POINTS = 4
 
 
 def prediction_sample_count(dataset, seq_len, pred_len, config, lee_root):
@@ -60,13 +62,93 @@ def build_cell_factor_table(agg, factors_dir, lee_root):
         factors_path = os.path.join(factors_dir, f"{dataset}_factors.csv")
         factors = pd.read_csv(factors_path)
         n_samples = prediction_sample_count(dataset, seq_len, pred_len, config, lee_root)
-        factor_rows = factor_rows_for_prediction(config, factors, n_samples, lee_root)
+        if factor_granularity_is_degenerate(factors):
+            factor_rows = direct_factor_rows_for_prediction(config, factors, n_samples, lee_root)
+        else:
+            factor_rows = factor_rows_for_prediction(config, factors, n_samples, lee_root)
         summary = {**cell, "test_sample_count": n_samples}
         for factor in FACTOR_COLUMNS:
             summary[f"input_{factor}"] = factor_rows[f"input_{factor}"].mean()
             summary[f"target_{factor}"] = factor_rows[f"target_{factor}"].mean()
         rows.append(summary)
     return pd.DataFrame(rows)
+
+
+def factor_granularity_is_degenerate(factors):
+    if factors.empty or not {"start_index", "end_index"}.issubset(factors.columns):
+        return True
+    lengths = pd.to_numeric(factors["end_index"], errors="coerce") - pd.to_numeric(
+        factors["start_index"], errors="coerce"
+    ) + 1
+    lengths = lengths.replace([np.inf, -np.inf], np.nan).dropna()
+    if lengths.empty:
+        return True
+    return float(lengths.median()) < MIN_DYNAMIC_FACTOR_POINTS
+
+
+def direct_factor_rows_for_prediction(config, factors, n_samples, lee_root):
+    """Compute factors on true model input/target windows when precomputed bins are too fine."""
+    seq_len = int(config["seq_len"])
+    pred_len = int(config["pred_len"])
+    dataset = config["data"]
+    csv_path = os.path.normpath(os.path.join(lee_root, config["root_path"], config["data_path"]))
+    frame = pd.read_csv(csv_path)
+    values = frame["OT" if "OT" in frame.columns else frame.columns[-1]].astype(float).to_numpy()
+    border1 = test_border1(dataset, seq_len, config, lee_root)
+
+    points_per_day = int(pd.to_numeric(factors.get("points_per_day", pd.Series([1])), errors="coerce").dropna().iloc[0])
+    reference_days = int(pd.to_numeric(factors.get("reference_days", pd.Series([30])), errors="coerce").dropna().iloc[0])
+    alpha = float(pd.to_numeric(factors.get("alpha", pd.Series([0.05])), errors="coerce").dropna().iloc[0])
+    beta = float(pd.to_numeric(factors.get("beta", pd.Series([0.05])), errors="coerce").dropna().iloc[0])
+    method = str(factors.get("method", pd.Series(["sum"])).dropna().iloc[0])
+    reference_size = max(reference_days * max(points_per_day, 1), seq_len)
+
+    rows = {
+        "sample_index": np.arange(n_samples),
+        "input_start_index": np.zeros(n_samples, dtype=int),
+        "input_end_index": np.zeros(n_samples, dtype=int),
+        "target_start_index": np.zeros(n_samples, dtype=int),
+        "target_end_index": np.zeros(n_samples, dtype=int),
+    }
+    input_values = {factor: np.full(n_samples, np.nan, dtype=float) for factor in FACTOR_COLUMNS}
+    target_values = {factor: np.full(n_samples, np.nan, dtype=float) for factor in FACTOR_COLUMNS}
+
+    for sample_index in range(n_samples):
+        input_start = border1 + sample_index
+        input_end = input_start + seq_len
+        target_start = input_end
+        target_end = target_start + pred_len
+        ref_start = max(0, input_start - reference_size)
+        reference = values[ref_start:input_start] if input_start > 0 else values[input_start:input_end]
+        input_factor_values = window_factors(
+            values[input_start:input_end],
+            reference,
+            alpha,
+            beta,
+            method,
+            points_per_day=points_per_day,
+        )
+        target_factor_values = window_factors(
+            values[target_start:target_end],
+            reference,
+            alpha,
+            beta,
+            method,
+            points_per_day=points_per_day,
+        )
+        rows["input_start_index"][sample_index] = input_start
+        rows["input_end_index"][sample_index] = input_end - 1
+        rows["target_start_index"][sample_index] = target_start
+        rows["target_end_index"][sample_index] = target_end - 1
+        for factor in FACTOR_COLUMNS:
+            input_values[factor][sample_index] = input_factor_values.get(factor, np.nan)
+            target_values[factor][sample_index] = target_factor_values.get(factor, np.nan)
+
+    out = pd.DataFrame(rows)
+    for factor in FACTOR_COLUMNS:
+        out[f"input_{factor}"] = input_values[factor]
+        out[f"target_{factor}"] = target_values[factor]
+    return out
 
 
 def annotate_bins(cell_factors):

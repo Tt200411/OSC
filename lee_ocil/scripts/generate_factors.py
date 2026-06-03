@@ -80,7 +80,71 @@ def max_drawdown_drawup(values):
     return float(drawdown.max()), float(drawup.max())
 
 
-def window_factors(values, reference_values, alpha, beta, method):
+def spectral_factors(values, points_per_day=None):
+    values = np.asarray(values, dtype=float)
+    if len(values) < 4:
+        return {
+            "spectral_entropy": 0.0,
+            "dominant_frequency_energy_ratio": 0.0,
+            "top3_frequency_energy_ratio": 0.0,
+            "low_freq_energy_ratio": 0.0,
+            "mid_freq_energy_ratio": 0.0,
+            "high_freq_energy_ratio": 0.0,
+            "spectral_centroid": 0.0,
+            "spectral_bandwidth": 0.0,
+            "spectral_flatness": 0.0,
+            "daily_cycle_energy_ratio": 0.0,
+        }
+    centered = values - values.mean()
+    spectrum = np.fft.rfft(centered)
+    freqs = np.fft.rfftfreq(len(centered), d=1.0)
+    power = np.abs(spectrum) ** 2
+    if len(power) > 1:
+        freqs = freqs[1:]
+        power = power[1:]
+    total = float(power.sum())
+    if total <= 1e-12:
+        return {
+            "spectral_entropy": 0.0,
+            "dominant_frequency_energy_ratio": 0.0,
+            "top3_frequency_energy_ratio": 0.0,
+            "low_freq_energy_ratio": 0.0,
+            "mid_freq_energy_ratio": 0.0,
+            "high_freq_energy_ratio": 0.0,
+            "spectral_centroid": 0.0,
+            "spectral_bandwidth": 0.0,
+            "spectral_flatness": 0.0,
+            "daily_cycle_energy_ratio": 0.0,
+        }
+    prob = power / total
+    entropy = -float(np.sum(prob * np.log(prob + 1e-12)) / np.log(len(prob))) if len(prob) > 1 else 0.0
+    order = np.sort(power)[::-1]
+    centroid = float(np.sum(freqs * power) / total)
+    bandwidth = float(np.sqrt(np.sum(((freqs - centroid) ** 2) * power) / total))
+    flatness = float(np.exp(np.mean(np.log(power + 1e-12))) / (np.mean(power) + 1e-12))
+    low = float(power[freqs <= 0.10].sum() / total)
+    mid = float(power[(freqs > 0.10) & (freqs <= 0.25)].sum() / total)
+    high = float(power[freqs > 0.25].sum() / total)
+    daily_ratio = 0.0
+    if points_per_day:
+        daily_freq = 1.0 / float(points_per_day)
+        nearest = int(np.argmin(np.abs(freqs - daily_freq)))
+        daily_ratio = float(power[nearest] / total)
+    return {
+        "spectral_entropy": entropy,
+        "dominant_frequency_energy_ratio": float(order[0] / total),
+        "top3_frequency_energy_ratio": float(order[:3].sum() / total),
+        "low_freq_energy_ratio": low,
+        "mid_freq_energy_ratio": mid,
+        "high_freq_energy_ratio": high,
+        "spectral_centroid": centroid,
+        "spectral_bandwidth": bandwidth,
+        "spectral_flatness": flatness,
+        "daily_cycle_energy_ratio": daily_ratio,
+    }
+
+
+def window_factors(values, reference_values, alpha, beta, method, points_per_day=None):
     values = np.asarray(values, dtype=float)
     reference_values = np.asarray(reference_values, dtype=float)
     diffs = np.diff(values)
@@ -168,6 +232,7 @@ def window_factors(values, reference_values, alpha, beta, method):
         "max_drawdown": max_drawdown,
         "max_drawup": max_drawup,
         "direction_entropy": sign_entropy(diffs),
+        **spectral_factors(values, points_per_day=points_per_day),
     }
 
 
@@ -183,7 +248,7 @@ def build_factor_table(dataset, csv_path, target, points_per_day, reference_days
             continue
         ref_start = max(0, start - reference_size)
         reference = values[ref_start:start] if start > 0 else values[start:end]
-        factors = window_factors(values[start:end], reference, alpha, beta, method)
+        factors = window_factors(values[start:end], reference, alpha, beta, method, points_per_day=points_per_day)
         rows.append({
             "dataset": dataset,
             "window_id": len(rows),

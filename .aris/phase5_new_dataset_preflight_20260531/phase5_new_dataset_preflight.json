@@ -1,0 +1,13 @@
+{
+  "all_loader_ok": null,
+  "all_schema_ok": false,
+  "datasets": [
+    "Weather",
+    "Exchange",
+    "ILI"
+  ],
+  "loader_path": ".aris/phase5_new_dataset_preflight_20260531/phase5_new_dataset_loader_smoke.csv",
+  "path_path": ".aris/phase5_new_dataset_preflight_20260531/phase5_new_dataset_path_candidates.csv",
+  "report_path": ".aris/phase5_new_dataset_preflight_20260531/phase5_new_dataset_preflight.md",
+  "schema_path": ".aris/phase5_new_dataset_preflight_20260531/phase5_new_dataset_schema.csv"
+}

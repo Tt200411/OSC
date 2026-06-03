@@ -1,0 +1,1 @@
+dataset,pred_len,seq_len,patch_len,stride,e_layers,d_model,n_heads,d_ff,batch_size,train_epochs,config_name,activation_signature,placement,seed_count,mse_mean,mse_std,mae_mean,mae_std

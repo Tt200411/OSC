@@ -1,29 +1,33 @@
-\documentclass{article}
-\usepackage{iclr2026_conference,times}
+\documentclass[runningheads,a4paper]{llncs}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{times}
 \usepackage{hyperref}
 \usepackage{url}
 \usepackage{booktabs}
-\usepackage{nicefrac}
 \usepackage{microtype}
 \usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage{subcaption}
 \usepackage{multirow}
-\usepackage{amsmath,amssymb,amsfonts,amsthm,mathtools}
+\usepackage{placeins}
+\usepackage{amsmath,amssymb,amsfonts,mathtools}
 \usepackage[capitalize,noabbrev]{cleveref}
 
 \input{math_commands}
 
-% Anonymous submission.
-% \iclrfinalcopy
+\emergencystretch=2em
 
-\title{Where and When Do Bounded Activations Help Informer Forecasting?\\
-Full-Grid Placement and Regime Diagnostics under an Official-Script Protocol}
+\newcommand{\citep}[1]{\cite{#1}}
+\newcommand{\citet}[1]{\cite{#1}}
+
+\title{Activation Choice Is a Design Variable in Informer Forecasting}
+\titlerunning{Activation Choice in Informer Forecasting}
 
 \author{Anonymous Authors}
+\authorrunning{Anonymous Authors}
+\institute{}
 
 \begin{document}
 
@@ -31,16 +35,19 @@ Full-Grid Placement and Regime Diagnostics under an Official-Script Protocol}
 
 \begin{abstract}
 \input{sections/0_abstract}
+\keywords{Time-series forecasting \and Activation functions \and Informer \and Regime diagnostics}
 \end{abstract}
 
 \input{sections/1_introduction}
 \input{sections/2_related_work}
 \input{sections/3_method}
 \input{sections/4_experiments}
+\FloatBarrier
 \input{sections/5_conclusion}
+\FloatBarrier
 
 \bibliography{references}
-\bibliographystyle{iclr2026_conference}
+\bibliographystyle{splncs04}
 
 \newpage
 \appendix

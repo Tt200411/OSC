@@ -1,0 +1,336 @@
+diff --git a/data_provider/data_loader.py b/data_provider/data_loader.py
+index c86471d..6a448d1 100644
+--- a/data_provider/data_loader.py
++++ b/data_provider/data_loader.py
+@@ -69,7 +69,7 @@ class Dataset_ETT_hour(Dataset):
+             df_stamp['day'] = df_stamp.date.apply(lambda row: row.day, 1)
+             df_stamp['weekday'] = df_stamp.date.apply(lambda row: row.weekday(), 1)
+             df_stamp['hour'] = df_stamp.date.apply(lambda row: row.hour, 1)
+-            data_stamp = df_stamp.drop(['date'], 1).values
++            data_stamp = df_stamp.drop(columns=['date']).values
+         elif self.timeenc == 1:
+             data_stamp = time_features(pd.to_datetime(df_stamp['date'].values), freq=self.freq)
+             data_stamp = data_stamp.transpose(1, 0)
+@@ -159,7 +159,7 @@ class Dataset_ETT_minute(Dataset):
+             df_stamp['hour'] = df_stamp.date.apply(lambda row: row.hour, 1)
+             df_stamp['minute'] = df_stamp.date.apply(lambda row: row.minute, 1)
+             df_stamp['minute'] = df_stamp.minute.map(lambda x: x // 15)
+-            data_stamp = df_stamp.drop(['date'], 1).values
++            data_stamp = df_stamp.drop(columns=['date']).values
+         elif self.timeenc == 1:
+             data_stamp = time_features(pd.to_datetime(df_stamp['date'].values), freq=self.freq)
+             data_stamp = data_stamp.transpose(1, 0)
+@@ -257,7 +257,7 @@ class Dataset_Custom(Dataset):
+             df_stamp['day'] = df_stamp.date.apply(lambda row: row.day, 1)
+             df_stamp['weekday'] = df_stamp.date.apply(lambda row: row.weekday(), 1)
+             df_stamp['hour'] = df_stamp.date.apply(lambda row: row.hour, 1)
+-            data_stamp = df_stamp.drop(['date'], 1).values
++            data_stamp = df_stamp.drop(columns=['date']).values
+         elif self.timeenc == 1:
+             data_stamp = time_features(pd.to_datetime(df_stamp['date'].values), freq=self.freq)
+             data_stamp = data_stamp.transpose(1, 0)
+@@ -500,7 +500,7 @@ class Dataset_Pred(Dataset):
+             df_stamp['hour'] = df_stamp.date.apply(lambda row: row.hour, 1)
+             df_stamp['minute'] = df_stamp.date.apply(lambda row: row.minute, 1)
+             df_stamp['minute'] = df_stamp.minute.map(lambda x: x // 15)
+-            data_stamp = df_stamp.drop(['date'], 1).values
++            data_stamp = df_stamp.drop(columns=['date']).values
+         elif self.timeenc == 1:
+             data_stamp = time_features(pd.to_datetime(df_stamp['date'].values), freq=self.freq)
+             data_stamp = data_stamp.transpose(1, 0)
+diff --git a/experiments/exp_long_term_forecasting.py b/experiments/exp_long_term_forecasting.py
+index 35170c6..60f36aa 100644
+--- a/experiments/exp_long_term_forecasting.py
++++ b/experiments/exp_long_term_forecasting.py
+@@ -2,6 +2,8 @@ from data_provider.data_factory import data_provider
+ from experiments.exp_basic import Exp_Basic
+ from utils.tools import EarlyStopping, adjust_learning_rate, visual
+ from utils.metrics import metric
++import csv
++import json
+ import torch
+ import torch.nn as nn
+ from torch import optim
+@@ -13,6 +15,97 @@ import numpy as np
+ warnings.filterwarnings('ignore')
+ 
+ 
++SUMMARY_COLUMNS = [
++    'setting', 'stage', 'model', 'dataset', 'data', 'data_path', 'features', 'target', 'freq',
++    'seq_len', 'label_len', 'pred_len', 'e_layers', 'd_layers', 'd_model', 'n_heads',
++    'd_ff', 'factor', 'dropout', 'batch_size', 'train_epochs', 'learning_rate',
++    'activation', 'output_activation', 'activation_signature', 'placement', 'config_name', 'seed',
++    'mse', 'mae', 'rmse', 'mape', 'mspe', 'server_id', 'server_ip', 'run_id', 'des',
++    'config_path', 'pred_path', 'true_path'
++]
++
++
++def activation_signature(args):
++    activation = str(args.activation)
++    output_activation = str(getattr(args, 'output_activation', 'linear')).lower()
++    output = 'tanh' if output_activation == 'tanh' else 'linear'
++    amplitude = 0.01 if activation in {'tanh_sin001', 'tanh_sin_001', 'tanh_sin'} else 0.0
++    return f"act={activation}|ffn={activation}|out={output}|a={amplitude:g}"
++
++
++def write_summary_row(args, setting, metrics, folder_path):
++    mae, mse, rmse, mape, mspe = [float(item) for item in metrics]
++    config_path = os.path.join(folder_path, 'config.json')
++    pred_path = os.path.join(folder_path, 'pred.npy')
++    true_path = os.path.join(folder_path, 'true.npy')
++    row = {
++        'setting': setting,
++        'stage': args.stage,
++        'model': args.model,
++        'dataset': args.data,
++        'data': args.data,
++        'data_path': args.data_path,
++        'features': args.features,
++        'target': args.target,
++        'freq': args.freq,
++        'seq_len': int(args.seq_len),
++        'label_len': int(args.label_len),
++        'pred_len': int(args.pred_len),
++        'e_layers': int(args.e_layers),
++        'd_layers': int(args.d_layers),
++        'd_model': int(args.d_model),
++        'n_heads': int(args.n_heads),
++        'd_ff': int(args.d_ff),
++        'factor': int(args.factor),
++        'dropout': float(args.dropout),
++        'batch_size': int(args.batch_size),
++        'train_epochs': int(args.train_epochs),
++        'learning_rate': float(args.learning_rate),
++        'activation': args.activation,
++        'output_activation': getattr(args, 'output_activation', 'linear'),
++        'activation_signature': activation_signature(args),
++        'placement': 'ffn_outtanh' if str(getattr(args, 'output_activation', 'linear')).lower() == 'tanh' else 'ffn_linear',
++        'config_name': args.config_name or f"{args.activation}_ffn_linear",
++        'seed': int(args.random_seed),
++        'mse': mse,
++        'mae': mae,
++        'rmse': rmse,
++        'mape': mape,
++        'mspe': mspe,
++        'server_id': args.server_id,
++        'server_ip': args.server_ip,
++        'run_id': args.run_id,
++        'des': args.des,
++        'config_path': config_path,
++        'pred_path': pred_path,
++        'true_path': true_path,
++    }
++    with open(config_path, 'w', encoding='utf-8') as handle:
++        json.dump(vars(args), handle, indent=2, sort_keys=True)
++    summary_path = os.path.join('./results', 'summary.csv')
++    os.makedirs(os.path.dirname(summary_path), exist_ok=True)
++    if os.path.exists(summary_path) and os.path.getsize(summary_path) > 0:
++        with open(summary_path, newline='', encoding='utf-8') as handle:
++            reader = csv.DictReader(handle)
++            existing_rows = list(reader)
++            existing_columns = reader.fieldnames or []
++        if existing_columns != SUMMARY_COLUMNS:
++            with open(summary_path, 'w', newline='', encoding='utf-8') as handle:
++                writer = csv.DictWriter(handle, fieldnames=SUMMARY_COLUMNS)
++                writer.writeheader()
++                for existing in existing_rows:
++                    upgraded = {column: existing.get(column, '') for column in SUMMARY_COLUMNS}
++                    if not upgraded.get('output_activation'):
++                        upgraded['output_activation'] = 'tanh' if upgraded.get('placement') == 'ffn_outtanh' else 'linear'
++                    writer.writerow(upgraded)
++    write_header = not os.path.exists(summary_path) or os.path.getsize(summary_path) == 0
++    with open(summary_path, 'a', newline='', encoding='utf-8') as handle:
++        writer = csv.DictWriter(handle, fieldnames=SUMMARY_COLUMNS)
++        if write_header:
++            writer.writeheader()
++        writer.writerow(row)
++
++
+ class Exp_Long_Term_Forecast(Exp_Basic):
+     def __init__(self, args):
+         super(Exp_Long_Term_Forecast, self).__init__(args)
+@@ -246,8 +339,8 @@ class Exp_Long_Term_Forecast(Exp_Basic):
+                         shape = input.shape
+                         input = test_data.inverse_transform(input.squeeze(0)).reshape(shape)
+                     gt = np.concatenate((input[0, :, -1], true[0, :, -1]), axis=0)
+-                    pd = np.concatenate((input[0, :, -1], pred[0, :, -1]), axis=0)
+-                    visual(gt, pd, os.path.join(folder_path, str(i) + '.pdf'))
++                    pred_line = np.concatenate((input[0, :, -1], pred[0, :, -1]), axis=0)
++                    visual(gt, pred_line, os.path.join(folder_path, str(i) + '.pdf'))
+ 
+         preds = np.array(preds)
+         trues = np.array(trues)
+@@ -270,9 +363,11 @@ class Exp_Long_Term_Forecast(Exp_Basic):
+         f.write('\n')
+         f.close()
+ 
+-        np.save(folder_path + 'metrics.npy', np.array([mae, mse, rmse, mape, mspe]))
++        metrics = np.array([mae, mse, rmse, mape, mspe])
++        np.save(folder_path + 'metrics.npy', metrics)
+         np.save(folder_path + 'pred.npy', preds)
+         np.save(folder_path + 'true.npy', trues)
++        write_summary_row(self.args, setting, metrics, folder_path)
+ 
+         return
+ 
+@@ -326,4 +421,4 @@ class Exp_Long_Term_Forecast(Exp_Basic):
+ 
+         np.save(folder_path + 'real_prediction.npy', preds)
+ 
+-        return
+\ No newline at end of file
++        return
+diff --git a/layers/Transformer_EncDec.py b/layers/Transformer_EncDec.py
+index c48ddc3..f508148 100644
+--- a/layers/Transformer_EncDec.py
++++ b/layers/Transformer_EncDec.py
+@@ -1,5 +1,25 @@
+ import torch.nn as nn
+ import torch.nn.functional as F
++import torch
++
++
++def get_activation_fn(activation):
++    activation = str(activation).lower()
++    if activation == "relu":
++        return F.relu
++    if activation == "gelu":
++        return F.gelu
++    if activation == "tanh":
++        return torch.tanh
++    if activation == "softsign":
++        return F.softsign
++    if activation in {"silu", "swish"}:
++        return F.silu
++    if activation in {"tanh_sin001", "tanh_sin_001"}:
++        return lambda x: torch.tanh(x) + 0.01 * torch.sin(x)
++    if activation == "tanh_sin":
++        return lambda x: torch.tanh(x) + 0.01 * torch.sin(x)
++    raise ValueError(f"Unsupported activation: {activation}")
+ 
+ 
+ class ConvLayer(nn.Module):
+@@ -33,7 +53,7 @@ class EncoderLayer(nn.Module):
+         self.norm1 = nn.LayerNorm(d_model)
+         self.norm2 = nn.LayerNorm(d_model)
+         self.dropout = nn.Dropout(dropout)
+-        self.activation = F.relu if activation == "relu" else F.gelu
++        self.activation = get_activation_fn(activation)
+ 
+     def forward(self, x, attn_mask=None, tau=None, delta=None):
+         new_x, attn = self.attention(
+@@ -92,7 +112,7 @@ class DecoderLayer(nn.Module):
+         self.norm2 = nn.LayerNorm(d_model)
+         self.norm3 = nn.LayerNorm(d_model)
+         self.dropout = nn.Dropout(dropout)
+-        self.activation = F.relu if activation == "relu" else F.gelu
++        self.activation = get_activation_fn(activation)
+ 
+     def forward(self, x, cross, x_mask=None, cross_mask=None, tau=None, delta=None):
+         x = x + self.dropout(self.self_attention(
+diff --git a/model/iTransformer.py b/model/iTransformer.py
+index a6627bf..89fdc7a 100644
+--- a/model/iTransformer.py
++++ b/model/iTransformer.py
+@@ -18,6 +18,7 @@ class Model(nn.Module):
+         self.pred_len = configs.pred_len
+         self.output_attention = configs.output_attention
+         self.use_norm = configs.use_norm
++        self.output_activation = str(getattr(configs, 'output_activation', 'linear')).lower()
+         # Embedding
+         self.enc_embedding = DataEmbedding_inverted(configs.seq_len, configs.d_model, configs.embed, configs.freq,
+                                                     configs.dropout)
+@@ -62,6 +63,10 @@ class Model(nn.Module):
+ 
+         # B N E -> B N S -> B S N 
+         dec_out = self.projector(enc_out).permute(0, 2, 1)[:, :, :N] # filter the covariates
++        if self.output_activation == 'tanh':
++            dec_out = torch.tanh(dec_out)
++        elif self.output_activation not in {'linear', 'identity', 'none'}:
++            raise ValueError(f"Unsupported output activation: {self.output_activation}")
+ 
+         if self.use_norm:
+             # De-Normalization from Non-stationary Transformer
+@@ -77,4 +82,4 @@ class Model(nn.Module):
+         if self.output_attention:
+             return dec_out[:, -self.pred_len:, :], attns
+         else:
+-            return dec_out[:, -self.pred_len:, :]  # [B, L, D]
+\ No newline at end of file
++            return dec_out[:, -self.pred_len:, :]  # [B, L, D]
+diff --git a/run.py b/run.py
+index a50bbdb..397fea2 100644
+--- a/run.py
++++ b/run.py
+@@ -6,11 +6,6 @@ import random
+ import numpy as np
+ 
+ if __name__ == '__main__':
+-    fix_seed = 2023
+-    random.seed(fix_seed)
+-    torch.manual_seed(fix_seed)
+-    np.random.seed(fix_seed)
+-
+     parser = argparse.ArgumentParser(description='iTransformer')
+ 
+     # basic config
+@@ -53,6 +48,9 @@ if __name__ == '__main__':
+     parser.add_argument('--embed', type=str, default='timeF',
+                         help='time features encoding, options:[timeF, fixed, learned]')
+     parser.add_argument('--activation', type=str, default='gelu', help='activation')
++    parser.add_argument('--output_activation', type=str, default='linear',
++                        choices=['linear', 'identity', 'none', 'tanh'],
++                        help='optional output activation before iTransformer de-normalization')
+     parser.add_argument('--output_attention', action='store_true', help='whether to output attention in ecoder')
+     parser.add_argument('--do_predict', action='store_true', help='whether to predict unseen future data')
+ 
+@@ -64,6 +62,12 @@ if __name__ == '__main__':
+     parser.add_argument('--patience', type=int, default=3, help='early stopping patience')
+     parser.add_argument('--learning_rate', type=float, default=0.0001, help='optimizer learning rate')
+     parser.add_argument('--des', type=str, default='test', help='exp description')
++    parser.add_argument('--random_seed', type=int, default=2023, help='random seed')
++    parser.add_argument('--config_name', type=str, default='', help='activation config name for result aggregation')
++    parser.add_argument('--stage', type=str, default='', help='experiment stage for result aggregation')
++    parser.add_argument('--run_id', type=str, default='', help='external run id for result aggregation')
++    parser.add_argument('--server_id', type=str, default='', help='server identifier for result aggregation')
++    parser.add_argument('--server_ip', type=str, default='', help='server IP for result aggregation')
+     parser.add_argument('--loss', type=str, default='MSE', help='loss function')
+     parser.add_argument('--lradj', type=str, default='type1', help='adjust learning rate')
+     parser.add_argument('--use_amp', action='store_true', help='use automatic mixed precision training', default=False)
+@@ -88,6 +92,10 @@ if __name__ == '__main__':
+                                                                            'you can select [partial_start_index, min(enc_in + partial_start_index, N)]')
+ 
+     args = parser.parse_args()
++    fix_seed = args.random_seed
++    random.seed(fix_seed)
++    torch.manual_seed(fix_seed)
++    np.random.seed(fix_seed)
+     args.use_gpu = True if torch.cuda.is_available() and args.use_gpu else False
+ 
+     if args.use_gpu and args.use_multi_gpu:
+diff --git a/utils/timefeatures.py b/utils/timefeatures.py
+index 7c12972..0c05be3 100644
+--- a/utils/timefeatures.py
++++ b/utils/timefeatures.py
+@@ -121,6 +121,8 @@ def time_features_from_frequency_str(freq_str: str) -> List[TimeFeature]:
+         ],
+     }
+ 
++    if str(freq_str).lower() == 't':
++        freq_str = 'min'
+     offset = to_offset(freq_str)
+ 
+     for offset_type, feature_classes in features_by_offsets.items():
+diff --git a/utils/tools.py b/utils/tools.py
+index c3b922e..3fda1c4 100644
+--- a/utils/tools.py
++++ b/utils/tools.py
+@@ -31,7 +31,7 @@ class EarlyStopping:
+         self.counter = 0
+         self.best_score = None
+         self.early_stop = False
+-        self.val_loss_min = np.Inf
++        self.val_loss_min = np.inf
+         self.delta = delta
+ 
+     def __call__(self, val_loss, model, path):

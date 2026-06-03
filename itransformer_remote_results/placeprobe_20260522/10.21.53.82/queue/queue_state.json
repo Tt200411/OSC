@@ -1,0 +1,100 @@
+{
+  "meta": {
+    "project": "itransformer_activation_transfer_10.21.53.82",
+    "started": "2026-05-22T06:16:16.196105Z",
+    "manifest_path": "/home/testsv/.aris_queue/itransformer/20260522_itransformer_placeprobe_10_21_53_82/manifest.json"
+  },
+  "phases": [
+    {
+      "name": "stage1",
+      "depends_on": [],
+      "status": "completed"
+    }
+  ],
+  "jobs": [
+    {
+      "id": "it_stage1_ETTh2_pl96_gelu_ffn_outtanh_s2024",
+      "phase": "stage1",
+      "cmd": "python -u run.py --random_seed 2024 --is_training 1 --root_path ../lee_ocil/ETT-small/ --data_path ETTh2.csv --model_id ETTh2_pl96_gelu_ffn_outtanh_s2024 --model iTransformer --data ETTh2 --features M --target OT --freq h --seq_len 96 --label_len 48 --pred_len 96 --enc_in 7 --dec_in 7 --c_out 7 --e_layers 2 --d_layers 1 --n_heads 8 --d_model 128 --d_ff 128 --factor 1 --dropout 0.1 --embed timeF --des itransformer_placeprobe_20260522_gelu_ffn_outtanh_s2024 --train_epochs 10 --patience 3 --itr 1 --batch_size 32 --learning_rate 0.0001 --num_workers 4 --activation gelu --output_activation tanh --gpu '${GPU}' --config_name gelu_ffn_outtanh --stage placement_probe --server_id 4090-82 --server_ip 10.21.53.82 --run_id itransformer_placeprobe_20260522",
+      "expected_output": "results/ETTh2_pl96_gelu_ffn_outtanh_s2024_iTransformer_ETTh2_M_ft96_sl48_ll96_pl128_dm8_nh2_el1_dl128_df1_fctimeF_ebTrue_dtitransformer_placeprobe_20260522_gelu_ffn_outtanh_s2024_projection_0/config.json",
+      "status": "completed",
+      "gpu": 0,
+      "screen_name": "EQ_it_stage1_ETTh2_pl96_gelu_ffn_outtanh_s2024",
+      "pid": 343290,
+      "attempts": 1,
+      "started": "2026-05-22T06:16:18.230916Z",
+      "completed": "2026-05-22T06:17:18.235680Z",
+      "error": null
+    },
+    {
+      "id": "it_stage1_ETTh2_pl96_swish_ffn_linear_s2024",
+      "phase": "stage1",
+      "cmd": "python -u run.py --random_seed 2024 --is_training 1 --root_path ../lee_ocil/ETT-small/ --data_path ETTh2.csv --model_id ETTh2_pl96_swish_ffn_linear_s2024 --model iTransformer --data ETTh2 --features M --target OT --freq h --seq_len 96 --label_len 48 --pred_len 96 --enc_in 7 --dec_in 7 --c_out 7 --e_layers 2 --d_layers 1 --n_heads 8 --d_model 128 --d_ff 128 --factor 1 --dropout 0.1 --embed timeF --des itransformer_placeprobe_20260522_swish_ffn_linear_s2024 --train_epochs 10 --patience 3 --itr 1 --batch_size 32 --learning_rate 0.0001 --num_workers 4 --activation swish --output_activation linear --gpu '${GPU}' --config_name swish_ffn_linear --stage placement_probe --server_id 4090-82 --server_ip 10.21.53.82 --run_id itransformer_placeprobe_20260522",
+      "expected_output": "results/ETTh2_pl96_swish_ffn_linear_s2024_iTransformer_ETTh2_M_ft96_sl48_ll96_pl128_dm8_nh2_el1_dl128_df1_fctimeF_ebTrue_dtitransformer_placeprobe_20260522_swish_ffn_linear_s2024_projection_0/config.json",
+      "status": "completed",
+      "gpu": 0,
+      "screen_name": "EQ_it_stage1_ETTh2_pl96_swish_ffn_linear_s2024",
+      "pid": 343722,
+      "attempts": 1,
+      "started": "2026-05-22T06:17:20.297681Z",
+      "completed": "2026-05-22T06:18:20.305207Z",
+      "error": null
+    },
+    {
+      "id": "it_stage1_ETTm2_pl96_gelu_ffn_outtanh_s2024",
+      "phase": "stage1",
+      "cmd": "python -u run.py --random_seed 2024 --is_training 1 --root_path ../lee_ocil/ETT-small/ --data_path ETTm2.csv --model_id ETTm2_pl96_gelu_ffn_outtanh_s2024 --model iTransformer --data ETTm2 --features M --target OT --freq t --seq_len 96 --label_len 48 --pred_len 96 --enc_in 7 --dec_in 7 --c_out 7 --e_layers 2 --d_layers 1 --n_heads 8 --d_model 128 --d_ff 128 --factor 1 --dropout 0.1 --embed timeF --des itransformer_placeprobe_20260522_gelu_ffn_outtanh_s2024 --train_epochs 10 --patience 3 --itr 1 --batch_size 32 --learning_rate 0.0001 --num_workers 4 --activation gelu --output_activation tanh --gpu '${GPU}' --config_name gelu_ffn_outtanh --stage placement_probe --server_id 4090-82 --server_ip 10.21.53.82 --run_id itransformer_placeprobe_20260522",
+      "expected_output": "results/ETTm2_pl96_gelu_ffn_outtanh_s2024_iTransformer_ETTm2_M_ft96_sl48_ll96_pl128_dm8_nh2_el1_dl128_df1_fctimeF_ebTrue_dtitransformer_placeprobe_20260522_gelu_ffn_outtanh_s2024_projection_0/config.json",
+      "status": "completed",
+      "gpu": 0,
+      "screen_name": "EQ_it_stage1_ETTm2_pl96_gelu_ffn_outtanh_s2024",
+      "pid": 344158,
+      "attempts": 1,
+      "started": "2026-05-22T06:18:22.371904Z",
+      "completed": "2026-05-22T06:21:22.423612Z",
+      "error": null
+    },
+    {
+      "id": "it_stage1_ETTm2_pl96_swish_ffn_linear_s2024",
+      "phase": "stage1",
+      "cmd": "python -u run.py --random_seed 2024 --is_training 1 --root_path ../lee_ocil/ETT-small/ --data_path ETTm2.csv --model_id ETTm2_pl96_swish_ffn_linear_s2024 --model iTransformer --data ETTm2 --features M --target OT --freq t --seq_len 96 --label_len 48 --pred_len 96 --enc_in 7 --dec_in 7 --c_out 7 --e_layers 2 --d_layers 1 --n_heads 8 --d_model 128 --d_ff 128 --factor 1 --dropout 0.1 --embed timeF --des itransformer_placeprobe_20260522_swish_ffn_linear_s2024 --train_epochs 10 --patience 3 --itr 1 --batch_size 32 --learning_rate 0.0001 --num_workers 4 --activation swish --output_activation linear --gpu '${GPU}' --config_name swish_ffn_linear --stage placement_probe --server_id 4090-82 --server_ip 10.21.53.82 --run_id itransformer_placeprobe_20260522",
+      "expected_output": "results/ETTm2_pl96_swish_ffn_linear_s2024_iTransformer_ETTm2_M_ft96_sl48_ll96_pl128_dm8_nh2_el1_dl128_df1_fctimeF_ebTrue_dtitransformer_placeprobe_20260522_swish_ffn_linear_s2024_projection_0/config.json",
+      "status": "completed",
+      "gpu": 0,
+      "screen_name": "EQ_it_stage1_ETTm2_pl96_swish_ffn_linear_s2024",
+      "pid": 344680,
+      "attempts": 1,
+      "started": "2026-05-22T06:21:24.481286Z",
+      "completed": "2026-05-22T06:24:24.529847Z",
+      "error": null
+    },
+    {
+      "id": "it_stage1_ETTm2_pl720_gelu_ffn_outtanh_s2024",
+      "phase": "stage1",
+      "cmd": "python -u run.py --random_seed 2024 --is_training 1 --root_path ../lee_ocil/ETT-small/ --data_path ETTm2.csv --model_id ETTm2_pl720_gelu_ffn_outtanh_s2024 --model iTransformer --data ETTm2 --features M --target OT --freq t --seq_len 96 --label_len 48 --pred_len 720 --enc_in 7 --dec_in 7 --c_out 7 --e_layers 2 --d_layers 1 --n_heads 8 --d_model 128 --d_ff 128 --factor 1 --dropout 0.1 --embed timeF --des itransformer_placeprobe_20260522_gelu_ffn_outtanh_s2024 --train_epochs 10 --patience 3 --itr 1 --batch_size 32 --learning_rate 0.0001 --num_workers 4 --activation gelu --output_activation tanh --gpu '${GPU}' --config_name gelu_ffn_outtanh --stage placement_probe --server_id 4090-82 --server_ip 10.21.53.82 --run_id itransformer_placeprobe_20260522",
+      "expected_output": "results/ETTm2_pl720_gelu_ffn_outtanh_s2024_iTransformer_ETTm2_M_ft96_sl48_ll720_pl128_dm8_nh2_el1_dl128_df1_fctimeF_ebTrue_dtitransformer_placeprobe_20260522_gelu_ffn_outtanh_s2024_projection_0/config.json",
+      "status": "completed",
+      "gpu": 0,
+      "screen_name": "EQ_it_stage1_ETTm2_pl720_gelu_ffn_outtanh_s2024",
+      "pid": 345174,
+      "attempts": 1,
+      "started": "2026-05-22T06:24:26.587446Z",
+      "completed": "2026-05-22T06:29:26.686932Z",
+      "error": null
+    },
+    {
+      "id": "it_stage1_ETTm2_pl720_swish_ffn_linear_s2024",
+      "phase": "stage1",
+      "cmd": "python -u run.py --random_seed 2024 --is_training 1 --root_path ../lee_ocil/ETT-small/ --data_path ETTm2.csv --model_id ETTm2_pl720_swish_ffn_linear_s2024 --model iTransformer --data ETTm2 --features M --target OT --freq t --seq_len 96 --label_len 48 --pred_len 720 --enc_in 7 --dec_in 7 --c_out 7 --e_layers 2 --d_layers 1 --n_heads 8 --d_model 128 --d_ff 128 --factor 1 --dropout 0.1 --embed timeF --des itransformer_placeprobe_20260522_swish_ffn_linear_s2024 --train_epochs 10 --patience 3 --itr 1 --batch_size 32 --learning_rate 0.0001 --num_workers 4 --activation swish --output_activation linear --gpu '${GPU}' --config_name swish_ffn_linear --stage placement_probe --server_id 4090-82 --server_ip 10.21.53.82 --run_id itransformer_placeprobe_20260522",
+      "expected_output": "results/ETTm2_pl720_swish_ffn_linear_s2024_iTransformer_ETTm2_M_ft96_sl48_ll720_pl128_dm8_nh2_el1_dl128_df1_fctimeF_ebTrue_dtitransformer_placeprobe_20260522_swish_ffn_linear_s2024_projection_0/config.json",
+      "status": "completed",
+      "gpu": 0,
+      "screen_name": "EQ_it_stage1_ETTm2_pl720_swish_ffn_linear_s2024",
+      "pid": 345843,
+      "attempts": 1,
+      "started": "2026-05-22T06:29:28.751635Z",
+      "completed": "2026-05-22T06:33:28.826850Z",
+      "error": null
+    }
+  ]
+}

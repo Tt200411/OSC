@@ -55,6 +55,16 @@ FACTOR_COLUMNS = [
     "max_drawdown",
     "max_drawup",
     "direction_entropy",
+    "spectral_entropy",
+    "dominant_frequency_energy_ratio",
+    "top3_frequency_energy_ratio",
+    "low_freq_energy_ratio",
+    "mid_freq_energy_ratio",
+    "high_freq_energy_ratio",
+    "spectral_centroid",
+    "spectral_bandwidth",
+    "spectral_flatness",
+    "daily_cycle_energy_ratio",
 ]
 
 BIN_ORDER = {
@@ -208,6 +218,9 @@ def test_border1(dataset, seq_len, config, lee_root):
 
 def prepare_factor_lookup(factors):
     factors = factors.sort_values("start_index").reset_index(drop=True)
+    for column in FACTOR_COLUMNS:
+        if column not in factors.columns:
+            factors[column] = np.nan
     starts = factors["start_index"].to_numpy()
     ends = factors["end_index"].to_numpy()
     values = factors[FACTOR_COLUMNS].to_numpy(dtype=float)

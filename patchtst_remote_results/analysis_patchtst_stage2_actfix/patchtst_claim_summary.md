@@ -1,0 +1,24 @@
+# PatchTST Activation Transfer Claim Summary
+
+- Raw finite seed-runs: 54
+- Complete 3-seed config cells: 18
+- Dataset-horizon cells with non-GELU best activation: 6/6
+
+## Static Ranking
+
+| config_name | mean_rank | best_cells | mean_mse |
+| --- | --- | --- | --- |
+| tanh_ffn_outtanh | 1.5 | 3 | 0.34168465849426055 |
+| gelu_ffn_outtanh | 2.0 | 3 | 0.3405648014611668 |
+| tanh_sin001_ffn_outtanh | 2.5 | 0 | 0.34183781759606463 |
+
+## Best Cells
+
+| dataset | pred_len | seq_len | patch_len | stride | e_layers | d_model | n_heads | d_ff | batch_size | train_epochs | config_name | activation_signature | placement | seed_count | mse_mean | mse_std | mae_mean | mae_std | rank |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| ETTh2 | 336 | 336 | 16 | 8 | 3 | 16 | 4 | 128 | 128 | 20 | gelu_ffn_outtanh | act=gelu|ffn=gelu|out=tanh|a=0 | ffn_outtanh | 3 | 0.3373213112354278 | 0.0024983937899927806 | 0.38595449924468994 | 0.0026072780931887937 | 1.0 |
+| ETTh2 | 720 | 336 | 16 | 8 | 3 | 16 | 4 | 128 | 128 | 20 | tanh_ffn_outtanh | act=tanh|ffn=tanh|out=tanh|a=0 | ffn_outtanh | 3 | 0.3815467158953349 | 0.001295455417271769 | 0.41980021198590595 | 0.000660521790267197 | 1.0 |
+| ETTm2 | 288 | 336 | 16 | 8 | 3 | 128 | 16 | 256 | 128 | 20 | tanh_ffn_outtanh | act=tanh|ffn=tanh|out=tanh|a=0 | ffn_outtanh | 3 | 0.2682887812455495 | 0.0017769565345553825 | 0.3238320052623749 | 0.0009608972223406437 | 1.0 |
+| ETTm2 | 672 | 336 | 16 | 8 | 3 | 128 | 16 | 256 | 128 | 20 | gelu_ffn_outtanh | act=gelu|ffn=gelu|out=tanh|a=0 | ffn_outtanh | 3 | 0.3585897882779439 | 0.0010072142194761018 | 0.37908393144607544 | 0.00046111896866953087 | 1.0 |
+| Solar3 | 96 | 96 | 16 | 8 | 3 | 128 | 8 | 256 | 128 | 20 | gelu_ffn_outtanh | act=gelu|ffn=gelu|out=tanh|a=0 | ffn_outtanh | 3 | 0.489565630753835 | 0.0027746441399736027 | 0.42874955137570697 | 0.0025044143087663523 | 1.0 |
+| Solar5 | 96 | 96 | 16 | 8 | 3 | 128 | 8 | 256 | 128 | 20 | tanh_ffn_outtanh | act=tanh|ffn=tanh|out=tanh|a=0 | ffn_outtanh | 3 | 0.2039782255887985 | 3.477660314062118e-05 | 0.23612137635548905 | 0.0006936359123108525 | 1.0 |

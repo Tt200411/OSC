@@ -1,0 +1,23 @@
+\begin{table}[t]
+\centering
+\caption{PatchTST activation-transfer stress test. The Informer activation effect transfers only partially: non-GELU activations win selected ETTh2/Solar cells, while GELU remains best in 7 of 12 tested cells.}
+\label{tab:patchtst_transfer}
+\begin{tabular}{llrrlr}
+\toprule
+Model & Dataset & Horizon & GELU MSE & Best config & Gain \\
+\midrule
+PatchTST & ETTh2 & 168 & 0.325880 & \texttt{gelu\_ffn\_linear} & 0.00\% \\
+PatchTST & ETTh2 & 336 & 0.328450 & \texttt{gelu\_ffn\_linear} & 0.00\% \\
+PatchTST & ETTh2 & 720 & 0.380881 & \texttt{softsign\_ffn\_linear} & 0.67\% \\
+PatchTST & ETTm2 & 96 & 0.165589 & \texttt{gelu\_ffn\_linear} & 0.00\% \\
+PatchTST & ETTm2 & 288 & 0.262739 & \texttt{gelu\_ffn\_linear} & 0.00\% \\
+PatchTST & ETTm2 & 672 & 0.355232 & \texttt{gelu\_ffn\_linear} & 0.00\% \\
+PatchTST & Solar2 & 24 & 0.065450 & \texttt{tanh\_sin001\_ffn\_linear} & 0.42\% \\
+PatchTST & Solar2 & 96 & 0.099666 & \texttt{softsign\_ffn\_linear} & 1.12\% \\
+PatchTST & Solar3 & 24 & 0.279035 & \texttt{gelu\_ffn\_linear} & 0.00\% \\
+PatchTST & Solar3 & 96 & 0.446409 & \texttt{gelu\_ffn\_linear} & 0.00\% \\
+PatchTST & Solar5 & 24 & 0.114792 & \texttt{tanh\_sin001\_ffn\_linear} & 1.33\% \\
+PatchTST & Solar5 & 96 & 0.176366 & \texttt{softsign\_ffn\_linear} & 1.01\% \\
+\bottomrule
+\end{tabular}
+\end{table}

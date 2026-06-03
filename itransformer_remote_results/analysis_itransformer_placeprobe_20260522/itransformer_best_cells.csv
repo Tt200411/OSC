@@ -1,0 +1,4 @@
+dataset,pred_len,seq_len,label_len,e_layers,d_layers,d_model,n_heads,d_ff,factor,batch_size,train_epochs,config_name,activation_signature,placement,seed_count,mse_mean,mse_std,mae_mean,mae_std,rank
+ETTh2,96,96,48,2,1,128,8,128,1,32,10,gelu_ffn_outtanh,act=gelu|ffn=gelu|out=tanh|a=0,ffn_outtanh,1,0.2996672689914703,,0.3488405048847198,,1.0
+ETTm2,96,96,48,2,1,128,8,128,1,32,10,tanh_sin001_ffn_linear,act=tanh_sin001|ffn=tanh_sin001|out=linear|a=0.01,ffn_linear,1,0.1838691085577011,,0.2682293057441711,,1.0
+ETTm2,720,96,48,2,1,128,8,128,1,32,10,tanh_ffn_outtanh,act=tanh|ffn=tanh|out=tanh|a=0,ffn_outtanh,1,0.408508151769638,,0.4024522304534912,,1.0

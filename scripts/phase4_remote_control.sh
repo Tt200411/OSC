@@ -445,6 +445,28 @@ PY
   done
 }
 
+phase5_data_check() {
+  for host in ${HOSTS}; do
+    case " ${DISABLED_HOSTS} " in
+      *" ${host} "*) continue ;;
+    esac
+    echo "## ${host}"
+    ssh_cmd "${host}" "cd ${REMOTE_DIR}/lee_ocil && \
+      echo '-- gpu --' && nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu --format=csv,noheader,nounits 2>/dev/null | head -4 || true; \
+      echo '-- disk --' && df -h \$HOME | tail -1; \
+      echo '-- screens --' && screen -ls 2>/dev/null || true; \
+      echo '-- project python processes --' && ps -u \$USER -o pid,etime,cmd | grep -E 'phase4_informer|phase4_queue_manager|queue_manager|main_informer' | grep -v grep || true; \
+      echo '-- venv --' && .venv/bin/python - <<'PY'
+import torch, numpy, pandas
+print('torch', torch.__version__)
+print('cuda_available', torch.cuda.is_available())
+print('cuda_device_count', torch.cuda.device_count())
+PY
+      echo '-- compile --' && .venv/bin/python -m py_compile phase4_informer.py scripts/phase4_common.py scripts/phase5_dataset_preflight.py scripts/phase5_zero_shot_router_predict.py; \
+      echo '-- dataset smoke --' && .venv/bin/python scripts/phase5_dataset_preflight.py --project_root . --lee_root . --output_dir .aris/phase5_new_dataset_preflight_remote_20260601 --loader_smoke"
+  done
+}
+
 case "${1:-inventory}" in
   inventory) inventory ;;
   sync) sync_all ;;
@@ -455,8 +477,9 @@ case "${1:-inventory}" in
   fetch) shift; fetch_queues "$@" ;;
   runtime) runtime_check ;;
   data-check) data_check ;;
+  phase5-data-check) phase5_data_check ;;
   *)
-    echo "Usage: $0 {inventory|sync|launch <manifest-dir>|resume <launched-file> [poll]|state <launched-file>|summary <launched-file>|fetch <launched-file> <dest-root>|runtime|data-check}" >&2
+    echo "Usage: $0 {inventory|sync|launch <manifest-dir>|resume <launched-file> [poll]|state <launched-file>|summary <launched-file>|fetch <launched-file> <dest-root>|runtime|data-check|phase5-data-check}" >&2
     exit 2
     ;;
 esac

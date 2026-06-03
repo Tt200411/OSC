@@ -2,32 +2,53 @@
 
 \subsection{Full-grid coverage}
 
-The completed Phase-4 matrix contains \(972\) eligible seed-runs: 36 dataset-horizon cells, nine activation configurations, and three seeds per configuration. All \(324\) dataset-horizon-configuration cells have complete three-seed coverage under batch size \(32\) and six epochs. \Cref{tab:phase4_coverage} summarizes the coverage split across ETTh, ETTm, and Solar.
+The completed Informer matrix contains \(972\) eligible seed-runs: 36 dataset-horizon cells, nine activation configurations, and three seeds per configuration. All \(324\) dataset-horizon-configuration cells have complete three-seed coverage under the matched batch-size-32, six-epoch protocol. \Cref{tab:phase4_coverage} summarizes the coverage split across ETTh, ETTm, and Solar.
 
 \input{figures/TABLE_phase4_coverage}
 
-The aggregation is strict. A row is reusable only when dataset, horizon, sequence length, label length, layer counts, factor, batch size, epochs, activation signature, and seed all match the canonical key. Batch-adjusted diagnostics and mismatched summaries are excluded from the main table. The Solar4 source file contained six missing target values; those values were repaired before relaunching the exact 54 missing Solar4 seed-runs, and the repaired file is recorded by checksum in the experiment audit.
+The aggregation is strict. A row is reusable only when dataset, horizon, sequence length, label length, layer counts, ProbSparse factor, batch size, epochs, activation signature, and seed all match the canonical key. The Solar4 source file initially produced non-finite losses because six target values were missing; those values were repaired before relaunching the exact missing Solar4 seed-runs. The repaired source checksum is recorded in the artifact notes.
 
-\subsection{Best activation by dataset and horizon}
+\subsection{Activation-only changes beat GELU in most cells}
 
-\Cref{tab:phase4_best_activation} reports the best activation in each completed dataset-horizon cell. A non-GELU activation is best in \(34/36\) cells. The only GELU-best cases are Solar3 at horizons 24 and 96. ETT and ETTm cells show the largest gains: all 20 ETT/ETTm cells prefer non-GELU activations, with mean best-cell MSE reductions of \(22.1\%\) on ETTh and \(24.7\%\) on ETTm. Solar gains are smaller and more site-specific: 14 of 16 Solar cells prefer non-GELU activations, with a mean best-cell reduction of \(6.7\%\) over GELU among those non-GELU-best cells.
+\Cref{tab:phase4_best_activation} reports the best activation in each completed dataset-horizon cell. A non-GELU activation is best in \(34/36\) cells. The Wilson interval for this descriptive cell proportion is \(81.9\%\) to \(98.5\%\), but the more important point is the breadth of the pattern: all 20 ETT/ETTm cells prefer a non-GELU activation, and 14 of 16 Solar cells do as well. The only GELU-best cases are Solar3 at horizons 24 and 96.
 
 \input{figures/TABLE_phase4_best_activation}
 
-The heatmap in \Cref{fig:phase4_best_gain_heatmap} shows the same conclusion visually. Strong positive cells are concentrated in ETTh2 and ETTm2, but the best configuration changes across horizons. \texttt{tanh\_sin} and \texttt{softsign} each win eight cells, \texttt{tanh} wins seven, output \texttt{tanh} wins five, encoder-side \texttt{tanh} wins three, Swish wins two, GELU wins two, and ReLU wins one. This spread is the main empirical reason not to claim a universal activation.
+The largest best-cell gains occur in ETTh2 and ETTm2. ETTh2/336 and ETTm2/288 select hidden \texttt{tanh} with output \texttt{tanh}; ETTm2/672 selects the same output-bounded configuration and has the largest relative gain in the table. Solar gains are smaller and more site-specific. This is useful evidence against a trivial explanation that any non-GELU activation always helps: Solar3 keeps GELU, while Solar7 has high variance and a ReLU best cell at horizon 24.
 
-\subsection{Static ranking and placement}
+\subsection{Bounded and tanh-family activations are strong static choices}
 
-\Cref{tab:phase4_static_ranking} ranks each static configuration within every dataset-horizon cell. The best average ranks are \texttt{tanh\_sin} (\(2.78\)), \texttt{tanh} (\(3.19\)), and \texttt{softsign} (\(3.47\)). These three configurations also have high positive-cell rates against GELU, above \(80\%\). Swish is often better than GELU but rarely best, and ReLU is weak overall despite winning Solar7/24.
+\Cref{tab:phase4_static_ranking} ranks configurations within each dataset-horizon cell and averages the ranks over all 36 cells. The strongest static choices are \texttt{tanh\_sin001\_all}, \texttt{tanh\_all}, and \texttt{softsign\_all}. They also have high top-3 coverage and positive-cell rates against GELU. This supports the main positive lesson: bounded sign-preserving nonlinearities are not merely one-off winners, but robust candidates under this Informer protocol.
 
 \input{figures/TABLE_phase4_static_ranking}
 
-Placement remains dataset- and horizon-dependent. Output \texttt{tanh} is best in five cells, including ETTh1/720, ETTh2/336, ETTh2/720, ETTm2/288, and ETTm2/672. However, its mean rank is \(7.11\) and its mean relative result is negative because it performs poorly in many other cells. Encoder-side \texttt{tanh} is best in three Solar cells, while decoder-side \texttt{tanh} wins none. Thus output bounding and encoder placement are real effects, but neither substitutes for a full per-cell activation choice.
+\Cref{tab:phase4_static_uncertainty} adds the uncertainty view used to keep this claim scoped. The top three static configurations have positive mean gains with descriptive intervals that remain above zero when summarized over dataset-horizon cells. In contrast, decoder-only \texttt{tanh} is weak, ReLU is negative on average, and output \texttt{tanh} has a strongly negative mean despite winning five cells. Therefore the paper should not recommend output bounding as a default. It should be treated as a targeted placement candidate for selected long-horizon ETT/ETTm cells.
 
-\subsection{Factor-bin diagnostics}
+\input{figures/TABLE_phase4_static_uncertainty}
 
-Summary-level factor bins cover all 36 completed dataset-horizon cells and produce 783 factor-bin rows. They confirm that activation differences vary with regime summaries, but they do not by themselves prove a deployable selection rule because the bins are computed after observing completed static runs. Sample-level oracles are stricter and are limited to cells with saved prediction arrays. Among 84 leave-one-seed-out oracle rows, only seven are positive, all on Solar1/96. \Cref{tab:phase4_loso_oracle} lists the positive cases.
+\subsection{Placement effects are real but conditional}
+
+The best-cell counts are spread across configurations. \texttt{tanh\_sin001} and \texttt{softsign} each win eight cells, \texttt{tanh} wins seven, output \texttt{tanh} wins five, encoder-side \texttt{tanh} wins three, Swish wins two, GELU wins two, and ReLU wins one. Full-hidden bounded activations are the safest static candidates, but placement changes the result in important cells.
+
+Output \texttt{tanh} is best in ETTh1/720, ETTh2/336, ETTh2/720, ETTm2/288, and ETTm2/672. These are high-gain cells, which explains why output bounding is tempting. However, the same placement has mean rank \(7.11\) and a negative average gain across the grid. Encoder-side \texttt{tanh} is best in Solar4/96, Solar5/96, and Solar7/96, while decoder-side \texttt{tanh} wins no cell. This pattern is consistent with placement being a conditional design variable rather than a universal trick.
+
+\subsection{Regime factors are diagnostic, not a router}
+
+Summary-level factor bins cover all 36 dataset-horizon cells and produce 783 factor-bin rows. They reveal substantial regime dependence: 196 factor-conditioned contrasts have absolute end-minus-start improvement at least \(0.02\). The strongest contrasts are often warnings rather than positive rules. For example, high volatility, jump intensity, and turbulence bins frequently show that output \texttt{tanh} becomes worse, not that a simple high-volatility rule should select it.
+
+Sample-level leave-one-seed-out oracles are stricter. Among 84 leave-one-seed-out oracle rows, only seven are positive, all on Solar1/96. \Cref{tab:phase4_loso_oracle} lists these cases. The gains are small relative to the static grid and are not broad enough to justify deployment. The current conclusion is therefore negative for a zero-shot activation router: factors are useful for explaining conditional behavior and selecting follow-up ablations, but not for selecting a concrete activation and placement in a new cell.
 
 \input{figures/TABLE_phase4_loso_oracle}
 
-The factor evidence is therefore diagnostic rather than causal. Same-split oracles can be read as upper bounds, while the leave-one-seed-out results provide only weak generalization evidence for regime-conditioned selection. The current results support using factors to design targeted follow-up ablations, not deploying a factor-based activation router.
+\subsection{Architecture-transfer stress tests}
+
+\Cref{tab:patchtst_transfer} and \Cref{tab:patchtst_output_tanh} test whether the Informer findings transfer to PatchTST. The answer is partial. In the FFN-linear stage, GELU remains best in 7 of 12 cells, while \texttt{softsign} and \texttt{tanh\_sin001} win selected ETTh2 and Solar cells. This shows that activation sensitivity does not disappear, but the Informer static ranking does not transfer directly. The output-placement result is stronger and negative: output \texttt{tanh} loses all 54 paired seed-run comparisons against the matching linear-head configuration.
+
+\input{figures/TABLE_patchtst_transfer}
+\input{figures/TABLE_patchtst_output_tanh}
+
+\Cref{tab:itransformer_transfer} gives a second transfer stress test. In a one-seed ETTh2/ETTm2 FFN-only pilot, GELU remains best in five of six cells, and the only non-GELU best case is a narrow \texttt{tanh\_sin001} gain on ETTm2/96. A later three-cell placement probe gives a more conditional signal: output \texttt{tanh} helps on ETTh2/96 and ETTm2/720 but hurts on ETTm2/96. Because this placement probe is currently single-seed, we use it only as a direction for follow-up, not as a main statistical claim.
+
+\input{figures/TABLE_itransformer_transfer}
+
+Together, the transfer experiments sharpen the story. The Informer full-grid claim is strong because it is complete and matched. The broader cross-architecture claim is weaker but still useful: activation behavior depends on architecture and placement, so an activation policy should not be promoted as a universal dataset-only rule.

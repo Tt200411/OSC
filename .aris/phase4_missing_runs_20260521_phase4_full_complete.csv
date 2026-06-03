@@ -1,0 +1,1 @@
+dataset,pred_len,seq_len,label_len,e_layers,d_layers,factor,features,d_model,n_heads,d_ff,dropout,attn,embed,batch_size,train_epochs,config_name,activation,activation_family,encoder_activation,decoder_activation,output_activation,amplitude,frequency,phase,lee_type,activation_signature,seed,target,freq,data_path

@@ -1,0 +1,4 @@
+dataset,path,exists,schema_ok,schema_reason
+Weather,,False,False,missing dataset file
+Exchange,,False,False,missing dataset file
+ILI,,False,False,missing dataset file

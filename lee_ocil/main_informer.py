@@ -44,6 +44,24 @@ DATASET_DEFAULTS = {
         "target": "Power",
         "freq": "t",
     },
+    "Weather": {
+        "root_path": "../Weather",
+        "data_path": "weather.csv",
+        "target": "OT",
+        "freq": "t",
+    },
+    "Exchange": {
+        "root_path": "../Exchange",
+        "data_path": "exchange_rate.csv",
+        "target": "OT",
+        "freq": "d",
+    },
+    "ILI": {
+        "root_path": "../ILI",
+        "data_path": "national_illness.csv",
+        "target": "OT",
+        "freq": "w",
+    },
 }
 
 ACTIVATION_CHOICES = [
@@ -87,7 +105,25 @@ def build_parser():
     parser = argparse.ArgumentParser(description="Informer activation experiment runner")
 
     parser.add_argument("--model", default=None, choices=["informer", "informerstack"])
-    parser.add_argument("--data", default=None, choices=["ETTh1", "ETTh2", "ETTm1", "ETTm2", "Solar", "Solar1", "Solar5", "custom", "WTH", "ECL"])
+    parser.add_argument(
+        "--data",
+        default=None,
+        choices=[
+            "ETTh1",
+            "ETTh2",
+            "ETTm1",
+            "ETTm2",
+            "Solar",
+            "Solar1",
+            "Solar5",
+            "Weather",
+            "Exchange",
+            "ILI",
+            "custom",
+            "WTH",
+            "ECL",
+        ],
+    )
     parser.add_argument("--root_path", default=None)
     parser.add_argument("--data_path", default=None)
     parser.add_argument("--features", default=None, choices=["M", "S", "MS"])

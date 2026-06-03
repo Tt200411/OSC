@@ -1,0 +1,8 @@
+config_name,mean_rank,best_cells,mean_mse
+gelu_ffn_linear,2.25,7,0.250040748467048
+tanh_ffn_linear,2.5,0,0.25147366130517584
+tanh_sin001_ffn_linear,2.5833333333333335,2,0.2514677879710992
+softsign_ffn_linear,2.9166666666666665,3,0.25178682721323437
+gelu_ffn_outtanh,5.5,0,0.3405648014611668
+tanh_ffn_outtanh,5.5,0,0.34168465849426055
+tanh_sin001_ffn_outtanh,6.5,0,0.34183781759606463

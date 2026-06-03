@@ -1,0 +1,97 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyperFirstAtBeginDocument{\AtBeginDocument}
+\HyperFirstAtBeginDocument{\ifx\hyper@anchor\@undefined
+\global\let\oldcontentsline\contentsline
+\gdef\contentsline#1#2#3#4{\oldcontentsline{#1}{#2}{#3}}
+\global\let\oldnewlabel\newlabel
+\gdef\newlabel#1#2{\newlabelxx{#1}#2}
+\gdef\newlabelxx#1#2#3#4#5#6{\oldnewlabel{#1}{{#2}{#3}}}
+\AtEndDocument{\ifx\hyper@anchor\@undefined
+\let\contentsline\oldcontentsline
+\let\newlabel\oldnewlabel
+\fi}
+\fi}
+\global\let\hyper@last\relax 
+\gdef\HyperFirstAtBeginDocument#1{#1}
+\providecommand*\HyPL@Entry[1]{}
+\citation{zhou2021informer}
+\HyPL@Entry{0<</S/D>>}
+\@writefile{toc}{\contentsline {title}{Activation Choice Is a Design Variable in Informer Forecasting}{1}{chapter.1}\protected@file@percent }
+\@writefile{toc}{\authcount {1}}
+\@writefile{toc}{\contentsline {author}{Anonymous Authors}{1}{chapter.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1.1}\protected@file@percent }
+\citation{nie2023patchtst}
+\citation{liu2023itransformer}
+\citation{zhou2021informer}
+\citation{nie2023patchtst}
+\citation{liu2023itransformer}
+\citation{nair2010relu}
+\citation{hendrycks2016gelu}
+\citation{sitzmann2020siren,tancik2020fourier}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Best activation gain over the same-protocol GELU row in each completed dataset-horizon cell. The full grid covers 36 dataset-horizon cells, nine activation configurations, and three seeds. Most cells prefer a non-GELU activation, but Solar3 remains GELU-best at both horizons.\relax }}{3}{figure.caption.2}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:phase4_best_gain_heatmap}{{1}{3}{Best activation gain over the same-protocol GELU row in each completed dataset-horizon cell. The full grid covers 36 dataset-horizon cells, nine activation configurations, and three seeds. Most cells prefer a non-GELU activation, but Solar3 remains GELU-best at both horizons.\relax }{figure.caption.2}{}}
+\newlabel{fig:phase4_best_gain_heatmap@cref}{{[figure][1][]1}{[1][2][]3}}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Related Work}{3}{section.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Transformer forecasting backbones.}{3}{section*.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Activation functions as controlled design variables.}{3}{section*.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Bounded and periodic nonlinearities.}{3}{section*.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Static activation ranking across the full Phase-4 grid. Bounded and tanh-family activations rank best on average, but the best-cell counts are spread across several configurations, arguing against a universal replacement activation.\relax }}{4}{figure.caption.3}\protected@file@percent }
+\newlabel{fig:phase4_static_ranking}{{2}{4}{Static activation ranking across the full Phase-4 grid. Bounded and tanh-family activations rank best on average, but the best-cell counts are spread across several configurations, arguing against a universal replacement activation.\relax }{figure.caption.3}{}}
+\newlabel{fig:phase4_static_ranking@cref}{{[figure][2][]2}{[1][2][]4}}
+\@writefile{toc}{\contentsline {paragraph}{Regime-aware forecasting diagnostics.}{4}{section*.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Architecture transfer.}{4}{section*.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Activation Grid and Protocol}{5}{section.1.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Forecasting setup}{5}{subsection.1.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Activation families and placements}{5}{subsection.1.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Datasets and horizon cells}{5}{subsection.1.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Aggregation and evidence policy}{6}{subsection.1.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Regime diagnostics}{6}{subsection.1.3.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Experiments}{6}{section.1.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Full-grid coverage}{6}{subsection.1.4.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Phase-4 full-grid coverage. A main-table cell is eligible only when all three seeds are present under batch size 32 and six training epochs.\relax }}{7}{table.caption.9}\protected@file@percent }
+\newlabel{tab:phase4_coverage}{{1}{7}{Phase-4 full-grid coverage. A main-table cell is eligible only when all three seeds are present under batch size 32 and six training epochs.\relax }{table.caption.9}{}}
+\newlabel{tab:phase4_coverage@cref}{{[table][1][]1}{[1][6][]7}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Activation-only changes beat GELU in most cells}{7}{subsection.1.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Bounded and tanh-family activations are strong static choices}{7}{subsection.1.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Placement effects are real but conditional}{8}{subsection.1.4.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Regime factors are diagnostic, not a router}{8}{subsection.1.4.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Architecture-transfer stress tests}{8}{subsection.1.4.6}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Best activation per dataset-horizon in the completed Phase-4 grid. Improvements are relative MSE reductions against the same-protocol GELU row with matched seeds; GELU-best cells have no relative-improvement entry.\relax }}{9}{table.caption.10}\protected@file@percent }
+\newlabel{tab:phase4_best_activation}{{2}{9}{Best activation per dataset-horizon in the completed Phase-4 grid. Improvements are relative MSE reductions against the same-protocol GELU row with matched seeds; GELU-best cells have no relative-improvement entry.\relax }{table.caption.10}{}}
+\newlabel{tab:phase4_best_activation@cref}{{[table][2][]2}{[1][7][]9}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Static activation ranking across the 36 completed dataset-horizon cells. Rank is computed within each cell over the nine Phase-4 configurations.\relax }}{10}{table.caption.11}\protected@file@percent }
+\newlabel{tab:phase4_static_ranking}{{3}{10}{Static activation ranking across the 36 completed dataset-horizon cells. Rank is computed within each cell over the nine Phase-4 configurations.\relax }{table.caption.11}{}}
+\newlabel{tab:phase4_static_ranking@cref}{{[table][3][]3}{[1][7][]10}}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Cell-level uncertainty for static Informer activation choices. The mean gain is computed from paired-seed relative MSE improvements over same-protocol GELU, first averaged inside each dataset-horizon cell and then summarized over the 36 cells. Intervals are descriptive 95\% normal intervals over cells, not a claim of population-level optimality.\relax }}{10}{table.caption.12}\protected@file@percent }
+\newlabel{tab:phase4_static_uncertainty}{{4}{10}{Cell-level uncertainty for static Informer activation choices. The mean gain is computed from paired-seed relative MSE improvements over same-protocol GELU, first averaged inside each dataset-horizon cell and then summarized over the 36 cells. Intervals are descriptive 95\% normal intervals over cells, not a claim of population-level optimality.\relax }{table.caption.12}{}}
+\newlabel{tab:phase4_static_uncertainty@cref}{{[table][4][]4}{[1][7][]10}}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Top positive leave-one-seed-out factor-oracle diagnostics among array-ready Phase-4 cells. These are diagnostic upper bounds for regime sensitivity, not deployed activation-routing results.\relax }}{11}{table.caption.13}\protected@file@percent }
+\newlabel{tab:phase4_loso_oracle}{{5}{11}{Top positive leave-one-seed-out factor-oracle diagnostics among array-ready Phase-4 cells. These are diagnostic upper bounds for regime sensitivity, not deployed activation-routing results.\relax }{table.caption.13}{}}
+\newlabel{tab:phase4_loso_oracle@cref}{{[table][5][]5}{[1][8][]11}}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces PatchTST activation-transfer stress test. The Informer activation effect transfers only partially: non-GELU activations win selected ETTh2/Solar cells, while GELU remains best in 7 of 12 tested cells.\relax }}{11}{table.caption.14}\protected@file@percent }
+\newlabel{tab:patchtst_transfer}{{6}{11}{PatchTST activation-transfer stress test. The Informer activation effect transfers only partially: non-GELU activations win selected ETTh2/Solar cells, while GELU remains best in 7 of 12 tested cells.\relax }{table.caption.14}{}}
+\newlabel{tab:patchtst_transfer@cref}{{[table][6][]6}{[1][8][]11}}
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces PatchTST output-tanh placement test. Output tanh loses every paired seed-run comparison against the matching linear-head configuration, indicating that the Informer output-bounding signal does not transfer to PatchTST.\relax }}{11}{table.caption.15}\protected@file@percent }
+\newlabel{tab:patchtst_output_tanh}{{7}{11}{PatchTST output-tanh placement test. Output tanh loses every paired seed-run comparison against the matching linear-head configuration, indicating that the Informer output-bounding signal does not transfer to PatchTST.\relax }{table.caption.15}{}}
+\newlabel{tab:patchtst_output_tanh@cref}{{[table][7][]7}{[1][8][]11}}
+\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces iTransformer activation-transfer stress test. In this one-seed pilot, GELU remains best in 5 of 6 ETTh2/ETTm2 cells; the only non-GELU win is a narrow \texttt  {tanh\_sin001} gain on ETTm2/96.\relax }}{12}{table.caption.16}\protected@file@percent }
+\newlabel{tab:itransformer_transfer}{{8}{12}{iTransformer activation-transfer stress test. In this one-seed pilot, GELU remains best in 5 of 6 ETTh2/ETTm2 cells; the only non-GELU win is a narrow \texttt {tanh\_sin001} gain on ETTm2/96.\relax }{table.caption.16}{}}
+\newlabel{tab:itransformer_transfer@cref}{{[table][8][]8}{[1][8][]12}}
+\bibdata{references}
+\bibcite{hendrycks2016gelu}{1}
+\bibcite{liu2023itransformer}{2}
+\bibcite{nair2010relu}{3}
+\bibcite{nie2023patchtst}{4}
+\bibcite{sitzmann2020siren}{5}
+\bibcite{tancik2020fourier}{6}
+\bibcite{zhou2021informer}{7}
+\bibstyle{splncs04}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Conclusion}{13}{section.1.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {A}Artifact and Reproducibility Notes}{14}{section.A.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {B}Dataset Integrity}{14}{section.A.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {C}Excluded Diagnostics}{14}{section.A.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {D}Current Evidence Limitations}{14}{section.A.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {E}Use of AI Tools}{15}{section.A.5}\protected@file@percent }
+\gdef \@abspage@last{15}

@@ -1,0 +1,32 @@
+{
+  "project": "patchtst_activation_transfer_10.21.53.113",
+  "cwd": "/home/testsv/project/osc_informer/PatchTST/PatchTST_supervised",
+  "venv_path": "/home/testsv/project/osc_informer/lee_ocil/.venv",
+  "gpus": [
+    0
+  ],
+  "max_parallel": 1,
+  "gpu_free_threshold_mib": 500,
+  "oom_retry": {
+    "delay": 180,
+    "max_attempts": 2
+  },
+  "phases": [
+    {
+      "name": "smoke",
+      "depends_on": [],
+      "jobs": [
+        {
+          "id": "ptst_smoke_ETTh2_pl336_tanh_sin001_ffn_linear_s2024",
+          "cmd": "python -u run_longExp.py --random_seed 2024 --is_training 1 --root_path ../../lee_ocil/ETT-small/ --data_path ETTh2.csv --model_id ETTh2_pl336_tanh_sin001_ffn_linear_s2024 --model PatchTST --data ETTh2 --features M --target OT --freq h --seq_len 336 --label_len 48 --pred_len 336 --enc_in 7 --dec_in 7 --c_out 7 --e_layers 3 --d_layers 1 --n_heads 4 --d_model 16 --d_ff 128 --factor 1 --dropout 0.3 --fc_dropout 0.3 --head_dropout 0 --patch_len 16 --stride 8 --padding_patch end --revin 1 --affine 0 --subtract_last 0 --decomposition 0 --embed timeF --des patchtst_smoke_20260521_tanh_sin001_ffn_linear_s2024 --train_epochs 3 --patience 5 --lradj type3 --pct_start 0.3 --itr 1 --batch_size 128 --learning_rate 0.0001 --num_workers 4 --activation tanh_sin --output_activation linear --perturb_amplitude 0.01 --perturb_frequency 1.0 --perturb_phase 0.0 --gpu '${GPU}' --server_id 4090-113 --server_ip 10.21.53.113 --run_id patchtst_smoke_20260521",
+          "expected_output": "results/ETTh2_pl336_tanh_sin001_ffn_linear_s2024_PatchTST_ETTh2_ftM_sl336_ll48_pl336_dm16_nh4_el3_dl1_df128_fc1_ebtimeF_dtTrue_patchtst_smoke_20260521_tanh_sin001_ffn_linear_s2024_0/config.json"
+        },
+        {
+          "id": "ptst_smoke_Solar3_pl96_tanh_sin001_ffn_linear_s2024",
+          "cmd": "python -u run_longExp.py --random_seed 2024 --is_training 1 --root_path ../../Solar/ --data_path Site_3_30MW.csv --model_id Solar3_pl96_tanh_sin001_ffn_linear_s2024 --model PatchTST --data custom --features M --target Power --freq t --seq_len 96 --label_len 48 --pred_len 96 --enc_in 6 --dec_in 6 --c_out 6 --e_layers 3 --d_layers 1 --n_heads 8 --d_model 128 --d_ff 256 --factor 1 --dropout 0.2 --fc_dropout 0.2 --head_dropout 0 --patch_len 16 --stride 8 --padding_patch end --revin 1 --affine 0 --subtract_last 0 --decomposition 0 --embed timeF --des patchtst_smoke_20260521_tanh_sin001_ffn_linear_s2024 --train_epochs 3 --patience 5 --lradj TST --pct_start 0.4 --itr 1 --batch_size 128 --learning_rate 0.0001 --num_workers 4 --activation tanh_sin --output_activation linear --perturb_amplitude 0.01 --perturb_frequency 1.0 --perturb_phase 0.0 --gpu '${GPU}' --server_id 4090-113 --server_ip 10.21.53.113 --run_id patchtst_smoke_20260521",
+          "expected_output": "results/Solar3_pl96_tanh_sin001_ffn_linear_s2024_PatchTST_custom_ftM_sl96_ll48_pl96_dm128_nh8_el3_dl1_df256_fc1_ebtimeF_dtTrue_patchtst_smoke_20260521_tanh_sin001_ffn_linear_s2024_0/config.json"
+        }
+      ]
+    }
+  ]
+}

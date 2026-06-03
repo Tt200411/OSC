@@ -1,0 +1,62 @@
+\begin{table}[t]
+\centering
+\caption{Specificity tests against the tanh baseline. Positive values indicate lower MSE than tanh.}
+\label{tab:tanh_specificity}
+\begin{tabular}{lrlrrrr}
+\toprule
+Dataset & Pred. & Activation & MSE & $\Delta$MSE & Win & Label \\
+\midrule
+ETTh1 & 24 & Lee1 & 0.6832 & +0.65\% & 0.400 & ineffective \\
+ETTh1 & 24 & Lee3 & 0.7648 & -13.95\% & 0.000 & negative \\
+ETTh1 & 24 & sin a=0.01 & 0.6865 & -1.66\% & 0.167 & ineffective \\
+ETTh1 & 24 & sin a=0.05 & 0.6854 & -1.30\% & 0.333 & ineffective \\
+ETTh1 & 24 & sin a=0.1 & 0.6911 & -2.29\% & 0.333 & negative \\
+ETTh1 & 168 & Lee1 & 1.0608 & +0.78\% & 0.833 & ineffective \\
+ETTh1 & 168 & Lee3 & 1.1258 & -5.41\% & 0.333 & negative \\
+ETTh1 & 168 & cos a=0.01 & 1.1794 & -0.52\% & 0.333 & ineffective \\
+ETTh1 & 168 & cos a=0.1 & 1.1731 & +0.04\% & 0.333 & ineffective \\
+ETTh1 & 168 & rand a=0.01 & 1.1830 & -0.81\% & 0.000 & ineffective \\
+ETTh1 & 168 & rand a=0.1 & 1.1815 & -0.71\% & 0.667 & ineffective \\
+ETTh1 & 168 & sin a=0.01 & 1.1337 & +0.60\% & 0.533 & ineffective \\
+ETTh1 & 168 & sin a=0.1 & 1.1302 & +0.01\% & 0.333 & ineffective \\
+ETTh2 & 168 & Lee1 & 3.4669 & +4.97\% & 0.833 & effective \\
+ETTh2 & 168 & Lee3 & 2.7308 & +22.07\% & 0.833 & strong\_effective \\
+ETTh2 & 168 & cos a=0.01 & 5.1165 & -5.16\% & 0.333 & negative \\
+ETTh2 & 168 & cos a=0.1 & 5.1596 & -5.81\% & 0.000 & negative \\
+ETTh2 & 168 & rand a=0.01 & 4.9563 & -1.59\% & 0.000 & ineffective \\
+ETTh2 & 168 & rand a=0.1 & 5.6574 & -16.51\% & 0.000 & negative \\
+ETTh2 & 168 & sin a=0.01 & 4.0810 & -2.00\% & 0.417 & negative \\
+ETTh2 & 168 & sin a=0.1 & 4.6501 & -6.23\% & 0.167 & negative \\
+Solar1 & 24 & Lee1 & 0.1625 & +0.58\% & 0.667 & ineffective \\
+Solar1 & 24 & Lee3 & 0.1918 & -17.20\% & 0.000 & negative \\
+Solar1 & 24 & cos a=0.01 & 0.1652 & +0.85\% & 0.667 & ineffective \\
+Solar1 & 24 & cos a=0.1 & 0.1648 & +1.13\% & 0.667 & mixed \\
+Solar1 & 24 & rand a=0.01 & 0.1670 & -0.22\% & 0.667 & ineffective \\
+Solar1 & 24 & rand a=0.1 & 0.1654 & +0.72\% & 1.000 & ineffective \\
+Solar1 & 24 & sin a=0.01 & 0.1642 & +0.48\% & 0.667 & ineffective \\
+Solar1 & 24 & sin a=0.05 & 0.1641 & -0.38\% & 0.667 & ineffective \\
+Solar1 & 24 & sin a=0.1 & 0.1654 & -0.25\% & 0.667 & ineffective \\
+Solar1 & 96 & Lee1 & 0.2538 & -1.32\% & 0.000 & ineffective \\
+Solar1 & 96 & cos a=0.01 & 0.2514 & -0.59\% & 0.667 & ineffective \\
+Solar1 & 96 & cos a=0.1 & 0.2520 & -0.77\% & 0.667 & ineffective \\
+Solar1 & 96 & rand a=0.01 & 0.2507 & -0.28\% & 0.333 & ineffective \\
+Solar1 & 96 & rand a=0.1 & 0.2529 & -1.17\% & 0.333 & ineffective \\
+Solar1 & 96 & sin a=0.01 & 0.2514 & -0.42\% & 0.333 & ineffective \\
+Solar1 & 96 & sin a=0.05 & 0.2553 & -1.99\% & 0.333 & ineffective \\
+Solar1 & 96 & sin a=0.1 & 0.2523 & -0.83\% & 0.333 & ineffective \\
+Solar5 & 24 & cos a=0.01 & 0.1147 & +2.01\% & 0.667 & effective \\
+Solar5 & 24 & cos a=0.1 & 0.1194 & -1.98\% & 0.333 & ineffective \\
+Solar5 & 24 & rand a=0.01 & 0.1171 & -0.00\% & 0.333 & ineffective \\
+Solar5 & 24 & rand a=0.1 & 0.1189 & -1.59\% & 0.333 & ineffective \\
+Solar5 & 24 & sin a=0.01 & 0.1180 & -0.72\% & 0.333 & ineffective \\
+Solar5 & 24 & sin a=0.1 & 0.1134 & +3.21\% & 1.000 & effective \\
+Solar5 & 96 & cos a=0.01 & 0.2048 & +1.15\% & 0.333 & ineffective \\
+Solar5 & 96 & cos a=0.1 & 0.2027 & +2.17\% & 1.000 & effective \\
+Solar5 & 96 & rand a=0.01 & 0.2008 & +3.09\% & 0.667 & effective \\
+Solar5 & 96 & rand a=0.1 & 0.2116 & -2.13\% & 0.333 & negative \\
+Solar5 & 96 & sin a=0.01 & 0.2045 & -0.94\% & 0.667 & ineffective \\
+Solar5 & 96 & sin a=0.05 & 0.2031 & -2.42\% & 0.000 & negative \\
+Solar5 & 96 & sin a=0.1 & 0.2081 & -2.68\% & 0.167 & negative \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,36 @@
+## 10.21.53.62
+ 
+rows 70176
+total_nan 0
+power_nan 0
+solar4_sha256:47c851e6e04642770cd94e76e5b6782bcf4203fb08cf4695a8d08fa6bbd70672
+Failed to initialize NVML: Driver/library version mismatch
+NVML library version: 580.159
+## 10.21.53.82
+ 
+rows 70176
+total_nan 0
+power_nan 0
+solar4_sha256:47c851e6e04642770cd94e76e5b6782bcf4203fb08cf4695a8d08fa6bbd70672
+0, NVIDIA GeForce RTX 4090, 40, 24564, 0
+## 10.21.53.113
+ 
+rows 70176
+total_nan 0
+power_nan 0
+solar4_sha256:47c851e6e04642770cd94e76e5b6782bcf4203fb08cf4695a8d08fa6bbd70672
+0, NVIDIA GeForce RTX 4090, 537, 24564, 0
+## 10.21.53.142
+ 
+rows 70176
+total_nan 0
+power_nan 0
+solar4_sha256:47c851e6e04642770cd94e76e5b6782bcf4203fb08cf4695a8d08fa6bbd70672
+0, NVIDIA GeForce RTX 4090, 40, 24564, 0
+## 10.21.53.162
+ 
+rows 70176
+total_nan 0
+power_nan 0
+solar4_sha256:47c851e6e04642770cd94e76e5b6782bcf4203fb08cf4695a8d08fa6bbd70672
+0, NVIDIA GeForce RTX 4090, 236, 24564, 0

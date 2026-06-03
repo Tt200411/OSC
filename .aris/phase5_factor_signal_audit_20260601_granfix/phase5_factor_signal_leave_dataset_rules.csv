@@ -1,0 +1,9 @@
+action,target,mean_policy_uplift,fire_rate,precision_if_fire,always_fire_mean_uplift,positive_rate,features_used
+regime_tanh_vs_gelu,gain_tanh_all_vs_gelu,-0.05187108107877087,0.3333333333333333,0.0,-0.11901814782161968,0.4444444444444444,input_kurtosis;abstain;input_volatility
+regime_softsign_vs_gelu,gain_softsign_all_vs_gelu,0.0,0.0,,-0.12714663915101776,0.3333333333333333,input_volatility;abstain
+regime_tanh_sin_vs_gelu,gain_tanh_sin001_all_vs_gelu,-0.05165496006111985,0.3333333333333333,0.0,-0.11119379614786123,0.4444444444444444,input_kurtosis;abstain;input_volatility
+placement_encoder_tanh_vs_gelu,gain_enc_tanh_dec_gelu_vs_gelu,0.0,0.0,,-0.12351031609224163,0.3333333333333333,input_volatility;abstain
+placement_decoder_tanh_vs_gelu,gain_enc_gelu_dec_tanh_vs_gelu,-0.004085260911053611,1.0,0.8888888888888888,-0.004085260911053611,0.8888888888888888,input_volatility;input_volatility_shock
+placement_output_tanh_vs_tanh,gain_outtanh_vs_tanh,-0.018304396942400342,0.3333333333333333,0.0,-0.04678131897505056,0.3333333333333333,input_kurtosis;input_mean;abstain
+placement_all_tanh_vs_best_split,gain_alltanh_vs_best_split,-0.12849767731878436,1.0,0.3333333333333333,-0.12849767731878436,0.3333333333333333,input_kurtosis;router_freq_dominant_period_to_horizon_ratio;input_anomaly_density_intensity
+oracle_gain_vs_gelu,oracle_gain_vs_gelu,0.024035504463226345,1.0,1.0,0.024035504463226345,1.0,router_freq_seasonal_peak_strength;input_anomaly_density_intensity

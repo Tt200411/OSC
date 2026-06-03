@@ -1,0 +1,44 @@
+{
+  "meta": {
+    "project": "patchtst_activation_transfer_10.21.53.142",
+    "started": "2026-05-21T09:49:10.181259Z",
+    "manifest_path": "/home/testsv/.aris_queue/patchtst/20260521_patchtst_smoke_retry3_10_21_53_142/manifest.json"
+  },
+  "phases": [
+    {
+      "name": "smoke",
+      "depends_on": [],
+      "status": "completed"
+    }
+  ],
+  "jobs": [
+    {
+      "id": "ptst_smoke_ETTm2_pl288_gelu_ffn_linear_s2024",
+      "phase": "smoke",
+      "cmd": "python -u run_longExp.py --random_seed 2024 --is_training 1 --root_path ../../lee_ocil/ETT-small/ --data_path ETTm2.csv --model_id ETTm2_pl288_gelu_ffn_linear_s2024 --model PatchTST --data ETTm2 --features M --target OT --freq t --seq_len 336 --label_len 48 --pred_len 288 --enc_in 7 --dec_in 7 --c_out 7 --e_layers 3 --d_layers 1 --n_heads 16 --d_model 128 --d_ff 256 --factor 1 --dropout 0.2 --fc_dropout 0.2 --head_dropout 0 --patch_len 16 --stride 8 --padding_patch end --revin 1 --affine 0 --subtract_last 0 --decomposition 0 --embed timeF --des patchtst_smoke_20260521_gelu_ffn_linear_s2024 --train_epochs 3 --patience 5 --lradj TST --pct_start 0.4 --itr 1 --batch_size 128 --learning_rate 0.0001 --num_workers 4 --activation gelu --output_activation linear --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --gpu '${GPU}' --server_id 4090-142 --server_ip 10.21.53.142 --run_id patchtst_smoke_20260521",
+      "expected_output": "results/ETTm2_pl288_gelu_ffn_linear_s2024_PatchTST_ETTm2_ftM_sl336_ll48_pl288_dm128_nh16_el3_dl1_df256_fc1_ebtimeF_dtTrue_patchtst_smoke_20260521_gelu_ffn_linear_s2024_0/config.json",
+      "status": "completed",
+      "gpu": 0,
+      "screen_name": "EQ_ptst_smoke_ETTm2_pl288_gelu_ffn_linear_s2024",
+      "pid": 2162794,
+      "attempts": 1,
+      "started": "2026-05-21T09:49:12.224236Z",
+      "completed": "2026-05-21T09:51:12.254313Z",
+      "error": null
+    },
+    {
+      "id": "ptst_smoke_Solar5_pl96_gelu_ffn_linear_s2024",
+      "phase": "smoke",
+      "cmd": "python -u run_longExp.py --random_seed 2024 --is_training 1 --root_path ../../Solar/ --data_path Site_5_110MW.csv --model_id Solar5_pl96_gelu_ffn_linear_s2024 --model PatchTST --data custom --features M --target Power --freq t --seq_len 96 --label_len 48 --pred_len 96 --enc_in 6 --dec_in 6 --c_out 6 --e_layers 3 --d_layers 1 --n_heads 8 --d_model 128 --d_ff 256 --factor 1 --dropout 0.2 --fc_dropout 0.2 --head_dropout 0 --patch_len 16 --stride 8 --padding_patch end --revin 1 --affine 0 --subtract_last 0 --decomposition 0 --embed timeF --des patchtst_smoke_20260521_gelu_ffn_linear_s2024 --train_epochs 3 --patience 5 --lradj TST --pct_start 0.4 --itr 1 --batch_size 128 --learning_rate 0.0001 --num_workers 4 --activation gelu --output_activation linear --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --gpu '${GPU}' --server_id 4090-142 --server_ip 10.21.53.142 --run_id patchtst_smoke_20260521",
+      "expected_output": "results/Solar5_pl96_gelu_ffn_linear_s2024_PatchTST_custom_ftM_sl96_ll48_pl96_dm128_nh8_el3_dl1_df256_fc1_ebtimeF_dtTrue_patchtst_smoke_20260521_gelu_ffn_linear_s2024_0/config.json",
+      "status": "completed",
+      "gpu": 0,
+      "screen_name": "EQ_ptst_smoke_Solar5_pl96_gelu_ffn_linear_s2024",
+      "pid": 2163147,
+      "attempts": 1,
+      "started": "2026-05-21T09:51:14.291285Z",
+      "completed": "2026-05-21T09:52:14.294066Z",
+      "error": null
+    }
+  ]
+}

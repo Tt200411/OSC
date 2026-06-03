@@ -1,0 +1,39 @@
+{
+  "date": "2026-05-21",
+  "auditor": "local-executor-no-subagent",
+  "overall_verdict": "warn",
+  "integrity_status": "warn",
+  "expected_seed_runs": 24,
+  "reusable_seed_runs": 2,
+  "newly_launched_seed_runs": 22,
+  "finite_rows": 24,
+  "duplicate_keys_after_dedup": 0,
+  "artifact_counts": {
+    "config.json": 24,
+    "metrics.npy": 24,
+    "pred.npy": 24,
+    "true.npy": 24
+  },
+  "queue_counts": {
+    "10.21.53.113": {
+      "completed": 6
+    },
+    "10.21.53.162": {
+      "completed": 5
+    },
+    "10.21.53.142": {
+      "completed": 5
+    },
+    "10.21.53.82": {
+      "completed": 6
+    }
+  },
+  "checks": {
+    "gt_provenance": "pass",
+    "score_normalization": "pass",
+    "result_existence": "pass",
+    "completion": "pass",
+    "scope": "warn",
+    "eval_type": "real_gt"
+  }
+}

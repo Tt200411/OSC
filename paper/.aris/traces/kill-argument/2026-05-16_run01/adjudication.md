@@ -1,0 +1,1 @@
+Fresh source-only adjudication found that title/abstract scope was partially answered by downgrading to a Phase-1 evidence report, but two critical points remain unresolved: non-independent repeated run records and missing inferential uncertainty/tests. Major partially answered points remain around effective sample size, broad scope, and factor-gradient diagnostics.

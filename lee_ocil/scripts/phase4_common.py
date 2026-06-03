@@ -60,7 +60,13 @@ SOLAR_FILES = {
     "Solar8": "Solar/Site_8_30MW.csv",
 }
 
-DATA_FILES = {**ETT_FILES, **SOLAR_FILES}
+CROSS_DATASET_FILES = {
+    "Weather": "Weather/weather.csv",
+    "Exchange": "Exchange/exchange_rate.csv",
+    "ILI": "ILI/national_illness.csv",
+}
+
+DATA_FILES = {**ETT_FILES, **SOLAR_FILES, **CROSS_DATASET_FILES}
 
 REMOTE_DATA_FILES = {
     "ETTh1": "lee_ocil/ETT-small/ETTh1.csv",
@@ -75,6 +81,9 @@ REMOTE_DATA_FILES = {
     "Solar6": "Solar/Site_6_35MW.csv",
     "Solar7": "Solar/Site_7_30MW.csv",
     "Solar8": "Solar/Site_8_30MW.csv",
+    "Weather": "Weather/weather.csv",
+    "Exchange": "Exchange/exchange_rate.csv",
+    "ILI": "ILI/national_illness.csv",
 }
 
 HORIZONS = {
@@ -297,16 +306,32 @@ def target_for_dataset(dataset):
 
 
 def freq_for_dataset(dataset):
+    if dataset == "Weather":
+        return "t"
+    if dataset == "Exchange":
+        return "d"
+    if dataset == "ILI":
+        return "w"
     return "t" if dataset.startswith("Solar") or dataset.startswith("ETTm") else "h"
 
 
 def root_path_for_dataset(dataset):
-    return "../Solar" if dataset.startswith("Solar") else "./ETT-small"
+    if dataset.startswith("Solar"):
+        return "../Solar"
+    if dataset == "Weather":
+        return "../Weather"
+    if dataset == "Exchange":
+        return "../Exchange"
+    if dataset == "ILI":
+        return "../ILI"
+    return "./ETT-small"
 
 
 def data_path_for_dataset(dataset):
     if dataset in ETT_FILES:
         return os.path.basename(ETT_FILES[dataset])
+    if dataset in CROSS_DATASET_FILES:
+        return os.path.basename(CROSS_DATASET_FILES[dataset])
     return os.path.basename(SOLAR_FILES[dataset])
 
 

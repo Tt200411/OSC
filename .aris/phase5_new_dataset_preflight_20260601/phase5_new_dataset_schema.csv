@@ -1,0 +1,4 @@
+dataset,path,exists,freq,horizons,rows,columns,numeric_columns,has_date,has_target,target,target_nan,total_nan,median_delta,mode_delta,mode_delta_rate,schema_ok,schema_reason
+Weather,/Users/tangbao/project/Oscillatory-Neural-Behavior-Leveraging-Dynamic-Activations-for-Improved-Learning-main/Weather/weather.csv,True,t,"96,192,336",52696,22,21,True,True,OT,0,0,0 days 00:10:00,0 days 00:10:00,0.9999620457348894,True,
+Exchange,/Users/tangbao/project/Oscillatory-Neural-Behavior-Leveraging-Dynamic-Activations-for-Improved-Learning-main/Exchange/exchange_rate.csv,True,d,"96,192,336",7588,9,8,True,True,OT,0,0,1 days 00:00:00,1 days 00:00:00,1.0,True,
+ILI,/Users/tangbao/project/Oscillatory-Neural-Behavior-Leveraging-Dynamic-Activations-for-Improved-Learning-main/ILI/national_illness.csv,True,w,"24,36,48",966,8,7,True,True,OT,0,0,7 days 00:00:00,7 days 00:00:00,1.0,True,

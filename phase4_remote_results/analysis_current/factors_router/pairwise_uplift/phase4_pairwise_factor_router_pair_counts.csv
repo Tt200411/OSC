@@ -1,0 +1,17 @@
+action_family,action_name,pair_count,mean_uplift,positive_rate
+placement,placement_output_tanh_matched,45,-0.42479493499272214,0.17777777777777778
+placement,placement_output_tanh_vs_best_linear,45,-0.47525657690347844,0.15555555555555556
+placement,placement_encoder_tanh_vs_default,36,0.057300019622110274,0.6944444444444444
+placement,placement_all_tanh_vs_best_split,36,0.05540683060599175,0.6111111111111112
+placement,placement_decoder_tanh_vs_default,36,0.024219454826616624,0.6111111111111112
+regime,regime_best_bounded_vs_default,57,0.09313849908039816,0.6491228070175439
+regime,regime_tanh_vs_default,57,0.07787927580330754,0.631578947368421
+regime,regime_tanh_sin_vs_default,57,0.07672463583879083,0.6140350877192983
+regime,regime_softsign_vs_default,57,0.07220854577427907,0.5789473684210527
+regime,regime_tanh_sin_vs_tanh,57,0.00010416135961126886,0.3333333333333333
+regime,regime_softsign_vs_tanh,57,-0.007119126067097159,0.3508771929824561
+regime,regime_best_unbounded_vs_default,39,0.051151972977354014,0.7948717948717948
+regime,regime_swish_vs_default,39,0.039027283369076765,0.717948717948718
+regime,regime_swish_vs_gelu,39,0.039027283369076765,0.717948717948718
+regime,regime_relu_vs_default,39,-0.019231072579958184,0.2564102564102564
+regime,regime_relu_vs_gelu,39,-0.019231072579958184,0.2564102564102564

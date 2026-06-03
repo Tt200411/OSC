@@ -1,0 +1,85 @@
+{
+  "project": "phase4_full_grid_10.21.53.113",
+  "cwd": "/home/testsv/project/osc_informer/lee_ocil",
+  "conda": "none",
+  "venv_path": "/home/testsv/project/osc_informer/lee_ocil/.venv",
+  "python": "",
+  "gpus": [
+    0
+  ],
+  "max_parallel": 1,
+  "gpu_free_threshold_mib": 500,
+  "oom_retry": {
+    "delay": 180,
+    "max_attempts": 2
+  },
+  "phases": [
+    {
+      "name": "solar96",
+      "depends_on": [],
+      "jobs": [
+        {
+          "id": "p4_Solar4_pl96_enc_gelu_dec_tanh_s2026",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data Solar4 --root_path ../Solar --data_path Site_4_130MW.csv --target Power --freq t --detail_freq t --seq_len 96 --label_len 48 --pred_len 96 --e_layers 2 --d_layers 1 --factor 5 --activation gelu --encoder_activation gelu --decoder_activation tanh --output_activation linear --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2026 --gpu '${GPU}' --server_id 4090-113 --server_ip 10.21.53.113 --run_id 20260521_phase4_solar4_nanfix --des 20260521_phase4_solar4_nanfix_enc_gelu_dec_tanh --no_save_pred --no_save_true",
+          "expected_output": "results/informer_Solar4_gelu_a0_encgelu_dectanh_outlinear_ftM_sl96_ll48_pl96_dm512_nh8_el2_dl1_df2048_fc5_seed2026_4090-113_20260521_phase4_solar4_nanfix_enc_gelu_dec_tanh/config.json"
+        },
+        {
+          "id": "p4_Solar4_pl96_gelu_all_s2025",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data Solar4 --root_path ../Solar --data_path Site_4_130MW.csv --target Power --freq t --detail_freq t --seq_len 96 --label_len 48 --pred_len 96 --e_layers 2 --d_layers 1 --factor 5 --activation gelu --encoder_activation gelu --decoder_activation gelu --output_activation linear --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2025 --gpu '${GPU}' --server_id 4090-113 --server_ip 10.21.53.113 --run_id 20260521_phase4_solar4_nanfix --des 20260521_phase4_solar4_nanfix_gelu_all --no_save_pred --no_save_true",
+          "expected_output": "results/informer_Solar4_gelu_a0_ftM_sl96_ll48_pl96_dm512_nh8_el2_dl1_df2048_fc5_seed2025_4090-113_20260521_phase4_solar4_nanfix_gelu_all/config.json"
+        },
+        {
+          "id": "p4_Solar4_pl96_softsign_all_s2024",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data Solar4 --root_path ../Solar --data_path Site_4_130MW.csv --target Power --freq t --detail_freq t --seq_len 96 --label_len 48 --pred_len 96 --e_layers 2 --d_layers 1 --factor 5 --activation softsign --encoder_activation softsign --decoder_activation softsign --output_activation linear --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2024 --gpu '${GPU}' --server_id 4090-113 --server_ip 10.21.53.113 --run_id 20260521_phase4_solar4_nanfix --des 20260521_phase4_solar4_nanfix_softsign_all --no_save_pred --no_save_true",
+          "expected_output": "results/informer_Solar4_softsign_a0_ftM_sl96_ll48_pl96_dm512_nh8_el2_dl1_df2048_fc5_seed2024_4090-113_20260521_phase4_solar4_nanfix_softsign_all/config.json"
+        },
+        {
+          "id": "p4_Solar4_pl96_swish_all_s2026",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data Solar4 --root_path ../Solar --data_path Site_4_130MW.csv --target Power --freq t --detail_freq t --seq_len 96 --label_len 48 --pred_len 96 --e_layers 2 --d_layers 1 --factor 5 --activation swish --encoder_activation swish --decoder_activation swish --output_activation linear --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2026 --gpu '${GPU}' --server_id 4090-113 --server_ip 10.21.53.113 --run_id 20260521_phase4_solar4_nanfix --des 20260521_phase4_solar4_nanfix_swish_all --no_save_pred --no_save_true",
+          "expected_output": "results/informer_Solar4_swish_a0_ftM_sl96_ll48_pl96_dm512_nh8_el2_dl1_df2048_fc5_seed2026_4090-113_20260521_phase4_solar4_nanfix_swish_all/config.json"
+        },
+        {
+          "id": "p4_Solar4_pl96_tanh_all_outtanh_s2025",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data Solar4 --root_path ../Solar --data_path Site_4_130MW.csv --target Power --freq t --detail_freq t --seq_len 96 --label_len 48 --pred_len 96 --e_layers 2 --d_layers 1 --factor 5 --activation tanh --encoder_activation tanh --decoder_activation tanh --output_activation tanh --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2025 --gpu '${GPU}' --server_id 4090-113 --server_ip 10.21.53.113 --run_id 20260521_phase4_solar4_nanfix --des 20260521_phase4_solar4_nanfix_tanh_all_outtanh --no_save_pred --no_save_true",
+          "expected_output": "results/informer_Solar4_tanh_a0_enctanh_dectanh_outtanh_ftM_sl96_ll48_pl96_dm512_nh8_el2_dl1_df2048_fc5_seed2025_4090-113_20260521_phase4_solar4_nanfix_tanh_all_outtanh/config.json"
+        }
+      ]
+    },
+    {
+      "name": "solar24",
+      "depends_on": [],
+      "jobs": [
+        {
+          "id": "p4_Solar4_pl24_enc_gelu_dec_tanh_s2024",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data Solar4 --root_path ../Solar --data_path Site_4_130MW.csv --target Power --freq t --detail_freq t --seq_len 96 --label_len 48 --pred_len 24 --e_layers 2 --d_layers 1 --factor 5 --activation gelu --encoder_activation gelu --decoder_activation tanh --output_activation linear --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2024 --gpu '${GPU}' --server_id 4090-113 --server_ip 10.21.53.113 --run_id 20260521_phase4_solar4_nanfix --des 20260521_phase4_solar4_nanfix_enc_gelu_dec_tanh --no_save_pred --no_save_true",
+          "expected_output": "results/informer_Solar4_gelu_a0_encgelu_dectanh_outlinear_ftM_sl96_ll48_pl24_dm512_nh8_el2_dl1_df2048_fc5_seed2024_4090-113_20260521_phase4_solar4_nanfix_enc_gelu_dec_tanh/config.json"
+        },
+        {
+          "id": "p4_Solar4_pl24_enc_tanh_dec_gelu_s2026",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data Solar4 --root_path ../Solar --data_path Site_4_130MW.csv --target Power --freq t --detail_freq t --seq_len 96 --label_len 48 --pred_len 24 --e_layers 2 --d_layers 1 --factor 5 --activation gelu --encoder_activation tanh --decoder_activation gelu --output_activation linear --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2026 --gpu '${GPU}' --server_id 4090-113 --server_ip 10.21.53.113 --run_id 20260521_phase4_solar4_nanfix --des 20260521_phase4_solar4_nanfix_enc_tanh_dec_gelu --no_save_pred --no_save_true",
+          "expected_output": "results/informer_Solar4_gelu_a0_enctanh_decgelu_outlinear_ftM_sl96_ll48_pl24_dm512_nh8_el2_dl1_df2048_fc5_seed2026_4090-113_20260521_phase4_solar4_nanfix_enc_tanh_dec_gelu/config.json"
+        },
+        {
+          "id": "p4_Solar4_pl24_relu_all_s2025",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data Solar4 --root_path ../Solar --data_path Site_4_130MW.csv --target Power --freq t --detail_freq t --seq_len 96 --label_len 48 --pred_len 24 --e_layers 2 --d_layers 1 --factor 5 --activation relu --encoder_activation relu --decoder_activation relu --output_activation linear --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2025 --gpu '${GPU}' --server_id 4090-113 --server_ip 10.21.53.113 --run_id 20260521_phase4_solar4_nanfix --des 20260521_phase4_solar4_nanfix_relu_all --no_save_pred --no_save_true",
+          "expected_output": "results/informer_Solar4_relu_a0_ftM_sl96_ll48_pl24_dm512_nh8_el2_dl1_df2048_fc5_seed2025_4090-113_20260521_phase4_solar4_nanfix_relu_all/config.json"
+        },
+        {
+          "id": "p4_Solar4_pl24_swish_all_s2024",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data Solar4 --root_path ../Solar --data_path Site_4_130MW.csv --target Power --freq t --detail_freq t --seq_len 96 --label_len 48 --pred_len 24 --e_layers 2 --d_layers 1 --factor 5 --activation swish --encoder_activation swish --decoder_activation swish --output_activation linear --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2024 --gpu '${GPU}' --server_id 4090-113 --server_ip 10.21.53.113 --run_id 20260521_phase4_solar4_nanfix --des 20260521_phase4_solar4_nanfix_swish_all --no_save_pred --no_save_true",
+          "expected_output": "results/informer_Solar4_swish_a0_ftM_sl96_ll48_pl24_dm512_nh8_el2_dl1_df2048_fc5_seed2024_4090-113_20260521_phase4_solar4_nanfix_swish_all/config.json"
+        },
+        {
+          "id": "p4_Solar4_pl24_tanh_all_s2026",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data Solar4 --root_path ../Solar --data_path Site_4_130MW.csv --target Power --freq t --detail_freq t --seq_len 96 --label_len 48 --pred_len 24 --e_layers 2 --d_layers 1 --factor 5 --activation tanh --encoder_activation tanh --decoder_activation tanh --output_activation linear --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2026 --gpu '${GPU}' --server_id 4090-113 --server_ip 10.21.53.113 --run_id 20260521_phase4_solar4_nanfix --des 20260521_phase4_solar4_nanfix_tanh_all --no_save_pred --no_save_true",
+          "expected_output": "results/informer_Solar4_tanh_a0_ftM_sl96_ll48_pl24_dm512_nh8_el2_dl1_df2048_fc5_seed2026_4090-113_20260521_phase4_solar4_nanfix_tanh_all/config.json"
+        },
+        {
+          "id": "p4_Solar4_pl24_tanh_sin001_all_s2025",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data Solar4 --root_path ../Solar --data_path Site_4_130MW.csv --target Power --freq t --detail_freq t --seq_len 96 --label_len 48 --pred_len 24 --e_layers 2 --d_layers 1 --factor 5 --activation tanh_sin --encoder_activation tanh_sin --decoder_activation tanh_sin --output_activation linear --perturb_amplitude 0.01 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2025 --gpu '${GPU}' --server_id 4090-113 --server_ip 10.21.53.113 --run_id 20260521_phase4_solar4_nanfix --des 20260521_phase4_solar4_nanfix_tanh_sin001_all --no_save_pred --no_save_true",
+          "expected_output": "results/informer_Solar4_tanh_sin_a0.01_ftM_sl96_ll48_pl24_dm512_nh8_el2_dl1_df2048_fc5_seed2025_4090-113_20260521_phase4_solar4_nanfix_tanh_sin001_all/config.json"
+        }
+      ]
+    }
+  ]
+}

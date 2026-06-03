@@ -1,0 +1,14 @@
+\begin{table}[t]
+\centering
+\caption{PatchTST output-tanh placement test. Output tanh loses every paired seed-run comparison against the matching linear-head configuration, indicating that the Informer output-bounding signal does not transfer to PatchTST.}
+\label{tab:patchtst_output_tanh}
+\begin{tabular}{lrrr}
+\toprule
+Base activation & Paired seed-runs & Win rate & Mean gain vs. linear \\
+\midrule
+\texttt{tanh} & 18 & 0.0\% & -5.28\% \\
+\texttt{tanh\_sin001} & 18 & 0.0\% & -5.31\% \\
+\texttt{gelu} & 18 & 0.0\% & -5.44\% \\
+\bottomrule
+\end{tabular}
+\end{table}

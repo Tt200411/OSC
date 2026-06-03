@@ -53,9 +53,9 @@ if [[ -n "${SSH_OPTS}" ]]; then
 fi
 
 if [[ ${#SSH_ARGS[@]} -gt 0 ]]; then
-  run_with_auth ssh "${SSH_ARGS[@]}" "${REMOTE}" "mkdir -p ${REMOTE_DIR}/Solar ${REMOTE_DIR}/lee_ocil/ETT-small"
+  run_with_auth ssh "${SSH_ARGS[@]}" "${REMOTE}" "mkdir -p ${REMOTE_DIR}/Solar ${REMOTE_DIR}/Weather ${REMOTE_DIR}/Exchange ${REMOTE_DIR}/ILI ${REMOTE_DIR}/lee_ocil/ETT-small"
 else
-  run_with_auth ssh "${REMOTE}" "mkdir -p ${REMOTE_DIR}/Solar ${REMOTE_DIR}/lee_ocil/ETT-small"
+  run_with_auth ssh "${REMOTE}" "mkdir -p ${REMOTE_DIR}/Solar ${REMOTE_DIR}/Weather ${REMOTE_DIR}/Exchange ${REMOTE_DIR}/ILI ${REMOTE_DIR}/lee_ocil/ETT-small"
 fi
 
 run_with_auth rsync -av -e "${RSYNC_RSH}" --delete \
@@ -86,5 +86,17 @@ run_with_auth rsync -av -e "${RSYNC_RSH}" \
   "${ROOT_DIR}/Solar/Site_7_30MW.csv" \
   "${ROOT_DIR}/Solar/Site_8_30MW.csv" \
   "${REMOTE}:${REMOTE_DIR}/Solar/"
+
+run_with_auth rsync -av -e "${RSYNC_RSH}" \
+  "${ROOT_DIR}/Weather/weather.csv" \
+  "${REMOTE}:${REMOTE_DIR}/Weather/"
+
+run_with_auth rsync -av -e "${RSYNC_RSH}" \
+  "${ROOT_DIR}/Exchange/exchange_rate.csv" \
+  "${REMOTE}:${REMOTE_DIR}/Exchange/"
+
+run_with_auth rsync -av -e "${RSYNC_RSH}" \
+  "${ROOT_DIR}/ILI/national_illness.csv" \
+  "${REMOTE}:${REMOTE_DIR}/ILI/"
 
 echo "Synced Phase-4 files to ${REMOTE}:${REMOTE_DIR}"

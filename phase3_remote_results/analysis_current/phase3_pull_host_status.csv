@@ -1,0 +1,5 @@
+host,ssh_batch_status,summary_pulled,logs_pulled
+10.21.53.62,permission_denied_publickey_password,False,False
+10.21.53.113,permission_denied_publickey_password,False,False
+10.21.53.142,permission_denied_publickey_password,False,False
+10.21.53.82,permission_denied_publickey_password,False,False

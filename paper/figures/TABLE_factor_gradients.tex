@@ -1,0 +1,23 @@
+\begin{table}[t]
+\centering
+\caption{Largest current high-minus-low input-factor gradients for Lee and sinusoidal perturbations. These rows diagnose conditional regimes and do not by themselves imply global effectiveness.}
+\label{tab:factor_gradients}
+\begin{tabular}{lrlrrrr}
+\toprule
+Dataset & Pred. & Activation & Factor & Server & $\Delta_{high-low}$ & Win shift \\
+\midrule
+Solar1 & 24 & Lee3 & turbulence\_score & 10.20.12.248 & +680.40 pp & +7.1 pp \\
+Solar1 & 24 & Lee3 & volatility & 10.20.12.248 & +623.19 pp & +2.6 pp \\
+ETTh1 & 168 & Lee3 & volatility & 10.21.53.113 & +53.45 pp & +27.1 pp \\
+ETTh1 & 168 & Lee3 & volatility & 10.21.53.62 & +43.05 pp & +10.5 pp \\
+Solar1 & 24 & sin a=0.1 & turbulence\_score & 10.20.12.248 & -20.13 pp & -5.1 pp \\
+Solar5 & 96 & sin a=0.1 & volatility & 10.21.53.162 & -16.56 pp & -5.3 pp \\
+Solar5 & 24 & sin a=0.1 & turbulence\_score & 10.21.53.142 & +16.54 pp & +0.1 pp \\
+Solar1 & 24 & Lee1 & volatility & 10.20.12.248 & +16.27 pp & +9.7 pp \\
+Solar5 & 96 & sin a=0.01 & turbulence\_score & 10.21.53.162 & +15.03 pp & -0.6 pp \\
+ETTh1 & 168 & Lee1 & volatility & 10.21.53.62 & -14.18 pp & -28.8 pp \\
+Solar1 & 24 & sin a=0.01 & turbulence\_score & 10.21.53.142 & -12.60 pp & -1.2 pp \\
+ETTh1 & 168 & Lee3 & turbulence\_score & 10.21.53.113 & -11.84 pp & -5.7 pp \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,19 @@
+\begin{table*}[t]
+\centering
+\caption{Placement and baseline-control ablations under the Phase-2/3 protocol. Output tanh is not a universal source of gain: it helps selected ETT cells but is harmful on Solar96.}
+\label{tab:phase2_placement}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llcccccccc}
+\toprule
+Dataset & H & GELU & ReLU & Swish & tanh hidden & enc-tanh & dec-tanh & tanh output \\
+\midrule
+ETTh1 & 168 & 1.046 $\pm$ 0.021 & 1.063 $\pm$ 0.018 & 1.022 $\pm$ 0.030 & \textbf{0.908 $\pm$ 0.128} & 1.036 $\pm$ 0.097 & 1.056 $\pm$ 0.025 & 1.106 $\pm$ 0.014 \\
+ETTh1 & 336 & 1.355 $\pm$ 0.036 & 1.378 $\pm$ 0.072 & 1.296 $\pm$ 0.045 & \textbf{1.228 $\pm$ 0.074} & 1.379 $\pm$ 0.016 & 1.299 $\pm$ 0.094 & 1.336 $\pm$ 0.118 \\
+ETTh2 & 168 & 5.142 $\pm$ 1.165 & 6.726 $\pm$ 1.648 & 4.004 $\pm$ 1.145 & 3.078 $\pm$ 0.489 & 3.159 $\pm$ 0.639 & 5.099 $\pm$ 1.682 & \textbf{2.979 $\pm$ 0.361} \\
+ETTh2 & 336 & 3.928 $\pm$ 0.187 & 4.219 $\pm$ 0.616 & 3.074 $\pm$ 0.161 & 2.178 $\pm$ 0.228 & 2.996 $\pm$ 0.350 & 3.506 $\pm$ 0.123 & \textbf{2.054 $\pm$ 0.219} \\
+Solar1 & 96 & 0.230 $\pm$ 0.005 & 0.236 $\pm$ 0.001 & 0.226 $\pm$ 0.007 & 0.225 $\pm$ 0.008 & \textbf{0.224 $\pm$ 0.005} & 0.235 $\pm$ 0.006 & 0.405 $\pm$ 0.002 \\
+Solar5 & 96 & 0.195 $\pm$ 0.005 & 0.198 $\pm$ 0.006 & 0.194 $\pm$ 0.002 & 0.186 $\pm$ 0.003 & \textbf{0.180 $\pm$ 0.003} & 0.194 $\pm$ 0.003 & 0.265 $\pm$ 0.001 \\
+\bottomrule
+\end{tabular}%
+}
+\end{table*}

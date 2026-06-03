@@ -1,0 +1,10 @@
+dataset,pred_len,seq_len,label_len,e_layers,d_layers,factor,gelu_mse,oracle_config,oracle_action,oracle_mse,oracle_seed_count,new_best_static_config,new_best_static_mse,oracle_gain_vs_gelu,new_static_gain_vs_gelu
+Exchange,96,96.0,48.0,2.0,1.0,5.0,0.9700721,enc_gelu_dec_tanh,bounded_linear,0.9305318,1,softsign_all,1.0052762,0.04076016617733875,-0.0362901891519197
+Exchange,192,96.0,48.0,2.0,1.0,5.0,1.1812613,enc_gelu_dec_tanh,bounded_linear,1.1411182,1,softsign_all,1.6034241,0.033983251631116755,-0.3573830785788038
+Exchange,336,96.0,48.0,2.0,1.0,5.0,1.6637204,gelu_all,baseline,1.6637204,1,softsign_all,1.7164084,0.0,-0.03166878280749568
+ILI,24,36.0,18.0,2.0,1.0,5.0,5.897227,enc_gelu_dec_tanh,bounded_linear,5.853008,1,tanh_sin001_all,5.8858104,0.007498269949588172,0.0019359268347648065
+ILI,36,36.0,18.0,2.0,1.0,5.0,5.681908,enc_tanh_dec_gelu,bounded_linear,5.423634,1,tanh_sin001_all,5.4969783,0.045455505439370034,0.03254711269524245
+ILI,48,36.0,18.0,2.0,1.0,5.0,5.1766324,tanh_sin001_all,bounded_linear,4.8986616,1,tanh_sin001_all,4.8986616,0.05369722601898491,0.05369722601898491
+Weather,96,96.0,48.0,2.0,1.0,5.0,0.41913968,tanh_sin001_all,bounded_linear,0.33686465,1,tanh_sin001_all,0.33686465,0.19629501554231282,0.19629501554231282
+Weather,192,96.0,48.0,2.0,1.0,5.0,0.37179664,gelu_all,baseline,0.37179664,1,tanh_sin001_all,0.4940928,0.0,-0.3289329349506762
+Weather,336,96.0,48.0,2.0,1.0,5.0,0.46428803,gelu_all,baseline,0.46428803,1,tanh_all,0.6539041,0.0,-0.4084018060943763

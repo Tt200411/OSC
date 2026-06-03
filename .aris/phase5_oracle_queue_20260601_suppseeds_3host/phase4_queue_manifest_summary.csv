@@ -1,0 +1,4 @@
+host,jobs,manifest
+10.21.53.113,42,.aris/phase5_oracle_queue_20260601_suppseeds_3host/phase4_queue_manifest_10_21_53_113.json
+10.21.53.142,42,.aris/phase5_oracle_queue_20260601_suppseeds_3host/phase4_queue_manifest_10_21_53_142.json
+10.21.53.162,42,.aris/phase5_oracle_queue_20260601_suppseeds_3host/phase4_queue_manifest_10_21_53_162.json

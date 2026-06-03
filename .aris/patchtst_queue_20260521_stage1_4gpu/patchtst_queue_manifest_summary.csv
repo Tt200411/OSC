@@ -1,0 +1,4 @@
+host,jobs,manifest
+10.21.53.82,60,.aris/patchtst_queue_20260521_stage1_4gpu/patchtst_queue_manifest_10_21_53_82.json
+10.21.53.113,60,.aris/patchtst_queue_20260521_stage1_4gpu/patchtst_queue_manifest_10_21_53_113.json
+10.21.53.142,24,.aris/patchtst_queue_20260521_stage1_4gpu/patchtst_queue_manifest_10_21_53_142.json

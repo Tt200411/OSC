@@ -1,0 +1,75 @@
+{
+  "audit_skill": "citation-audit",
+  "verdict": "WARN",
+  "reason_code": "all_entries_real_weak_contexts_disclosed",
+  "summary": "All cited entries exist; minor weak-context citation risks remain, no hallucinated refs.",
+  "audited_input_hashes": {
+    "main.tex": "sha256:2b8a581ce928a9e4e1b1d3d8e64128cb0e82cf74712d2e99971f97c784d22514",
+    "references.bib": "sha256:df4965997d488d9d1e0048ed77b138f5afbb90c32cc853e5268e00faecf1a85c",
+    "sections/0_abstract.tex": "sha256:a911f8ea5636b84f679e14268db6c37610d4f1ecc1eb6d9749f320ed1e55ce40",
+    "sections/1_introduction.tex": "sha256:5a0b1619e3df0d20895d1fd78b03bdcc6f64352f12be6b39760e6492cddb6456",
+    "sections/2_related_work.tex": "sha256:7778b15659102f869a6cec07baf0d4732bd6b9541c9c703af210cf2fe7edf162",
+    "sections/3_method.tex": "sha256:60b92f64b1242fbd6afafbaf9e6689ef4345f7a35898021e2cc52769a6ecfc39",
+    "sections/4_experiments.tex": "sha256:ad7ad13844f36164a3fdbcb90a386696c76bd7481139acf728713032e5a807ab",
+    "sections/5_conclusion.tex": "sha256:4b1a523c650f772cabbfdbe8b56b191d9f987eeccbea39f2a29e7200014ae854",
+    "sections/A_appendix.tex": "sha256:4a23b0f19b65da976a9f878adf6dbf937cb4bf2f9d3c261ccebc653bcb078588",
+    ".aris/citation-audit/contexts.txt": "sha256:787d5af1fa125ee12f0ba17abd216015e931bf728081c5851ab3f940858dd521"
+  },
+  "trace_path": ".aris/traces/citation-audit/2026-05-16_run01/",
+  "thread_id": "citation-multi-fresh-reviewers",
+  "reviewer_model": "gpt-5.5",
+  "reviewer_reasoning": "xhigh",
+  "generated_at": "2026-05-15T16:43:04Z",
+  "details": {
+    "total_entries": 6,
+    "counts": {
+      "KEEP": 6,
+      "FIX": 0,
+      "REPLACE": 0,
+      "REMOVE": 0
+    },
+    "per_entry": [
+      {
+        "key": "vaswani2017attention",
+        "verdict": "KEEP",
+        "axis_failures": [
+          "CONTEXT_WEAK"
+        ],
+        "uses": [
+          {
+            "file": "sections/2_related_work.tex",
+            "line": 4,
+            "verdict": "WEAK"
+          }
+        ]
+      },
+      {
+        "key": "zhou2021informer",
+        "verdict": "KEEP",
+        "axis_failures": []
+      },
+      {
+        "key": "hendrycks2016gelu",
+        "verdict": "KEEP",
+        "axis_failures": []
+      },
+      {
+        "key": "nair2010relu",
+        "verdict": "KEEP",
+        "axis_failures": [
+          "CONTEXT_WEAK"
+        ]
+      },
+      {
+        "key": "sitzmann2020siren",
+        "verdict": "KEEP",
+        "axis_failures": []
+      },
+      {
+        "key": "tancik2020fourier",
+        "verdict": "KEEP",
+        "axis_failures": []
+      }
+    ]
+  }
+}

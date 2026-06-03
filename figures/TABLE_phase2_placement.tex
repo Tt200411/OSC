@@ -1,0 +1,19 @@
+\begin{table*}[t]
+\centering
+\caption{Placement and output-activation ablations under the Phase-2 protocol. Output tanh is not a universal source of gain: it helps selected ETT cells but is harmful on Solar96.}
+\label{tab:phase2_placement}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llccccc}
+\toprule
+Dataset & H & GELU & tanh hidden & enc-tanh & dec-tanh & tanh output \\
+\midrule
+ETTh1 & 168 & 1.047 $\pm$ 0.021 & \textbf{0.912 $\pm$ 0.131} & 1.036 $\pm$ 0.097 & 1.056 $\pm$ 0.025 & 1.106 $\pm$ 0.014 \\
+ETTh1 & 336 & 1.361 $\pm$ 0.026 & \textbf{1.230 $\pm$ 0.076} & 1.379 $\pm$ 0.016 & 1.299 $\pm$ 0.094 & 1.336 $\pm$ 0.118 \\
+ETTh2 & 168 & 5.142 $\pm$ 1.165 & 3.078 $\pm$ 0.489 & 3.159 $\pm$ 0.639 & 5.099 $\pm$ 1.682 & \textbf{2.979 $\pm$ 0.361} \\
+ETTh2 & 336 & 3.928 $\pm$ 0.187 & 2.178 $\pm$ 0.228 & 2.996 $\pm$ 0.350 & 3.506 $\pm$ 0.123 & \textbf{2.054 $\pm$ 0.219} \\
+Solar1 & 96 & 0.230 $\pm$ 0.005 & 0.225 $\pm$ 0.008 & \textbf{0.224 $\pm$ 0.005} & 0.235 $\pm$ 0.006 & 0.405 $\pm$ 0.002 \\
+Solar5 & 96 & 0.195 $\pm$ 0.005 & 0.186 $\pm$ 0.003 & \textbf{0.180 $\pm$ 0.003} & 0.194 $\pm$ 0.003 & 0.265 $\pm$ 0.001 \\
+\bottomrule
+\end{tabular}%
+}
+\end{table*}

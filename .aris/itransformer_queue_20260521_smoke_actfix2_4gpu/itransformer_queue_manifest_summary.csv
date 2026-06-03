@@ -1,0 +1,3 @@
+host,jobs,manifest
+10.21.53.82,1,.aris/itransformer_queue_20260521_smoke_actfix2_4gpu/itransformer_queue_manifest_10_21_53_82.json
+10.21.53.113,1,.aris/itransformer_queue_20260521_smoke_actfix2_4gpu/itransformer_queue_manifest_10_21_53_113.json

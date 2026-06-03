@@ -1,0 +1,129 @@
+{
+  "project": "phase4_full_grid_10.21.53.142",
+  "cwd": "/home/testsv/project/osc_informer/lee_ocil",
+  "conda": "none",
+  "venv_path": "/home/testsv/project/osc_informer/lee_ocil/.venv",
+  "python": "",
+  "gpus": [
+    0
+  ],
+  "max_parallel": 1,
+  "gpu_free_threshold_mib": 500,
+  "oom_retry": {
+    "delay": 180,
+    "max_attempts": 2
+  },
+  "phases": [
+    {
+      "name": "other",
+      "depends_on": [],
+      "jobs": [
+        {
+          "id": "p4_Exchange_pl96_enc_tanh_dec_gelu_s2024",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data Exchange --root_path ../Exchange --data_path exchange_rate.csv --target OT --freq d --detail_freq d --seq_len 96 --label_len 48 --pred_len 96 --e_layers 2 --d_layers 1 --factor 5 --activation gelu --encoder_activation tanh --decoder_activation gelu --output_activation linear --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2024 --gpu '${GPU}' --server_id 4090-142 --server_ip 10.21.53.142 --run_id phase5_router_oracle_20260601 --des phase5_router_oracle_20260601_enc_tanh_dec_gelu --no_save_pred --no_save_true",
+          "expected_output": "results/informer_Exchange_gelu_a0_enctanh_decgelu_outlinear_ftM_sl96_ll48_pl96_dm512_nh8_el2_dl1_df2048_fc5_seed2024_4090-142_phase5_router_oracle_20260601_enc_tanh_dec_gelu/config.json"
+        },
+        {
+          "id": "p4_Exchange_pl96_tanh_all_s2024",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data Exchange --root_path ../Exchange --data_path exchange_rate.csv --target OT --freq d --detail_freq d --seq_len 96 --label_len 48 --pred_len 96 --e_layers 2 --d_layers 1 --factor 5 --activation tanh --encoder_activation tanh --decoder_activation tanh --output_activation linear --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2024 --gpu '${GPU}' --server_id 4090-142 --server_ip 10.21.53.142 --run_id phase5_router_oracle_20260601 --des phase5_router_oracle_20260601_tanh_all --no_save_pred --no_save_true",
+          "expected_output": "results/informer_Exchange_tanh_a0_ftM_sl96_ll48_pl96_dm512_nh8_el2_dl1_df2048_fc5_seed2024_4090-142_phase5_router_oracle_20260601_tanh_all/config.json"
+        },
+        {
+          "id": "p4_Weather_pl96_enc_gelu_dec_tanh_s2024",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data Weather --root_path ../Weather --data_path weather.csv --target OT --freq t --detail_freq t --seq_len 96 --label_len 48 --pred_len 96 --e_layers 2 --d_layers 1 --factor 5 --activation gelu --encoder_activation gelu --decoder_activation tanh --output_activation linear --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2024 --gpu '${GPU}' --server_id 4090-142 --server_ip 10.21.53.142 --run_id phase5_router_oracle_20260601 --des phase5_router_oracle_20260601_enc_gelu_dec_tanh --no_save_pred --no_save_true",
+          "expected_output": "results/informer_Weather_gelu_a0_encgelu_dectanh_outlinear_ftM_sl96_ll48_pl96_dm512_nh8_el2_dl1_df2048_fc5_seed2024_4090-142_phase5_router_oracle_20260601_enc_gelu_dec_tanh/config.json"
+        },
+        {
+          "id": "p4_Weather_pl96_softsign_all_s2024",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data Weather --root_path ../Weather --data_path weather.csv --target OT --freq t --detail_freq t --seq_len 96 --label_len 48 --pred_len 96 --e_layers 2 --d_layers 1 --factor 5 --activation softsign --encoder_activation softsign --decoder_activation softsign --output_activation linear --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2024 --gpu '${GPU}' --server_id 4090-142 --server_ip 10.21.53.142 --run_id phase5_router_oracle_20260601 --des phase5_router_oracle_20260601_softsign_all --no_save_pred --no_save_true",
+          "expected_output": "results/informer_Weather_softsign_a0_ftM_sl96_ll48_pl96_dm512_nh8_el2_dl1_df2048_fc5_seed2024_4090-142_phase5_router_oracle_20260601_softsign_all/config.json"
+        },
+        {
+          "id": "p4_Weather_pl96_tanh_sin001_all_s2024",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data Weather --root_path ../Weather --data_path weather.csv --target OT --freq t --detail_freq t --seq_len 96 --label_len 48 --pred_len 96 --e_layers 2 --d_layers 1 --factor 5 --activation tanh_sin --encoder_activation tanh_sin --decoder_activation tanh_sin --output_activation linear --perturb_amplitude 0.01 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2024 --gpu '${GPU}' --server_id 4090-142 --server_ip 10.21.53.142 --run_id phase5_router_oracle_20260601 --des phase5_router_oracle_20260601_tanh_sin001_all --no_save_pred --no_save_true",
+          "expected_output": "results/informer_Weather_tanh_sin_a0.01_ftM_sl96_ll48_pl96_dm512_nh8_el2_dl1_df2048_fc5_seed2024_4090-142_phase5_router_oracle_20260601_tanh_sin001_all/config.json"
+        },
+        {
+          "id": "p4_Exchange_pl192_gelu_all_s2024",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data Exchange --root_path ../Exchange --data_path exchange_rate.csv --target OT --freq d --detail_freq d --seq_len 96 --label_len 48 --pred_len 192 --e_layers 2 --d_layers 1 --factor 5 --activation gelu --encoder_activation gelu --decoder_activation gelu --output_activation linear --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2024 --gpu '${GPU}' --server_id 4090-142 --server_ip 10.21.53.142 --run_id phase5_router_oracle_20260601 --des phase5_router_oracle_20260601_gelu_all --no_save_pred --no_save_true",
+          "expected_output": "results/informer_Exchange_gelu_a0_ftM_sl96_ll48_pl192_dm512_nh8_el2_dl1_df2048_fc5_seed2024_4090-142_phase5_router_oracle_20260601_gelu_all/config.json"
+        },
+        {
+          "id": "p4_Exchange_pl192_tanh_all_outtanh_s2024",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data Exchange --root_path ../Exchange --data_path exchange_rate.csv --target OT --freq d --detail_freq d --seq_len 96 --label_len 48 --pred_len 192 --e_layers 2 --d_layers 1 --factor 5 --activation tanh --encoder_activation tanh --decoder_activation tanh --output_activation tanh --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2024 --gpu '${GPU}' --server_id 4090-142 --server_ip 10.21.53.142 --run_id phase5_router_oracle_20260601 --des phase5_router_oracle_20260601_tanh_all_outtanh --no_save_pred --no_save_true",
+          "expected_output": "results/informer_Exchange_tanh_a0_enctanh_dectanh_outtanh_ftM_sl96_ll48_pl192_dm512_nh8_el2_dl1_df2048_fc5_seed2024_4090-142_phase5_router_oracle_20260601_tanh_all_outtanh/config.json"
+        },
+        {
+          "id": "p4_Exchange_pl336_enc_tanh_dec_gelu_s2024",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data Exchange --root_path ../Exchange --data_path exchange_rate.csv --target OT --freq d --detail_freq d --seq_len 96 --label_len 48 --pred_len 336 --e_layers 2 --d_layers 1 --factor 5 --activation gelu --encoder_activation tanh --decoder_activation gelu --output_activation linear --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2024 --gpu '${GPU}' --server_id 4090-142 --server_ip 10.21.53.142 --run_id phase5_router_oracle_20260601 --des phase5_router_oracle_20260601_enc_tanh_dec_gelu --no_save_pred --no_save_true",
+          "expected_output": "results/informer_Exchange_gelu_a0_enctanh_decgelu_outlinear_ftM_sl96_ll48_pl336_dm512_nh8_el2_dl1_df2048_fc5_seed2024_4090-142_phase5_router_oracle_20260601_enc_tanh_dec_gelu/config.json"
+        },
+        {
+          "id": "p4_Exchange_pl336_tanh_all_s2024",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data Exchange --root_path ../Exchange --data_path exchange_rate.csv --target OT --freq d --detail_freq d --seq_len 96 --label_len 48 --pred_len 336 --e_layers 2 --d_layers 1 --factor 5 --activation tanh --encoder_activation tanh --decoder_activation tanh --output_activation linear --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2024 --gpu '${GPU}' --server_id 4090-142 --server_ip 10.21.53.142 --run_id phase5_router_oracle_20260601 --des phase5_router_oracle_20260601_tanh_all --no_save_pred --no_save_true",
+          "expected_output": "results/informer_Exchange_tanh_a0_ftM_sl96_ll48_pl336_dm512_nh8_el2_dl1_df2048_fc5_seed2024_4090-142_phase5_router_oracle_20260601_tanh_all/config.json"
+        },
+        {
+          "id": "p4_ILI_pl24_enc_gelu_dec_tanh_s2024",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data ILI --root_path ../ILI --data_path national_illness.csv --target OT --freq w --detail_freq w --seq_len 36 --label_len 18 --pred_len 24 --e_layers 2 --d_layers 1 --factor 5 --activation gelu --encoder_activation gelu --decoder_activation tanh --output_activation linear --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2024 --gpu '${GPU}' --server_id 4090-142 --server_ip 10.21.53.142 --run_id phase5_router_oracle_20260601 --des phase5_router_oracle_20260601_enc_gelu_dec_tanh --no_save_pred --no_save_true",
+          "expected_output": "results/informer_ILI_gelu_a0_encgelu_dectanh_outlinear_ftM_sl36_ll18_pl24_dm512_nh8_el2_dl1_df2048_fc5_seed2024_4090-142_phase5_router_oracle_20260601_enc_gelu_dec_tanh/config.json"
+        },
+        {
+          "id": "p4_ILI_pl24_softsign_all_s2024",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data ILI --root_path ../ILI --data_path national_illness.csv --target OT --freq w --detail_freq w --seq_len 36 --label_len 18 --pred_len 24 --e_layers 2 --d_layers 1 --factor 5 --activation softsign --encoder_activation softsign --decoder_activation softsign --output_activation linear --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2024 --gpu '${GPU}' --server_id 4090-142 --server_ip 10.21.53.142 --run_id phase5_router_oracle_20260601 --des phase5_router_oracle_20260601_softsign_all --no_save_pred --no_save_true",
+          "expected_output": "results/informer_ILI_softsign_a0_ftM_sl36_ll18_pl24_dm512_nh8_el2_dl1_df2048_fc5_seed2024_4090-142_phase5_router_oracle_20260601_softsign_all/config.json"
+        },
+        {
+          "id": "p4_ILI_pl24_tanh_sin001_all_s2024",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data ILI --root_path ../ILI --data_path national_illness.csv --target OT --freq w --detail_freq w --seq_len 36 --label_len 18 --pred_len 24 --e_layers 2 --d_layers 1 --factor 5 --activation tanh_sin --encoder_activation tanh_sin --decoder_activation tanh_sin --output_activation linear --perturb_amplitude 0.01 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2024 --gpu '${GPU}' --server_id 4090-142 --server_ip 10.21.53.142 --run_id phase5_router_oracle_20260601 --des phase5_router_oracle_20260601_tanh_sin001_all --no_save_pred --no_save_true",
+          "expected_output": "results/informer_ILI_tanh_sin_a0.01_ftM_sl36_ll18_pl24_dm512_nh8_el2_dl1_df2048_fc5_seed2024_4090-142_phase5_router_oracle_20260601_tanh_sin001_all/config.json"
+        },
+        {
+          "id": "p4_ILI_pl36_gelu_all_s2024",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data ILI --root_path ../ILI --data_path national_illness.csv --target OT --freq w --detail_freq w --seq_len 36 --label_len 18 --pred_len 36 --e_layers 2 --d_layers 1 --factor 5 --activation gelu --encoder_activation gelu --decoder_activation gelu --output_activation linear --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2024 --gpu '${GPU}' --server_id 4090-142 --server_ip 10.21.53.142 --run_id phase5_router_oracle_20260601 --des phase5_router_oracle_20260601_gelu_all --no_save_pred --no_save_true",
+          "expected_output": "results/informer_ILI_gelu_a0_ftM_sl36_ll18_pl36_dm512_nh8_el2_dl1_df2048_fc5_seed2024_4090-142_phase5_router_oracle_20260601_gelu_all/config.json"
+        },
+        {
+          "id": "p4_ILI_pl36_tanh_all_outtanh_s2024",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data ILI --root_path ../ILI --data_path national_illness.csv --target OT --freq w --detail_freq w --seq_len 36 --label_len 18 --pred_len 36 --e_layers 2 --d_layers 1 --factor 5 --activation tanh --encoder_activation tanh --decoder_activation tanh --output_activation tanh --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2024 --gpu '${GPU}' --server_id 4090-142 --server_ip 10.21.53.142 --run_id phase5_router_oracle_20260601 --des phase5_router_oracle_20260601_tanh_all_outtanh --no_save_pred --no_save_true",
+          "expected_output": "results/informer_ILI_tanh_a0_enctanh_dectanh_outtanh_ftM_sl36_ll18_pl36_dm512_nh8_el2_dl1_df2048_fc5_seed2024_4090-142_phase5_router_oracle_20260601_tanh_all_outtanh/config.json"
+        },
+        {
+          "id": "p4_ILI_pl48_enc_tanh_dec_gelu_s2024",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data ILI --root_path ../ILI --data_path national_illness.csv --target OT --freq w --detail_freq w --seq_len 36 --label_len 18 --pred_len 48 --e_layers 2 --d_layers 1 --factor 5 --activation gelu --encoder_activation tanh --decoder_activation gelu --output_activation linear --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2024 --gpu '${GPU}' --server_id 4090-142 --server_ip 10.21.53.142 --run_id phase5_router_oracle_20260601 --des phase5_router_oracle_20260601_enc_tanh_dec_gelu --no_save_pred --no_save_true",
+          "expected_output": "results/informer_ILI_gelu_a0_enctanh_decgelu_outlinear_ftM_sl36_ll18_pl48_dm512_nh8_el2_dl1_df2048_fc5_seed2024_4090-142_phase5_router_oracle_20260601_enc_tanh_dec_gelu/config.json"
+        },
+        {
+          "id": "p4_ILI_pl48_tanh_all_s2024",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data ILI --root_path ../ILI --data_path national_illness.csv --target OT --freq w --detail_freq w --seq_len 36 --label_len 18 --pred_len 48 --e_layers 2 --d_layers 1 --factor 5 --activation tanh --encoder_activation tanh --decoder_activation tanh --output_activation linear --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2024 --gpu '${GPU}' --server_id 4090-142 --server_ip 10.21.53.142 --run_id phase5_router_oracle_20260601 --des phase5_router_oracle_20260601_tanh_all --no_save_pred --no_save_true",
+          "expected_output": "results/informer_ILI_tanh_a0_ftM_sl36_ll18_pl48_dm512_nh8_el2_dl1_df2048_fc5_seed2024_4090-142_phase5_router_oracle_20260601_tanh_all/config.json"
+        },
+        {
+          "id": "p4_Weather_pl192_enc_gelu_dec_tanh_s2024",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data Weather --root_path ../Weather --data_path weather.csv --target OT --freq t --detail_freq t --seq_len 96 --label_len 48 --pred_len 192 --e_layers 2 --d_layers 1 --factor 5 --activation gelu --encoder_activation gelu --decoder_activation tanh --output_activation linear --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2024 --gpu '${GPU}' --server_id 4090-142 --server_ip 10.21.53.142 --run_id phase5_router_oracle_20260601 --des phase5_router_oracle_20260601_enc_gelu_dec_tanh --no_save_pred --no_save_true",
+          "expected_output": "results/informer_Weather_gelu_a0_encgelu_dectanh_outlinear_ftM_sl96_ll48_pl192_dm512_nh8_el2_dl1_df2048_fc5_seed2024_4090-142_phase5_router_oracle_20260601_enc_gelu_dec_tanh/config.json"
+        },
+        {
+          "id": "p4_Weather_pl192_softsign_all_s2024",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data Weather --root_path ../Weather --data_path weather.csv --target OT --freq t --detail_freq t --seq_len 96 --label_len 48 --pred_len 192 --e_layers 2 --d_layers 1 --factor 5 --activation softsign --encoder_activation softsign --decoder_activation softsign --output_activation linear --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2024 --gpu '${GPU}' --server_id 4090-142 --server_ip 10.21.53.142 --run_id phase5_router_oracle_20260601 --des phase5_router_oracle_20260601_softsign_all --no_save_pred --no_save_true",
+          "expected_output": "results/informer_Weather_softsign_a0_ftM_sl96_ll48_pl192_dm512_nh8_el2_dl1_df2048_fc5_seed2024_4090-142_phase5_router_oracle_20260601_softsign_all/config.json"
+        },
+        {
+          "id": "p4_Weather_pl192_tanh_sin001_all_s2024",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data Weather --root_path ../Weather --data_path weather.csv --target OT --freq t --detail_freq t --seq_len 96 --label_len 48 --pred_len 192 --e_layers 2 --d_layers 1 --factor 5 --activation tanh_sin --encoder_activation tanh_sin --decoder_activation tanh_sin --output_activation linear --perturb_amplitude 0.01 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2024 --gpu '${GPU}' --server_id 4090-142 --server_ip 10.21.53.142 --run_id phase5_router_oracle_20260601 --des phase5_router_oracle_20260601_tanh_sin001_all --no_save_pred --no_save_true",
+          "expected_output": "results/informer_Weather_tanh_sin_a0.01_ftM_sl96_ll48_pl192_dm512_nh8_el2_dl1_df2048_fc5_seed2024_4090-142_phase5_router_oracle_20260601_tanh_sin001_all/config.json"
+        },
+        {
+          "id": "p4_Weather_pl336_gelu_all_s2024",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data Weather --root_path ../Weather --data_path weather.csv --target OT --freq t --detail_freq t --seq_len 96 --label_len 48 --pred_len 336 --e_layers 2 --d_layers 1 --factor 5 --activation gelu --encoder_activation gelu --decoder_activation gelu --output_activation linear --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2024 --gpu '${GPU}' --server_id 4090-142 --server_ip 10.21.53.142 --run_id phase5_router_oracle_20260601 --des phase5_router_oracle_20260601_gelu_all --no_save_pred --no_save_true",
+          "expected_output": "results/informer_Weather_gelu_a0_ftM_sl96_ll48_pl336_dm512_nh8_el2_dl1_df2048_fc5_seed2024_4090-142_phase5_router_oracle_20260601_gelu_all/config.json"
+        },
+        {
+          "id": "p4_Weather_pl336_tanh_all_outtanh_s2024",
+          "cmd": "python -u phase4_informer.py --model informer --features M --d_model 512 --n_heads 8 --d_ff 2048 --attn prob --embed timeF --distil true --mix true --batch_size 32 --learning_rate 1e-4 --patience 3 --lradj type1 --train_epochs 6 --dropout 0.05 --data Weather --root_path ../Weather --data_path weather.csv --target OT --freq t --detail_freq t --seq_len 96 --label_len 48 --pred_len 336 --e_layers 2 --d_layers 1 --factor 5 --activation tanh --encoder_activation tanh --decoder_activation tanh --output_activation tanh --perturb_amplitude 0.0 --perturb_frequency 1.0 --perturb_phase 0.0 --lee_type 1 --seed 2024 --gpu '${GPU}' --server_id 4090-142 --server_ip 10.21.53.142 --run_id phase5_router_oracle_20260601 --des phase5_router_oracle_20260601_tanh_all_outtanh --no_save_pred --no_save_true",
+          "expected_output": "results/informer_Weather_tanh_a0_enctanh_dectanh_outtanh_ftM_sl96_ll48_pl336_dm512_nh8_el2_dl1_df2048_fc5_seed2024_4090-142_phase5_router_oracle_20260601_tanh_all_outtanh/config.json"
+        }
+      ]
+    }
+  ]
+}

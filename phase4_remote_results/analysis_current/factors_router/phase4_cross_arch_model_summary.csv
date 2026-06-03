@@ -1,0 +1,5 @@
+model,cell_count,non_baseline_best_cells,mean_best_gain_vs_baseline,best_static_config,best_static_mean_rank,nonbaseline_win_rate
+Informer,36,34,0.15971035491271118,tanh_sin001_all,2.7777777777777777,0.6527777777777778
+PatchTST,12,5,0.0038017382086899323,gelu_ffn_linear,2.25,0.2777777777777778
+iTransformer-placeprobe,3,3,0.007273632965934658,swish_ffn_outtanh,5.333333333333333,0.45454545454545453
+iTransformer-stage1,6,1,0.0003228265015226435,gelu_ffn_linear,1.5,0.16666666666666666

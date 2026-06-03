@@ -1,0 +1,9 @@
+dataset,pred_len,activation,encoder_activation,decoder_activation,output_activation,activation_signature,placement,sample_mse_target_mean,sample_mse_target_std,sample_count,seed_count
+Solar1,96,gelu,tanh,gelu,linear,act=gelu|enc=tanh|dec=gelu|out=linear|a=0|lee=1,encoder-only,0.17755797765199713,0.19750430027652677,41760,3
+Solar1,96,tanh,tanh,tanh,linear,act=tanh|enc=tanh|dec=tanh|out=linear|a=0|lee=1,full-hidden,0.17796720931277776,0.19781390961776377,41760,3
+Solar1,96,tanh_sin,tanh_sin,tanh_sin,linear,act=tanh_sin|enc=tanh_sin|dec=tanh_sin|out=linear|a=0.01|lee=1,full-hidden,0.18302640326109673,0.20587548026475522,41760,3
+Solar1,96,gelu,gelu,gelu,linear,act=gelu|enc=gelu|dec=gelu|out=linear|a=0|lee=1,full-hidden,0.19283224585662595,0.20961830729446854,41760,3
+Solar5,96,gelu,tanh,gelu,linear,act=gelu|enc=tanh|dec=gelu|out=linear|a=0|lee=1,encoder-only,0.2506461925703089,0.28011279095746744,41760,3
+Solar5,96,tanh_sin,tanh_sin,tanh_sin,linear,act=tanh_sin|enc=tanh_sin|dec=tanh_sin|out=linear|a=0.01|lee=1,full-hidden,0.2550395208823611,0.28810929675265534,41760,3
+Solar5,96,tanh,tanh,tanh,linear,act=tanh|enc=tanh|dec=tanh|out=linear|a=0|lee=1,full-hidden,0.26398410267584055,0.2936656155284552,41760,3
+Solar5,96,gelu,gelu,gelu,linear,act=gelu|enc=gelu|dec=gelu|out=linear|a=0|lee=1,full-hidden,0.28120058879802445,0.3079867721246762,41760,3

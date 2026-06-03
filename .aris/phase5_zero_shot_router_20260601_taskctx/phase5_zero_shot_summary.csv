@@ -1,0 +1,13 @@
+feature_set,fallback_policy,cell_count,abstain_rate,mean_recommendation_count,top_chosen_configs,top_actions,top_features
+all_input,gelu,9,0.0,6.0,tanh_sin001_all,regime_best_bounded_vs_default,input_volatility
+all_input,train_static,9,0.0,6.0,tanh_sin001_all,regime_best_bounded_vs_default,input_volatility
+all_with_topology,gelu,9,0.0,6.0,tanh_sin001_all,regime_best_bounded_vs_default,input_volatility
+all_with_topology,train_static,9,0.0,6.0,tanh_sin001_all,regime_best_bounded_vs_default,input_volatility
+data,gelu,9,0.0,6.0,tanh_sin001_all,regime_best_bounded_vs_default,input_volatility
+data,train_static,9,0.0,6.0,tanh_sin001_all,regime_best_bounded_vs_default,input_volatility
+frequency,gelu,9,0.0,5.0,tanh_all;tanh_sin001_all,placement_all_tanh_vs_best_split;regime_best_bounded_vs_default,router_timefreq_rolling_spectral_entropy_std;input_spectral_flatness
+frequency,train_static,9,0.0,5.0,tanh_all;tanh_sin001_all,placement_all_tanh_vs_best_split;regime_best_bounded_vs_default,router_timefreq_rolling_spectral_entropy_std;input_spectral_flatness
+statistical,gelu,9,0.0,6.0,tanh_sin001_all,regime_best_bounded_vs_default,input_volatility
+statistical,train_static,9,0.0,6.0,tanh_sin001_all,regime_best_bounded_vs_default,input_volatility
+topology,gelu,9,0.0,6.666666666666667,tanh_sin001_all,regime_best_bounded_vs_default,pred_len
+topology,train_static,9,0.0,6.666666666666667,tanh_sin001_all,regime_best_bounded_vs_default,pred_len

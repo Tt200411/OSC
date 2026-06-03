@@ -1,0 +1,21 @@
+\begin{table}[t]
+\centering
+\caption{Solar96 regime-oracle diagnostics using saved prediction arrays. Static MSE is target-channel sample MSE. Same-split oracle gains are optimistic; leave-one-seed-out (LOSO) gains are the stricter stability check.}
+\label{tab:phase3_solar_oracle}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{llccc}
+\toprule
+Dataset & Diagnostic & Reference MSE & Best factor & Gain \\
+\midrule
+Solar1 & best static: encoder-tanh & 0.1776 & -- & -- \\
+Solar1 & same-split oracle & 0.1776 & tail ratio & +3.52\% \\
+Solar1 & LOSO oracle & 0.1776 & max abs. change & +1.57\% \\
+Solar1 & LOSO oracle & 0.1776 & volatility shock & +1.26\% \\
+Solar1 & LOSO oracle & 0.1776 & volatility & +0.92\% \\
+Solar5 & best static: encoder-tanh & 0.2506 & -- & -- \\
+Solar5 & same-split oracle & 0.2506 & std & +1.00\% \\
+Solar5 & best LOSO factor & 0.2506 & max abs. change & -0.07\% \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}

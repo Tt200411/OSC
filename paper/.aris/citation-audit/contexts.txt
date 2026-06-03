@@ -1,0 +1,45 @@
+KEY: zhou2021informer
+FILE: sections/1_introduction.tex
+LINE: 5
+CONTEXT: This paper asks whether activation-only changes can improve Informer forecasting and, more importantly, when such changes are justified. We use Informer \citep{zhou2021informer}, a transformer architecture designed for long sequence time-series forecasting, as the controlled backbone. We keep the model structure fixed and vary only the nonlinearity inside the encoder and decoder feed-forward/convolutional blocks. This separates activation effects from attention or parameter-count effects.
+
+KEY: hendrycks2016gelu
+FILE: sections/1_introduction.tex
+LINE: 7
+CONTEXT: Our starting hypothesis was that lightweight oscillatory perturbations, such as adding \(a\sin(x)\) to a standard activation, could help long-horizon high-volatility forecasts. The current evidence is more specific. Bounded sign-preserving activations such as \texttt{tanh} and \texttt{softsign} explain much of the improvement over GELU \citep{hendrycks2016gelu}. Explicit oscillatory perturbations around \texttt{tanh} are not globally reliable. Lee-OC variants show strong behavior in some long-horizon ETT settings but can be harmful in solar settings. These observations motivate a factor-conditioned analysis rather than a single global activation ranking.
+
+KEY: nair2010relu
+FILE: sections/1_introduction.tex
+LINE: 11
+CONTEXT: \item We implement a controlled activation-family interface for Informer that supports GELU, ReLU \citep{nair2010relu}, bounded activations, sinusoidal/cosine/random perturbations, and Lee-OC variants without changing the surrounding architecture.
+
+KEY: vaswani2017attention
+FILE: sections/2_related_work.tex
+LINE: 4
+CONTEXT: The transformer architecture \citep{vaswani2017attention} introduced attention-based sequence modeling that later became a foundation for long-horizon forecasting architectures. Informer \citep{zhou2021informer} adapts this family to long sequence time-series forecasting through efficient attention and an encoder-decoder design. Our study does not propose a new attention mechanism. Instead, it uses Informer as a fixed experimental substrate to isolate the effect of activation functions.
+
+KEY: zhou2021informer
+FILE: sections/2_related_work.tex
+LINE: 4
+CONTEXT: The transformer architecture \citep{vaswani2017attention} introduced attention-based sequence modeling that later became a foundation for long-horizon forecasting architectures. Informer \citep{zhou2021informer} adapts this family to long sequence time-series forecasting through efficient attention and an encoder-decoder design. Our study does not propose a new attention mechanism. Instead, it uses Informer as a fixed experimental substrate to isolate the effect of activation functions.
+
+KEY: nair2010relu
+FILE: sections/2_related_work.tex
+LINE: 7
+CONTEXT: ReLU \citep{nair2010relu} and GELU \citep{hendrycks2016gelu} are common defaults in deep networks and transformer blocks. Bounded nonlinearities such as \texttt{tanh} and \texttt{softsign} are older but still useful controls because they preserve sign while constraining output magnitude. Our experiments show that these bounded controls are essential: without them, a Lee or sinusoidal perturbation may appear useful against GELU while offering little or no advantage over a simpler bounded baseline.
+
+KEY: hendrycks2016gelu
+FILE: sections/2_related_work.tex
+LINE: 7
+CONTEXT: ReLU \citep{nair2010relu} and GELU \citep{hendrycks2016gelu} are common defaults in deep networks and transformer blocks. Bounded nonlinearities such as \texttt{tanh} and \texttt{softsign} are older but still useful controls because they preserve sign while constraining output magnitude. Our experiments show that these bounded controls are essential: without them, a Lee or sinusoidal perturbation may appear useful against GELU while offering little or no advantage over a simpler bounded baseline.
+
+KEY: sitzmann2020siren
+FILE: sections/2_related_work.tex
+LINE: 10
+CONTEXT: Periodic activations and Fourier features have been studied for representing high-frequency functions \citep{sitzmann2020siren,tancik2020fourier}. Our use of oscillatory activations is different. We do not train an implicit neural representation; we perturb the feed-forward activation inside a forecasting transformer and test whether the perturbation improves forecasting error under fixed capacity. This framing makes the comparison against the unperturbed base activation critical.
+
+KEY: tancik2020fourier
+FILE: sections/2_related_work.tex
+LINE: 10
+CONTEXT: Periodic activations and Fourier features have been studied for representing high-frequency functions \citep{sitzmann2020siren,tancik2020fourier}. Our use of oscillatory activations is different. We do not train an implicit neural representation; we perturb the feed-forward activation inside a forecasting transformer and test whether the perturbation improves forecasting error under fixed capacity. This framing makes the comparison against the unperturbed base activation critical.
+

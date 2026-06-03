@@ -1,0 +1,87 @@
+{
+  "audit_skill": "kill-argument",
+  "verdict": "FAIL",
+  "reason_code": "unresolved_critical",
+  "summary": "Critical unresolved deduplication and inference risks remain for submission.",
+  "audited_input_hashes": {
+    "main.tex": "sha256:2b8a581ce928a9e4e1b1d3d8e64128cb0e82cf74712d2e99971f97c784d22514",
+    "references.bib": "sha256:df4965997d488d9d1e0048ed77b138f5afbb90c32cc853e5268e00faecf1a85c",
+    "main.pdf": "sha256:a20e99dbcc161725a24070623e48bba2f39bf574594132692538c75aa8acc10b",
+    "sections/0_abstract.tex": "sha256:a911f8ea5636b84f679e14268db6c37610d4f1ecc1eb6d9749f320ed1e55ce40",
+    "sections/1_introduction.tex": "sha256:5a0b1619e3df0d20895d1fd78b03bdcc6f64352f12be6b39760e6492cddb6456",
+    "sections/2_related_work.tex": "sha256:7778b15659102f869a6cec07baf0d4732bd6b9541c9c703af210cf2fe7edf162",
+    "sections/3_method.tex": "sha256:60b92f64b1242fbd6afafbaf9e6689ef4345f7a35898021e2cc52769a6ecfc39",
+    "sections/4_experiments.tex": "sha256:ad7ad13844f36164a3fdbcb90a386696c76bd7481139acf728713032e5a807ab",
+    "sections/5_conclusion.tex": "sha256:4b1a523c650f772cabbfdbe8b56b191d9f987eeccbea39f2a29e7200014ae854",
+    "sections/A_appendix.tex": "sha256:4a23b0f19b65da976a9f878adf6dbf937cb4bf2f9d3c261ccebc653bcb078588",
+    "figures/TABLE_bounded_vs_gelu.tex": "sha256:b937c5fbe5e6e94f27b31bd565bc1413b5e0a938da098b92a3febd4c1b1e1cb0",
+    "figures/TABLE_dataset_coverage.tex": "sha256:6d471412061ee48105195fae224f7cb10a0db33583ad043eb3a7d1bfa2bdd020",
+    "figures/TABLE_factor_gradients.tex": "sha256:64073f0e43d11d6403c972bf4d545f5aaa5737937a8d6ddbb34953ddbd7ee022",
+    "figures/TABLE_tanh_specificity.tex": "sha256:7be484a1705fb3161d8bfae74e34f3ad5d25f3f304aa2ea4f41827339d790579"
+  },
+  "trace_path": ".aris/traces/kill-argument/2026-05-16_run01/",
+  "thread_id": "019e2c7c-5abe-7380-92c6-2939c216d8ca",
+  "reviewer_model": "gpt-5.5",
+  "reviewer_reasoning": "xhigh",
+  "generated_at": "2026-05-15T16:43:04Z",
+  "details": {
+    "attack_thread_id": "019e2c77-96ac-7480-8f2b-9902f0da8eb7",
+    "defense_thread_id": "019e2c7c-5abe-7380-92c6-2939c216d8ca",
+    "attack_memo": "I would reject because the paper\u2019s central empirical evidence is explicitly not in a submission-ready statistical state. The abstract reports precise paired gains and win rates as if they are validated findings, while the paper concedes repeated remote run records and no frozen de-duplication, confidence intervals, or paired tests. The factor-conditioned story relies on server-sliced diagnostics with extreme values, and the paper itself reserves dynamic selection for future work.",
+    "decomposed_points": [
+      {
+        "id": "P_1",
+        "label": "Abstract/title scope overstatement",
+        "verdict": "partially_answered",
+        "severity_if_unresolved": "major"
+      },
+      {
+        "id": "P_2",
+        "label": "Non-independent run records",
+        "verdict": "still_unresolved",
+        "severity_if_unresolved": "critical"
+      },
+      {
+        "id": "P_3",
+        "label": "Effective sample size ambiguity",
+        "verdict": "partially_answered",
+        "severity_if_unresolved": "major"
+      },
+      {
+        "id": "P_4",
+        "label": "Seed threshold and missing inference",
+        "verdict": "still_unresolved",
+        "severity_if_unresolved": "critical"
+      },
+      {
+        "id": "P_5",
+        "label": "Broad multi-dataset/horizon claims",
+        "verdict": "partially_answered",
+        "severity_if_unresolved": "major"
+      },
+      {
+        "id": "P_6",
+        "label": "Dynamic factor-conditioned selection",
+        "verdict": "answered_by_current_text",
+        "severity_if_unresolved": "major"
+      },
+      {
+        "id": "P_7",
+        "label": "Server-sliced factor gradients",
+        "verdict": "partially_answered",
+        "severity_if_unresolved": "major"
+      }
+    ],
+    "counts": {
+      "answered_by_current_text": 1,
+      "partially_answered": 4,
+      "still_unresolved": 2
+    },
+    "net_assessment": "Paper is now scoped as Phase-1, but critical deduplication and inference risks remain.",
+    "top_action_items": [
+      "Freeze de-duplication and regenerate tables.",
+      "Add paired uncertainty/tests.",
+      "Move or replace server-sliced factor diagnostics."
+    ]
+  }
+}

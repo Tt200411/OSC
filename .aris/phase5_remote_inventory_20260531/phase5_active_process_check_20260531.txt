@@ -1,0 +1,135 @@
+## 10.21.53.62
+ 
+SCREEN_LS
+No Sockets found in /run/screen/S-testsv.
+
+GPU_APPS
+Failed to initialize NVML: Driver/library version mismatch
+NVML library version: 580.159
+PYTHON_PROCESSES
+      3 root     S    73-04:46:50  0.0  0.0 [pool_workqueue_release]
+    464 root     S    73-04:46:47  0.0  0.0 [nv_queue]
+    465 root     S    73-04:46:47  0.0  0.0 [nv_queue]
+    482 root     S    73-04:46:47  0.0  0.0 [nv_queue]
+   1095 root     S    73-04:46:44  0.0  0.0 [UVM global queue]
+   1102 root     S    73-04:46:44  0.0  0.0 [UVM deferred release queue]
+   1500 root     S    73-04:46:44  0.0  0.0 [irq/162-iwlwifi:default_queue]
+   1501 root     S    73-04:46:44  0.0  0.0 [irq/163-iwlwifi:queue_1]
+   1502 root     S    73-04:46:44  0.0  0.0 [irq/164-iwlwifi:queue_2]
+   1503 root     S    73-04:46:44  0.0  0.0 [irq/165-iwlwifi:queue_3]
+   1504 root     S    73-04:46:44  0.0  0.0 [irq/166-iwlwifi:queue_4]
+   1505 root     S    73-04:46:44  0.0  0.0 [irq/167-iwlwifi:queue_5]
+   1506 root     S    73-04:46:44  0.0  0.0 [irq/168-iwlwifi:queue_6]
+   1507 root     S    73-04:46:44  0.0  0.0 [irq/169-iwlwifi:queue_7]
+   1508 root     S    73-04:46:44  0.0  0.0 [irq/170-iwlwifi:queue_8]
+   1509 root     S    73-04:46:44  0.0  0.0 [irq/171-iwlwifi:queue_9]
+   1510 root     S    73-04:46:44  0.0  0.0 [irq/172-iwlwifi:queue_10]
+   1511 root     S    73-04:46:44  0.0  0.0 [irq/173-iwlwifi:queue_11]
+   1512 root     S    73-04:46:44  0.0  0.0 [irq/174-iwlwifi:queue_12]
+   1513 root     S    73-04:46:44  0.0  0.0 [irq/175-iwlwifi:queue_13]
+   1514 root     S    73-04:46:44  0.0  0.0 [irq/176-iwlwifi:queue_14]
+   2252 root     Ssl  73-04:46:42  0.0  0.0 /usr/bin/python3 /usr/share/unattended-upgrades/unattended-upgrade-shutdown --wait-for-signal
+ 822440 ps       Sl   40-10:57:30  0.0  0.0 /usr/bin/python3 /usr/share/apport/apport-gtk
+1370946 testsv   S          00:00  0.0  0.0 grep -E python|run.py|phase4|patchtst|itransformer|queue
+
+## 10.21.53.82
+ 
+SCREEN_LS
+No Sockets found in /run/screen/S-testsv.
+
+GPU_APPS
+PYTHON_PROCESSES
+      3 root     S    83-05:39:45  0.0  0.0 [pool_workqueue_release]
+    805 root     S    83-05:39:42  0.0  0.0 [nv_queue]
+    806 root     S    83-05:39:42  0.0  0.0 [nv_queue]
+    822 root     S    83-05:39:42  0.0  0.0 [nv_queue]
+   1107 root     S    83-05:39:41  0.0  0.0 [UVM global queue]
+   1108 root     S    83-05:39:41  0.0  0.0 [UVM deferred release queue]
+   1488 root     Ssl  83-05:39:39  0.0  0.0 /usr/bin/python3 /usr/share/unattended-upgrades/unattended-upgrade-shutdown --wait-for-signal
+  67028 testsv   S    12-00:45:36  0.0  0.0 bash -c cd ~/project/osc_informer && nohup python3 "$HOME/.aris_queue/queue_manager.py" --manifest "$HOME/.aris_queue/runs/20260519_phase4_smoke_10_21_53_82/manifest.json" --state "$HOME/.aris_queue/runs/20260519_phase4_smoke_10_21_53_82/queue_state.json" --log-dir "$HOME/.aris_queue/runs/20260519_phase4_smoke_10_21_53_82/logs" > "$HOME/.aris_queue/runs/20260519_phase4_smoke_10_21_53_82/queue_mgr.log" 2>&1 &
+  67029 testsv   S    12-00:45:36  0.0  0.0 python3 /home/testsv/.aris_queue/queue_manager.py --manifest /home/testsv/.aris_queue/runs/20260519_phase4_smoke_10_21_53_82/manifest.json --state /home/testsv/.aris_queue/runs/20260519_phase4_smoke_10_21_53_82/queue_state.json --log-dir /home/testsv/.aris_queue/runs/20260519_phase4_smoke_10_21_53_82/logs
+  67546 testsv   S    12-00:37:35  0.0  0.0 bash -c cd ~/project/osc_informer && nohup python3 "$HOME/.aris_queue/queue_manager.py" --manifest "$HOME/.aris_queue/runs/20260519_phase4_smoke_10_21_53_82/manifest.json" --state "$HOME/.aris_queue/runs/20260519_phase4_smoke_10_21_53_82/queue_state.json" --log-dir "$HOME/.aris_queue/runs/20260519_phase4_smoke_10_21_53_82/logs" > "$HOME/.aris_queue/runs/20260519_phase4_smoke_10_21_53_82/queue_mgr.log" 2>&1 < /dev/null &
+  67547 testsv   S    12-00:37:35  0.0  0.0 python3 /home/testsv/.aris_queue/queue_manager.py --manifest /home/testsv/.aris_queue/runs/20260519_phase4_smoke_10_21_53_82/manifest.json --state /home/testsv/.aris_queue/runs/20260519_phase4_smoke_10_21_53_82/queue_state.json --log-dir /home/testsv/.aris_queue/runs/20260519_phase4_smoke_10_21_53_82/logs
+  67836 testsv   S    12-00:35:29  0.0  0.0 bash -c cd ~/project/osc_informer && setsid python3 "$HOME/.aris_queue/queue_manager.py" --manifest "$HOME/.aris_queue/runs/20260519_phase4_smoke_10_21_53_82/manifest.json" --state "$HOME/.aris_queue/runs/20260519_phase4_smoke_10_21_53_82/queue_state.json" --log-dir "$HOME/.aris_queue/runs/20260519_phase4_smoke_10_21_53_82/logs" > "$HOME/.aris_queue/runs/20260519_phase4_smoke_10_21_53_82/queue_mgr.log" 2>&1 < /dev/null & disown || true; exit 0
+  67837 testsv   Ss   12-00:35:29  0.0  0.0 python3 /home/testsv/.aris_queue/queue_manager.py --manifest /home/testsv/.aris_queue/runs/20260519_phase4_smoke_10_21_53_82/manifest.json --state /home/testsv/.aris_queue/runs/20260519_phase4_smoke_10_21_53_82/queue_state.json --log-dir /home/testsv/.aris_queue/runs/20260519_phase4_smoke_10_21_53_82/logs
+ 755337 testsv   Ssl   4-02:50:02  0.1  0.0 /home/testsv/Gongji/Agent/.venv/bin/python -m uvicorn app:app --host 0.0.0.0 --port 18080
+2427163 testsv   S          00:00  0.0  0.0 grep -E python|run.py|phase4|patchtst|itransformer|queue
+
+## 10.21.53.113
+ 
+SCREEN_LS
+No Sockets found in /run/screen/S-testsv.
+
+GPU_APPS
+3508906, /home/wangakang/liuxin/SCUC-julia-C/scuc-c/build/scuc_hpr_bridge, 386
+PYTHON_PROCESSES
+      3 root     S    43-22:46:59  0.0  0.0 [pool_workqueue_release]
+    843 root     S    43-22:46:54  0.0  0.0 [irq/161-iwlwifi:default_queue]
+    845 root     S    43-22:46:54  0.0  0.0 [irq/162-iwlwifi:queue_1]
+    846 root     S    43-22:46:54  0.0  0.0 [irq/163-iwlwifi:queue_2]
+    847 root     S    43-22:46:54  0.0  0.0 [irq/164-iwlwifi:queue_3]
+    848 root     S    43-22:46:54  0.0  0.0 [irq/165-iwlwifi:queue_4]
+    849 root     S    43-22:46:54  0.0  0.0 [irq/166-iwlwifi:queue_5]
+    850 root     S    43-22:46:54  0.0  0.0 [irq/167-iwlwifi:queue_6]
+    851 root     S    43-22:46:54  0.0  0.0 [irq/168-iwlwifi:queue_7]
+    852 root     S    43-22:46:54  0.0  0.0 [irq/169-iwlwifi:queue_8]
+    853 root     S    43-22:46:54  0.0  0.0 [irq/170-iwlwifi:queue_9]
+    854 root     S    43-22:46:54  0.0  0.0 [irq/171-iwlwifi:queue_10]
+    855 root     S    43-22:46:54  0.0  0.0 [irq/172-iwlwifi:queue_11]
+    856 root     S    43-22:46:54  0.0  0.0 [irq/173-iwlwifi:queue_12]
+    857 root     S    43-22:46:54  0.0  0.0 [irq/174-iwlwifi:queue_13]
+    858 root     S    43-22:46:54  0.0  0.0 [irq/175-iwlwifi:queue_14]
+    945 root     S    43-22:46:53  0.0  0.0 [nv_queue]
+    946 root     S    43-22:46:53  0.0  0.0 [nv_queue]
+   1086 root     S    43-22:46:53  0.0  0.0 [UVM global queue]
+   1087 root     S    43-22:46:53  0.0  0.0 [UVM deferred release queue]
+   1632 root     Ssl  43-22:46:52  0.0  0.0 /usr/bin/python3 /usr/share/unattended-upgrades/unattended-upgrade-shutdown --wait-for-signal
+   2023 root     S    43-22:46:51  0.0  0.0 [nv_queue]
+ 738220 ps       SNl  37-16:21:37  0.0  0.1 /usr/bin/python3 /usr/bin/update-manager --no-update --no-focus-on-map
+2442187 testsv   Ssl   4-02:49:59  0.1  0.0 /home/testsv/Gongji/Agent/.venv/bin/python -m uvicorn app:app --host 0.0.0.0 --port 18080
+3509717 testsv   S          00:00  0.0  0.0 grep -E python|run.py|phase4|patchtst|itransformer|queue
+
+## 10.21.53.142
+ 
+SCREEN_LS
+No Sockets found in /run/screen/S-testsv.
+
+GPU_APPS
+PYTHON_PROCESSES
+      3 root     S    70-04:10:58  0.0  0.0 [pool_workqueue_release]
+    823 root     S    70-04:10:55  0.0  0.0 [nv_queue]
+    824 root     S    70-04:10:55  0.0  0.0 [nv_queue]
+    848 root     S    70-04:10:55  0.0  0.0 [nv_queue]
+   1401 root     S    70-04:10:54  0.0  0.0 [UVM global queue]
+   1402 root     S    70-04:10:54  0.0  0.0 [UVM deferred release queue]
+   1484 root     Ssl  70-04:10:53  0.0  0.0 /usr/bin/python3 /usr/share/unattended-upgrades/unattended-upgrade-shutdown --wait-for-signal
+ 963500 wangy    R    67-05:52:46 99.9  0.0 python3
+ 964956 wangy    R    67-05:47:40 99.9  0.0 python3 solve_xpress.py mas76 neos5
+ 967373 wangy    R    67-05:39:19 99.9  0.0 python3 solve_xpress.py neos5 timtab1
+1021198 wangy    R    67-01:23:12 99.9  0.0 python3 solve_xpress.py mas76
+1022143 wangy    R    67-01:19:30 99.9  0.0 python3 -u solve_xpress.py
+
+## 10.21.53.162
+ 
+SCREEN_LS
+No Sockets found in /run/screen/S-testsv.
+
+GPU_APPS
+PYTHON_PROCESSES
+      3 root     S    54-05:06:20  0.0  0.0 [pool_workqueue_release]
+    801 root     S    54-05:06:17  0.0  0.0 [nv_queue]
+    802 root     S    54-05:06:17  0.0  0.0 [nv_queue]
+    825 root     S    54-05:06:17  0.0  0.0 [nv_queue]
+   1411 root     S    54-05:06:16  0.0  0.0 [UVM global queue]
+   1412 root     S    54-05:06:16  0.0  0.0 [UVM deferred release queue]
+   1505 root     Ssl  54-05:06:16  0.0  0.0 /usr/bin/python3 /usr/share/unattended-upgrades/unattended-upgrade-shutdown --wait-for-signal
+ 288570 wjh      Ssl  52-22:18:37  0.0  0.0 /usr/bin/node /home/wjh/.local/node_modules/acpx/dist/cli.js __queue-owner
+ 288710 wjh      Ssl  52-22:18:36  0.0  0.0 /usr/bin/node /home/wjh/.local/node_modules/acpx/dist/cli.js __queue-owner
+ 289305 wjh      Ssl  52-22:18:14  0.0  0.0 /usr/bin/node /home/wjh/.local/node_modules/acpx/dist/cli.js __queue-owner
+ 618251 wjh      Ssl  48-17:43:57  0.0  0.0 /usr/bin/node /home/wjh/.local/node_modules/acpx/dist/cli.js __queue-owner
+ 644533 wjh      Sl   48-16:56:20  0.0  0.6 /home/wjh/.hermes/hermes-agent/venv/bin/python -m hermes_cli.main gateway run --replace
+3296057 testsv   Ssl   4-02:49:56  0.1  0.0 /home/testsv/Gongji/Agent/.venv/bin/python -m uvicorn app:app --host 0.0.0.0 --port 18080
+3465306 ubuntu   SNl   3-01:53:43  0.0  0.1 /usr/bin/python3 /usr/bin/update-manager --no-update --no-focus-on-map
+3477465 ubuntu   S     3-00:06:09  0.0  0.0 /usr/bin/python3 /usr/bin/gnome-terminal --wait
+3958052 testsv   S    441077234-00:18:40 0.0  0.0 grep -E python|run.py|phase4|patchtst|itransformer|queue
+

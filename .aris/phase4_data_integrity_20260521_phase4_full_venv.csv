@@ -1,0 +1,13 @@
+dataset,path,exists,ok,rows,columns,reason
+ETTh1,lee_ocil/ETT-small/ETTh1.csv,True,True,17420,"date,HUFL,HULL,MUFL,MULL,LUFL,LULL,OT",
+ETTh2,lee_ocil/ETT-small/ETTh2.csv,True,True,17420,"date,HUFL,HULL,MUFL,MULL,LUFL,LULL,OT",
+ETTm1,lee_ocil/ETT-small/ETTm1.csv,True,True,69680,"date,HUFL,HULL,MUFL,MULL,LUFL,LULL,OT",
+ETTm2,lee_ocil/ETT-small/ETTm2.csv,True,True,69680,"date,HUFL,HULL,MUFL,MULL,LUFL,LULL,OT",
+Solar1,Solar/Site_1_50MW.csv,True,True,70176,"date,Total_Irradiance,Global_Irradiance,Direct_Irradiance,Temperature,Atmosphere,Power",
+Solar2,Solar/Site_2_130MW.csv,True,True,70176,"date,Total_Irradiance,Global_Irradiance,Direct_Irradiance,Temperature,Atmosphere,Power",
+Solar3,Solar/Site_3_30MW.csv,True,True,20352,"date,Total_Irradiance,Global_Irradiance,Direct_Irradiance,Temperature,Atmosphere,Power",
+Solar4,Solar/Site_4_130MW.csv,True,True,70176,"date,Total_Irradiance,Global_Irradiance,Direct_Irradiance,Temperature,Atmosphere,Power",
+Solar5,Solar/Site_5_110MW.csv,True,True,70176,"date,Total_Irradiance,Global_Irradiance,Direct_Irradiance,Temperature,Atmosphere,Power",
+Solar6,Solar/Site_6_35MW.csv,True,True,70176,"date,Total_Irradiance,Global_Irradiance,Direct_Irradiance,Temperature,Atmosphere,Power",
+Solar7,Solar/Site_7_30MW.csv,True,True,70176,"date,Total_Irradiance,Global_Irradiance,Direct_Irradiance,Temperature,Atmosphere,Power",
+Solar8,Solar/Site_8_30MW.csv,True,True,69408,"date,Total_Irradiance,Global_Irradiance,Direct_Irradiance,Temperature,Atmosphere,Power",
